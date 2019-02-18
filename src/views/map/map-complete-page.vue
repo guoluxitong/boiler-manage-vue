@@ -12,7 +12,7 @@
         },
         data(){
             return {
-                mapHeight:document.body.clientHeight
+                mapHeight:document.documentElement.clientHeight
             }
         },
         mounted (){

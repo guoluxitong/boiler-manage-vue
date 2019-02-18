@@ -16,7 +16,7 @@
             <el-date-picker v-model="listQuery.saleDate" type="date" value-format="yyyy-MM-dd" placeholder="售出时间" style="width: 150px;"></el-date-picker>
             <el-button  type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
             <el-button style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit" v-permission="['3','5']">新增</el-button>
-            <el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>
+            <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
         </el-row>
         <!--数据展示-->
         <el-table :data="list" v-loading="listLoading" element-loading-text="给我一点时间" border fit highlight-current-row style="width: 120%" @row-contextmenu="openTableMenu">
@@ -81,7 +81,7 @@
             <menu-context-item @click="handleDownload" :width="100" :fontSize="18">导出</menu-context-item>
             <menu-context-item @click="showControllerData" :width="100" :fontSize="18">监控</menu-context-item>
             <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="18">辅机信息</menu-context-item>
-            <menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>
+            <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
             <menu-context-item @click="handleChoiceUser" v-permission="['3']" :width="100" :fontSize="18">分配</menu-context-item>
             <menu-context-item @click="handleDelete" v-permission="['3','6']" :width="100" :fontSize="18">删除</menu-context-item>
         </menu-context>
@@ -94,10 +94,10 @@
         <product-form-dialog
           :show.sync="productFromDialogVisible"
           :productFormData="productFormData"
+          :title="titleName"
           @confirmEditDialog="confirmEditDialog"
           @productFormDialogClose="productFormDialogClose"
         ></product-form-dialog>
-
         <!--分配用户dialog-->
         <div class="user-select">
             <el-dialog title="分配用户" :visible.sync="dialogChoiceUserFormVisible" width="30%">
@@ -120,13 +120,26 @@
           :id="delId">
         </boiler-common-delete-validate-dialog>
         <!--售出-->
-        <div>
-          <el-dialog :visible.sync="dialogChoiceUserFormVisible" width="30%">
-
-          </el-dialog>
-        </div>
+        <product-map-dialog
+          :show.sync="productMapDialogVisible"
+          :productFormData="productFormData"
+          @productMapDialogClose="productMapDialogClose"
+          @confirmSellDialog="confirmSellDialog">
+        </product-map-dialog>
         <!--监控-->
+      <controller-run-info-dialog
+        :show.sync="controllerRunInfoDialogVisible"
+        :controllerNo="controllerNo"
+        @controllerRunInfoDialogClose="controllerRunInfoDialogClose">
+      </controller-run-info-dialog>
         <!--辅机信息-->
+        <auxiliary-machine-dialog
+          :show.sync="auxiliaryMachineDialogVisible"
+          :productFormData="productFormData"
+          :title="titleName"
+          @auxiliaryMachineDialogClose="auxiliaryMachineDialogClose"
+          @confirmAuxiliaryMachineDialog="confirmAuxiliaryMachineDialog">
+        </auxiliary-machine-dialog>
         <!--运行信息-->
     </div>
 </template>
@@ -146,8 +159,12 @@
    import {formatDateTime} from '@/utils/date'
    import {validatePositiveAndSmallAndFloatNum} from '@/utils/validate'
    import {editProduct} from '@/api/product'
-
+    import productMapDialog from './product-map'
     import productFormDialog from './product-form'
+    import auxiliaryMachineDialog from './auxiliary-machine-form'
+    import controllerRunInfoDialog from '../controller-run-info/index'
+    import {updateProductSellAbout} from '@/api/product'
+    import {getControllerByteData,getControllerType} from '@/api/controller'
 
     function dictionaryValueFilter(dictionaryValue,value) {
         const dictionaryValueItem = dictionaryValue.filter(item => {
@@ -158,7 +175,10 @@
     export default {
         components:{
           'boiler-common-delete-validate-dialog':boilerCommonDeleteValidate,
-          productFormDialog
+          productFormDialog,
+          productMapDialog,
+          auxiliaryMachineDialog,
+          controllerRunInfoDialog,
         },
         directives: { permission },
         data() {
@@ -216,6 +236,7 @@
                     productId:0
                 },
                 productFormData:{},
+              controllerNo:'',
                 rules:{
                   tonnageNum: [{trigger: 'blur', validator: validatePositiveAndSmallAndFloatNumFun}],
                   boilerNo: [{ required: true,trigger: 'blur', message: '锅炉编号不能为空' }],
@@ -230,6 +251,11 @@
                 updateId: -1,
                 deleteValidateFormDialogVisible:false,
                 productFromDialogVisible:false,
+                productMapDialogVisible:false,
+                auxiliaryMachineDialogVisible:false,
+                controllerRunInfoDialogVisible:false,
+                mapCompleteDialogVisible:false,
+                titleName:'',
             }
         },
         filters: {
@@ -294,89 +320,44 @@
                     this.listLoading = false
                 })
             },
+            //产品新增
             handleCreate() {
-                let width= Math.round(document.body.clientWidth/2)
-                let height= Math.round(document.body.clientHeight/2)+100
-                //let newWindow=openCommonWindow("/product-form?title=create",{width: width, height: height})
-                // newWindow.on('closed', () => {newWindow = null})
-                // ipcMain.once('handleCloseProductForm', (event, arg) => {
-                //     newWindow.close()
-                //     newWindow = null
-                //     this.$message({
-                //         message: '成功',
-                //         type: 'success'
-                //     })
-                //     this.getList()
-                // })
+              this.productFromDialogVisible=true
+              this.titleName = '新增'
             },
             //产品编辑
             handleUpdate(row) {
               this.productFromDialogVisible=true
               this.productFormData = row
+              this.titleName = '编辑'
             },
+            //产品复制
             handleCopy(row){
-                let productFormData={
-                        id:row.id,
-                        roleIdArray:row.roleIdArray,
-                        userId:row.userId,
-                        orgId:row.orgId,
-                        orgType:row.orgType,
-                        controllerNo:'',
-                        boilerNo:'',
-                        boilerModelNumber:row.boilerModelNumber,
-                        tonnageNum:row.tonnageNum,
-                        medium:row.medium,
-                        fuel:row.fuel,
-                        createDateTime:row.createDateTime,
-                        editDateTime:row.editDateTime,
-                        isSell:row.isSell,
-                        productAuxiliaryMachineInfoList:row.productAuxiliaryMachineInfoList
-                };
-                let width= Math.round(document.body.clientWidth/2)
-                let height= Math.round(document.body.clientHeight/2)+50
-                // let newWindow=openElectronWindow("/product-form?title=copy&&productFormData="+JSON.stringify(productFormData),{width: width, height: height})
-                // newWindow.on('closed', () => {
-                //     newWindow = null
-                //     ipcMain.removeAllListeners(['handleCloseProductForm'])
-                // })
-                // ipcMain.once('handleCloseProductForm', (event, arg) => {
-                //     newWindow.close()
-                //     newWindow = null
-                //     this.$message({
-                //         message: '成功',
-                //         type: 'success'
-                //     })
-                //     this.getList()
-                // })
+              this.productFromDialogVisible=true
+              this.productFormData = row
+              this.titleName = '复制'
             },
-            showMap(){
+            /*showMap(){
                 let width= Math.round(document.body.clientWidth/2)+175
                 let height= Math.round(document.body.clientHeight/2)+175
                 // let newWindow=openCommonWindow("/map-complete-page",{width: width, height: height})
                 // newWindow.on('closed', () => {
                 //     newWindow = null
                 // })
-            },
+            },*/
+            //产品售出
             sellProduct(row){
-                let width= Math.round(document.body.clientWidth/2)+175
-                let height= Math.round(document.body.clientHeight/2)+175
-                // let newWindow=openCommonWindow("/product-map?productMapData="+JSON.stringify(row),{width: width, height: height})
-                // newWindow.on('closed', () => {
-                //     this.getList()
-                //     newWindow = null
-                // })
+              this.productMapDialogVisible=true
+              this.productFormData = row
             },
+            //监控
             showControllerData(row){
-                // let newWindow=openCommonWindow("/controller-run-info?controllerNo="+row.controllerNo,{width: 600, height: 500})
-                // newWindow.on('closed', () => {
-                //     newWindow = null
-                // })
+                  this.controllerRunInfoDialogVisible = true
+                  this.controllerNo = row.controllerNo
             },
-            /**
-             * 辅机信息
-             */
+            // 辅机信息
             auxiliaryMachineInfo(row){
-                let width= Math.round(document.body.clientWidth/2)
+                /*let width= Math.round(document.body.clientWidth/2)
                 let height= Math.round(document.body.clientHeight/2)+80
                 let newWindow=openCommonWindow("/auxiliary-machine-form?title=auxiliaryMachineInfo&&productFormData="+JSON.stringify(row),{width: width, height: height})
                 newWindow.on('closed', () => {newWindow = null})
@@ -388,7 +369,10 @@
                         type: 'success'
                     })
                     this.getList()
-                })
+                })*/
+              this.auxiliaryMachineDialogVisible = true
+              this.productFormData = row
+              this.titleName = '辅机信息'
             },
             baseInfoInfo(row){
                 let width= Math.round(document.body.clientWidth)-200
@@ -471,13 +455,48 @@
               if(obj.flag){
                 this.productFromDialogVisible=obj.productFromDialogVisible
                 editProduct(obj.productFormData).then(response=>{
+                  if (obj.title === '编辑') {
+                    this.$message({
+                      message: '编辑成功',
+                      type: 'success'
+                    })
+                  }else if(obj.title === '复制'){
+                    this.$message({
+                      message: '复制成功',
+                      type: 'success'
+                    })
+                  }else if (obj.title === '新增') {
+                    this.$message({
+                      message: '新增成功',
+                      type: 'success'
+                    })
+                  }
+                  this.getList()
+                })
+              }
+            },
+            confirmSellDialog(obj){
+              if (obj.flag) {
+                this.productMapDialogVisible = obj.productMapDialogVisible
+                updateProductSellAbout(obj.productFormData).then(response=>{
                   this.$message({
-                    message: '编辑成功',
+                    message: '出售成功',
                     type: 'success'
                   })
                   this.getList()
                 })
-                  //this.$emit('confirmEditDialog',{productFromDialogVisible:false,flag:true})
+              }
+            },
+            confirmAuxiliaryMachineDialog(obj){
+              if (obj.flag) {
+                this.auxiliaryMachineDialogVisible = obj.auxiliaryMachineDialogVisible
+                editProduct(obj.productFormData).then(()=>{
+                  this.$message({
+                    message:'操作成功',
+                    type:'success'
+                  })
+                  this.getList()
+                })
               }
             },
             handleDownload(row) {
@@ -566,6 +585,17 @@
             productFormDialogClose(obj){
                 this.productFromDialogVisible = obj.productFromDialogVisible
                 this.getList()
+            },
+            productMapDialogClose(obj){
+                this.productMapDialogVisible = obj.productMapDialogVisible
+              this.getList()
+            },
+            auxiliaryMachineDialogClose(obj){
+              this.auxiliaryMachineDialogVisible = obj.auxiliaryMachineDialogVisible
+              this.getList()
+            },
+            controllerRunInfoDialogClose(obj){
+              this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible
             },
             handleSizeChange(val) {
                 this.listQuery.pageSize = val

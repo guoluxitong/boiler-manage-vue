@@ -22,24 +22,24 @@ export default {
     return {
       homeUrl: config.default_home_url,
       fullscreenLoading: false,
-      width: document.body.clientWidth - 50,
-      height: document.body.clientWidth - 98
+      width: document.documentElement.clientWidth -18,
+      height: document.documentElement.clientHeight -110
     };
   },  
   mounted() {
-    let self = this;
-    let webview = document.getElementById("foo");
-    let loadstart = function() {
-      self.fullscreenLoading = true;
-    };
-    let loadstop = function() {
-      self.fullscreenLoading = false;
-    };
-    webview.addEventListener("did-start-loading", loadstart);
-    webview.addEventListener("did-stop-loading", loadstop);
+    // let self = this;
+    // let webview = document.getElementById("foo");
+    // let loadstart = function() {
+    //   self.fullscreenLoading = true;
+    // };
+    // let loadstop = function() {
+    //   self.fullscreenLoading = false;
+    // };
+    // webview.addEventListener("did-start-loading", loadstart);
+    // webview.addEventListener("did-stop-loading", loadstop);
   },
   destroyed() {
-    this.$root.$emit("changeAppMainHeight", 88);
+    // this.$root.$emit("changeAppMainHeight", 88);
   },
   methods: {
     initHomeIndex() {

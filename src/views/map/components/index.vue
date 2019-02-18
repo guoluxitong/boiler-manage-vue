@@ -1,25 +1,35 @@
 <template>
     <div class="map-container">
         <div id="map" class="map" :style="{height:mapHeight+'px'}"> </div>
+      <controller-run-info-dialog
+        :show.sync="controllerRunInfoDialogVisible"
+        :controllerNo="controllerNo"
+        @controllerRunInfoDialogClose="controllerRunInfoDialogClose">
+      </controller-run-info-dialog>
     </div>
 </template>
 <script>
     //import {openElectronWindow} from '@/utils/windowsOperate'
     import checkPermission from '@/utils/permission'
-    import {productDataOnMap} from "@/api/product";
+    import {productDataOnMap} from "@/api/product"
+    import controllerRunInfoDialog from '../../controller-run-info/index'
     export default {
         name:'map-component',
+      components:{
+        controllerRunInfoDialog
+      },
         props:{
             mapHeight:{
                 type:Number,
-                default:document.body.clientHeight-88
+                default:document.documentElement.clientHeight-88
             }
         },
         data() {
             return {
                 center: {lng: 105, lat: 34},
                 mapPoints:[],
-                userId:''
+                userId:'',
+              controllerRunInfoDialogVisible:false,
             }
         },
         mounted() {
@@ -54,10 +64,15 @@
                         //     newWindow = null
                         // })
                         // newWindow.setTitle("运行信息")
+                      this.controllerRunInfoDialogVisible = true
+                      this.controllerNo = this.mapPoints[i].controllerNo
                     })
                 }
                 new BMapLib.MarkerClusterer(map, {markers:markers});
-            }
+            },
+          controllerRunInfoDialogClose(obj){
+            this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible
+          },
         }
     }
 </script>

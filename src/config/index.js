@@ -2,7 +2,7 @@ export const config={
     //测试环境使用
     development_base_ip:'localhost',
     development_base_port:'8091',
-    //正式环境当中使用
+    //正式环境当中使用  boilermanage.sdcsoft.com.cn
     product_base_ip:'boilermanage.sdcsoft.com.cn',
     product_base_port:'',
     //设备相关url（1）、获得字节数据 （2）、获得设备信息

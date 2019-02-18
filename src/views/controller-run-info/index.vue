@@ -1,8 +1,15 @@
 <template>
-    <div class="product-runInfo" v-title data-title="运行信息" style="overflow-y:auto">
+  <el-dialog
+    title="运行信息"
+    :visible.sync="visible"
+    @close="controllerRunInfoClose"
+    :show="show"
+    @open="controllerRunInfoOpen"
+    >
+    <div class="product-runInfo" style="overflow-y:auto">
         <animation :stove-animation="controllerFormData.stoveAnimation" :fan-animation-list="controllerFormData.fanAnimationList" :beng-animation-list="controllerFormData.bengAnimationList"></animation>
         <el-row class="run-tab">
-            <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto','height':runTabHeight+'px'}">
+            <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto'}">
                 <el-tab-pane label="异常信息" name="first" v-if="controllerFormData.exceptionInfoMap&&Object.keys(controllerFormData.exceptionInfoMap).length>0">
                     <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}</span> </el-row>
                 </el-tab-pane>
@@ -21,6 +28,7 @@
             </el-tabs>
         </el-row>
     </div>
+  </el-dialog>
 </template>
 <script>
     import {getControllerByteData,getControllerType} from '@/api/controller'
@@ -36,6 +44,7 @@
         },
         data(){
             return{
+              visible: this.show,
                 dialogDeviceFormVisible: false,
                 runTabHeight:document.body.clientHeight-125,
                 timeInterVal:3,
@@ -52,58 +61,58 @@
                 },
             }
         },
+      props: {
+        show: {
+          type: Boolean,
+          default: false
+        },
+        controllerNo:{
+          type: String,
+          default: ''
+        }
+      },
+      watch: {
+        show () {
+          this.visible = this.show;
+        },
+      },
         created(){
-            let self=this
-            window.onresize = function(){
-                self.runTabHeight=document.body.clientHeight-160
-            }
-            this.configContextMenu()
-            this.setTimeInterval()
-            this.showControllerData()
+
         },
         methods:{
-/*
-            configContextMenu(){
-                const menu = new Menu()
-                let self=this
-                menu.append(new MenuItem({label: '参数设置',
-                    click() {
-                        self.$prompt('请输入间隔时间（秒）', '通讯参数', {
-                            confirmButtonText: '确定',
-                            cancelButtonText: '取消',
-                            inputValue:self.timeInterVal,
-                        }).then(({ value }) => {
-                            window.localStorage['timeInterVal']=value
-                            self.$message({
-                                type: 'success',
-                                message: '设置成功'
-                            });
-                        }).catch(() => {
-                            self.$message({
-                                type: 'info',
-                                message: '取消输入'
-                            });
-                        });
-                    }}
-                ))
-                menu.append(new MenuItem({type: 'separator'}))
-                menu.append(new MenuItem({label: '动画设置', click() { console.log('item 1 clicked') }}))
-                window.addEventListener('contextmenu', (e) => {
-                    e.preventDefault()
-                    menu.popup({window: remote.getCurrentWindow()})
-                }, false)
-            },
-*/
+          controllerRunInfoOpen(){
+            this.initControllerInfo()
+            let self=this
+            window.onresize = function(){
+              self.runTabHeight=document.body.clientHeight-160
+            }
+            this.setTimeInterval()
+            this.showControllerData()
+          },
+          controllerRunInfoClose(){
+            this.initControllerInfo()
+
+            this.$emit('controllerRunInfoDialogClose',{controllerRunInfoDialogVisible:false})
+          },
             setTimeInterval(){
                 let timeInterVal=window.localStorage['timeInterVal']
                 if(timeInterVal) this.timeInterVal=timeInterVal
-                setInterval( ()=> {
-                    this.showControllerData()
+
+                var timer = setInterval( ()=> {
+                  this.showControllerData(timer)
+
                 },1000*(this.timeInterVal));
             },
-            showControllerData(){
-                Promise.all([getControllerByteData(this.$route.query.controllerNo),getControllerType(this.$route.query.controllerNo)]).then((data)=>{
+            showControllerData(timer){
+                Promise.all([getControllerByteData(this.controllerNo),getControllerType(this.controllerNo)]).then((data)=>{
                     let controllerByteData=data[0].data
+                    if (controllerByteData.length === 0){
+                      this.$message({
+                        message: '设备未开机',
+                        type: 'warning'
+                      })
+                      clearInterval(timer)
+                    }
                     let controllerType=data[1].data.deviceType
                     if(controllerByteData.length>0&&controllerType){
                         this.getDeviceByByteDataAndType(controllerByteData,controllerType)
@@ -125,6 +134,9 @@
                 })
             },
             initControllerInfo(){
+              this.controllerFormData.bengAnimationList=[]
+              this.controllerFormData.fanAnimationList=[]
+              this.controllerFormData.stoveAnimation=''
                 this.controllerFormData.exceptionInfoMap={}
                 this.controllerFormData.baseInfoMap={}
                 this.controllerFormData.mockInfoMap={}

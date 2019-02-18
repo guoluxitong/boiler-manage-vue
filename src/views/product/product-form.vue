@@ -1,20 +1,20 @@
 <template>
   <div>
     <el-dialog
-      title="编辑"
+      :title="title"
       :visible.sync="visible"
       @close="productFormClose"
       :show="show">
-      <el-form :rules="rules" ref="productForm" :model="productFormData" label-position="right" label-width="100px" style='width: 96%; margin-left:15px;margin-top:15px'>
+      <el-form :rules="rules" ref="productForm" :model="formData" label-position="right" label-width="100px" style='width: 96%; margin-left:15px;margin-top:15px'>
         <el-row>
           <el-col :span="12">
             <el-form-item label="锅炉编号" prop="boilerNo">
-              <el-input v-model="productFormData.boilerNo"></el-input>
+              <el-input v-model="formData.boilerNo"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="锅炉型号">
-              <el-select clearable class="filter-item" v-model="productFormData.boilerModelNumber"  style="width: 60%">
+              <el-select clearable class="filter-item" v-model="formData.boilerModelNumber"  style="width: 60%">
                 <el-option v-for="item in boilerModelNumberArray" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
               <el-button type="primary" @click="handleAddBoilerModel" v-permission="['3']">添加</el-button>
@@ -24,34 +24,38 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="控制器编号" prop="controllerNo">
-              <el-input v-model="productFormData.controllerNo"></el-input>
+              <el-input v-model="formData.controllerNo"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" >
             <el-form-item label="吨位（T）" prop="tonnageNum">
-              <el-input v-model="productFormData.tonnageNum"></el-input>
+              <el-input v-model="formData.tonnageNum"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="燃料" prop="fuel">
-              <el-select clearable class="filter-item" v-model="productFormData.fuel" style="width: 100%" >
+              <el-select clearable class="filter-item" v-model="formData.fuel" style="width: 100%" >
                 <el-option v-for="item in fuelArray" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="介质" prop="medium">
-              <el-select clearable class="filter-item" v-model="productFormData.medium" style="width: 100%" >
+              <el-select clearable class="filter-item" v-model="formData.medium" style="width: 100%" >
                 <el-option v-for="item in mediumArray" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <div class="product-footer">
-          <el-button type="primary" @click="submitForm">确认</el-button>
-        </div>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item>
+              <el-button type="primary" @click="submitForm">确认</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </el-dialog>
     <boiler-model-complete-dialog
@@ -99,6 +103,23 @@
         }
       }
       return {
+        formData:{
+          id:'',
+          roleIdArray:this.$store.state.user.roleIdArray,
+          userId:this.$store.state.user.userId,
+          orgId:this.$store.state.user.orgId,
+          orgType:this.$store.state.user.orgType,
+          controllerNo:'',
+          boilerNo:'',
+          boilerModelNumber:null,
+          tonnageNum:null,
+          medium:null,
+          fuel:null,
+          createDateTime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
+          editDateTime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss"),
+          isSell:0,
+          productAuxiliaryMachineInfoList:[]
+        },
         visible: this.show,
         boilerModelNumberArray:[],
         mediumArray:[],
@@ -124,11 +145,37 @@
       productFormData:{
         type: Object,
         default: ()=>{}
+      },
+      title:{
+        type:String,
+        default:''
       }
     },
     watch: {
       show () {
         this.visible = this.show;
+        if (this.title === '编辑') {
+          this.formData = this.productFormData
+        }else if (this.title === '新增')
+        {
+          this.formData = {}
+          this.formData.isSell=0
+          this.formData.roleIdArray=this.$store.state.user.roleIdArray
+          this.formData.userId=this.$store.state.user.userId
+          this.formData.orgId=this.$store.state.user.orgId
+          this.formData.orgType=this.$store.state.user.orgType
+          this.formData.createDateTime=formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss")
+          this.formData.editDateTime=formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss")
+        }else  if (this.title === '复制') {
+          this.formData = this.productFormData
+          this.formData.boilerNo = ''
+          this.formData.controllerNo=''
+          this.formData.roleIdArray=this.$store.state.user.roleIdArray
+          this.formData.userId=this.$store.state.user.userId
+          this.formData.orgId=this.$store.state.user.orgId
+          this.formData.orgType=this.$store.state.user.orgType
+          this.formData.createDateTime=formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss")
+        }
       }
     },
     mounted() {
@@ -168,7 +215,10 @@
       submitForm(){
         this.$refs['productForm'].validate((valid) => {
           if (valid) {
-            this.$emit('confirmEditDialog',{productFromDialogVisible:false,flag:true,productFormData:this.productFormData})
+            if (this.title === '复制') {
+              this.formData.id=''
+            }
+            this.$emit('confirmEditDialog',{productFromDialogVisible:false,flag:true,productFormData:this.formData,title:this.title})
           } else {
             this.$emit('confirmEditDialog',{productFromDialogVisible:true,flag:false})
           }

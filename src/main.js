@@ -2,14 +2,14 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
-import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './icons'
 import './permission'
 import menuContext from '@/components/menuContext'
 import menuContextItem from '@/components/menuContext/menuContextItem'
+import store from './store'
+import router from './router'
 
 Vue.use(menuContext)
 Vue.use(menuContextItem)
