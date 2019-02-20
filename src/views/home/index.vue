@@ -25,21 +25,9 @@ export default {
       width: document.documentElement.clientWidth -18,
       height: document.documentElement.clientHeight -110
     };
-  },  
-  mounted() {
-    // let self = this;
-    // let webview = document.getElementById("foo");
-    // let loadstart = function() {
-    //   self.fullscreenLoading = true;
-    // };
-    // let loadstop = function() {
-    //   self.fullscreenLoading = false;
-    // };
-    // webview.addEventListener("did-start-loading", loadstart);
-    // webview.addEventListener("did-stop-loading", loadstop);
   },
-  destroyed() {
-    // this.$root.$emit("changeAppMainHeight", 88);
+  created(){
+    this.initHomeIndex()
   },
   methods: {
     initHomeIndex() {
