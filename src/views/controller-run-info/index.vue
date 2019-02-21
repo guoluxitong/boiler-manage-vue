@@ -108,7 +108,7 @@
                     let controllerByteData=data[0].data
                     if (controllerByteData.length === 0){
                       this.$message({
-                        message: '设备未开机',
+                        message: '设备未在线',
                         type: 'warning'
                       })
                       clearInterval(timer)

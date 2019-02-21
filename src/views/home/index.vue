@@ -1,17 +1,6 @@
 <template>
 
   <iframe :src="homeUrl" v-loading.fullscreen.lock="fullscreenLoading" id="foo" scrolling="no" frameborder="0" :width="width" :height="height"></iframe>
- <!-- <webview
-      id="foo"
-      v-loading.fullscreen.lock="fullscreenLoading"
-      :src="homeUrl"
-      nodeintegration
-      plugins
-      autosize="on"
-      disablewebsecurity
-      :width="width"
-      :height="height"
-    ></webview>-->
 </template>
 
 <script>
