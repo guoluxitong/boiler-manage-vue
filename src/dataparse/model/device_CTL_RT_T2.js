@@ -1,5 +1,5 @@
 import device_CTL from "./device_CTL";
-import { byteToString} from '@/utils/dataparse'
+import { byteToString} from '../../utils/dataparse'
 import {deviceModel} from "./sdcSoftDevice"
 import element from "../entity/element";
 

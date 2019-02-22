@@ -1,5 +1,5 @@
 import parentStartStopField from '../startStopField'
-import {getInt16Number} from '@/utils/dataparse'
+import {getInt16Number} from '../../../utils/dataparse'
 export default class startStopField extends parentStartStopField {
   haveValue(...bytes){
     this.value=getInt16Number(bytes);

@@ -1,5 +1,5 @@
 import device_CTL from "./device_CTL";
-import { byteToString} from '@/utils/dataparse'
+import { byteToString} from '../../utils/dataparse'
 import element from "../entity/element"
 import {media,power} from '../map/commonValueMap'
 

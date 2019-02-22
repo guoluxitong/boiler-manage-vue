@@ -1,5 +1,5 @@
 import sdcSoftDevice from "./sdcSoftDevice";
-import { getUnit32Number} from '@/utils/dataparse'
+import { getUnit32Number} from '../../utils/dataparse'
 import element from "../entity/element";
 
 const key_point_add_shui_beng = "_addshuibeng"
