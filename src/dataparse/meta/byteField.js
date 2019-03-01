@@ -13,6 +13,9 @@ export default class byteField{
         this.baseNumber=0
         this.isShow=true
     }
+    getBaseNumber(){
+        return this.baseNumber
+    }
     getValueString(){
         if(this.unit!=""){
             return this.value+this.unit
@@ -61,6 +64,8 @@ export default class byteField{
                 }else if(typeof arguments[5] =='string'){
                     arguments[0].unit=arguments[5]
                     arguments[0].baseNumber=arguments[6]
+                }else if(typeof arguments[6] == 'object'){
+                    arguments[0].valueMap = arguments[6]
                 }
               break;
         }

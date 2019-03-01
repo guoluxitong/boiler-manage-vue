@@ -9,6 +9,8 @@ const key_point_ran_shao_qi_kongzhi = "oc_ranshaoqikongzhi"
 const key_point_ran_shao_qi_status = "oc_ranshaoqitiaojie"
 const key_point_xun_huan_beng = "_xunhuanbeng"
 const key_point_xun_huan_beng_1 = "oc_1_xunhuanbeng_start_stop"
+const key_point_xun_huan_beng_2 = "oc_2_xunhuanbeng_start_stop"
+const key_point_xun_huan_beng_3 = "oc_3_xunhuanbeng_start_stop"
 export default class device_CTL_RT_H1_RY extends device_CTL{
     handleByteField(byteField,bytes=[]){
         if(byteField.haveValue(bytes[byteField.startIndex],bytes[byteField.startIndex+1])){
@@ -23,8 +25,8 @@ export default class device_CTL_RT_H1_RY extends device_CTL{
         return 0
     }
     getPowerInfo(){
-        if(this.getOpenCloseFields()[key_point_ran_shao_qi_kongzhi].value>0){
-            return this.getOpenCloseFields()[key_point_ran_shao_qi_status].value
+        if(this.getDeviceInfoFields()[key_point_ran_shao_qi_kongzhi].value>0){
+            return this.getOpenCloseFields()["oc_ranshaoqibilijianda"].value>0?1:0
         }
         return 0
     }

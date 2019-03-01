@@ -11,19 +11,27 @@ import openCloseField from '../meta/ctl_njrt/openCloseField'
 import powerField from '../meta/ctl_njrt/t2/powerField'
 import runDayField from "../meta/ctl_njrt/runDaysField";
 import runHousField from "../meta/ctl_njrt/runHousField";
+import settingField from "../meta/ctl_njrt/settingField"
 
 export default class devicePointMap_CTL_RT_T2_RYZQ_YLKZQ extends map {
     constructor() {
         super();
+
+        const coms_status = {
+            0:'待命',
+            1:'报警',
+            2:'运行',
+        }
+
         const byteFieldObj = new byteField();
 
         /*************start 计算属性（不显示）****************/
-        this.getPointMap["_ranshaoqi"] = byteFieldObj.init(new baseInfoField(), "de_ranshaoqi", 0, 0, "燃烧器", false)
-        this.getPointMap["_jishui_beng"] = byteFieldObj.init(new baseInfoField(), "oc_jishui_beng", 0, 0, "给水泵", false)
-        this.getPointMap["_lengning_beng"] = byteFieldObj.init(new baseInfoField(), "oc_lengning_beng", 0, 0, "冷凝泵", false)
+        this.getPointMap["_ranshaoqi"] = byteFieldObj.init(new baseInfoField(), "_ranshaoqi", 0, 0, "燃烧器",false)
+        this.getPointMap["_addshuibeng"] = byteFieldObj.init(new baseInfoField(), "_addshuibeng", 0, 0, "给水泵",false)
+        this.getPointMap["_lengningbeng"] = byteFieldObj.init(new baseInfoField(), "_lengningbeng", 0, 0, "冷凝泵",false)
         /*************end 计算属性（不显示）****************/
 
-        this.getPointMap[deviceModel.key_point_system_status] = byteFieldObj.init(new baseInfoField(), deviceModel.key_point_system_status, 3, 2, "系统状态", ctl_njrt_common_valueMap.coms_status)
+        this.getPointMap[deviceModel.key_point_system_status] = byteFieldObj.init(new baseInfoField(), deviceModel.key_point_system_status, 3, 2, "系统状态", coms_status)
         this.getPointMap[deviceModel.key_point_run_life] = byteFieldObj.init(new baseInfoField(), deviceModel.key_point_run_life, 53, 2, "运行时间","时")
         this.getPointMap[deviceModel.key_point_run_days] = byteFieldObj.init(new runDayField(), deviceModel.key_point_run_days, 0, 0, "运行天数", "天")
         this.getPointMap[deviceModel.key_point_run_hours] = byteFieldObj.init(new runHousField(), deviceModel.key_point_run_hours, 0, 0, "运行小时数", "时")
@@ -47,9 +55,9 @@ export default class devicePointMap_CTL_RT_T2_RYZQ_YLKZQ extends map {
         this.getPointMap["oc_ranshaoqikongzhi"]=byteFieldObj.init(new openCloseField(),"oc_ranshaoqikongzhi", 9, 2, "燃烧器启停控制",0,coms_open_close)
         this.getPointMap["oc_ranshaoqitiaojie"]=byteFieldObj.init(new openCloseField(),"oc_ranshaoqitiaojie", 9, 2, "燃烧器调节",1,ctl_njrt_common_valueMap.coms_ranshaoqi_status)
 
-        this.getPointMap["de_jishuibeng1"]=byteFieldObj.init(new openCloseField(), "de_jishuibeng1", 9, 2, "给水泵控制（主）",3,coms_open_close)
-        this.getPointMap["de_jishuibeng2"]=byteFieldObj.init(new openCloseField(), "de_jishuibeng2", 9, 2, "给水泵控制（备）",4,coms_open_close)
-        this.getPointMap["de_lengningbeng1"]=byteFieldObj.init(new openCloseField(), "de_lengningbeng1", 9, 2, "冷凝循环泵控制",5,coms_open_close)
+        this.getPointMap["oc_1_addshuibeng_start_stop"]=byteFieldObj.init(new deviceField(), "oc_1_addshuibeng_start_stop", 9, 2, "给水泵控制（主）",3,coms_open_close)
+        this.getPointMap["oc_2_addshuibeng_start_stop"]=byteFieldObj.init(new deviceField(), "oc_2_addshuibeng_start_stop", 9, 2, "给水泵控制（备）",4,coms_open_close)
+        this.getPointMap["oc_1_lengningxunhuanbeng_start_stop"]=byteFieldObj.init(new deviceField(), "oc_1_lengningxunhuanbeng_start_stop", 9, 2, "冷凝循环泵控制",5,coms_open_close)
         this.getPointMap["oc_baojingzhuangtaishuchu"]=byteFieldObj.init(new openCloseField(),"oc_baojingzhuangtaishuchu", 9, 2, "报警状态输出",6,coms_open_close)
 
         this.getPointMap["mo_lengningqiyanwen"]=byteFieldObj.init(new mockField(),"mo_lengningqiyanwen", 13, 2, "冷凝器烟温","℃")
@@ -60,7 +68,7 @@ export default class devicePointMap_CTL_RT_T2_RYZQ_YLKZQ extends map {
 
         this.getPointMap["de_jishuibeng_zhu/bei_"]=byteFieldObj.init(new deviceField(),"de_jishuibeng_zhu/bei_", 49, 2, "给水泵",0, ctl_njrt_common_valueMap.coms_master)
         this.getPointMap["de_jishuibeng_shoudong/zidong_"]=byteFieldObj.init(new deviceField(),"de_jishuibeng_shoudong/zidong_", 49, 2, "给水泵",1, ctl_njrt_common_valueMap.coms_atuo)
-        this.getPointMap["de_lengningxunhuanbeng_zidong/shoudong_"]=byteFieldObj.init(new deviceField(),"de_lengningxunhuanbeng_zidong/shoudong_", 49, 2, "冷凝循环泵",3, ctl_njrt_common_valueMap.coms_atuo)
+        this.getPointMap["de_lengningxunhuanbeng_zidong/shoudong_"]=byteFieldObj.init(new deviceField(),"de_lengningxunhuanbeng_zidong/shoudong_", 49, 2, "节能循环泵",3, ctl_njrt_common_valueMap.coms_atuo)
 
         this.getPointMap["ex_shuiweichuanganqiduanlu1"]=byteFieldObj.init(new exceptionField(),"ex_shuiweichuanganqiduanlu1", 45, 2, "水位传感器断路",3)
         this.getPointMap["ex_shuiweichuanganqiduanlu"]=byteFieldObj.init(new exceptionField(),"ex_shuiweichuanganqiduanlu", 45, 2, "水位传感器短路",4)
@@ -77,5 +85,32 @@ export default class devicePointMap_CTL_RT_T2_RYZQ_YLKZQ extends map {
         this.getPointMap["ex_ranqiyaligaobaojing"]=byteFieldObj.init(new exceptionField(),"ex_ranqiyaligaobaojing", 45, 2, "燃气压力高报警",15)
         this.getPointMap["ex_ranqixieloubaojing"]=byteFieldObj.init(new exceptionField(),"ex_ranqixieloubaojing", 47, 2, "燃气泄漏报警",0)
         this.getPointMap["ex_ranshaoqiguzhang"]=byteFieldObj.init(new exceptionField(),"ex_ranshaoqiguzhang", 47, 2, "燃烧器故障",1)
+
+        this.getPointMap["ex_ranshaoqiguzhang"]=byteFieldObj.init(new exceptionField(), "ex_ranshaoqiguzhang", 47, 2, "燃烧器故障",1)
+        this.getPointMap["ex_jixiandishuiweibaojing2"]=byteFieldObj.init(new exceptionField(), "ex_jixiandishuiweibaojing2", 47, 2, "极限低水位报警2",4)
+
+        this.getPointMap["se_paiyanchaowen"]=byteFieldObj.init(new settingField(), "se_paiyanchaowen", 107, 2, "排烟超温","℃")
+        this.getPointMap["se_chaoyabaojing"]=byteFieldObj.init(new settingField(), "se_chaoyabaojing", 109, 2, "超压报警","Mpa",100)
+        this.getPointMap["se_tingluyali"]=byteFieldObj.init(new settingField(), "se_tingluyali", 111, 2, "停炉压力","Mpa",100)
+        this.getPointMap["se_qiluyali"]=byteFieldObj.init(new settingField(), "se_qiluyali", 115, 2, "启炉压力","Mpa",100)
+        this.getPointMap["se_zuanhuoyali"]=byteFieldObj.init(new settingField(), "se_zuanhuoyali", 113, 2, "转火压力","Mpa",100)
+        this.getPointMap["se_shuchushangxian"]=byteFieldObj.init(new settingField(), "se_shuchushangxian", 117, 2, "输出上限","%")
+        this.getPointMap["se_shuchuxiaxian"]=byteFieldObj.init(new settingField(), "se_shuchuxiaxian", 119, 2, "输出下限","%")
+        this.getPointMap["se_ranshaozhouqi"]=byteFieldObj.init(new settingField(), "se_ranshaozhouqi", 121, 2, "燃烧  周期")
+        this.getPointMap["se_ranshaoP"]=byteFieldObj.init(new settingField(), "se_ranshaoP", 123, 2, "燃烧  P")
+        this.getPointMap["se_ranshaoI"]=byteFieldObj.init(new settingField(), "se_ranshaoI", 125, 2, "燃烧  I")
+        this.getPointMap["se_ranshaoD"]=byteFieldObj.init(new settingField(), "se_ranshaoD", 127, 2, "燃烧  D")
+        this.getPointMap["se_xingcheng"]=byteFieldObj.init(new settingField(), "se_xingcheng", 129, 2, "行程")
+        this.getPointMap["se_gaobaojing"]=byteFieldObj.init(new settingField(), "se_gaobaojing", 131, 2, "高报警","mm")
+        this.getPointMap["se_gaoshuiwei"]=byteFieldObj.init(new settingField(), "se_gaoshuiwei", 133, 2, "高水位","mm")
+        this.getPointMap["se_dishuiwei"]=byteFieldObj.init(new settingField(), "se_dishuiwei", 135, 2, "低水位","mm")
+        this.getPointMap["se_mubiaoshuiwei"]=byteFieldObj.init(new settingField(), "se_mubiaoshuiwei", 137, 2, "目标水位","mm")
+        this.getPointMap["se_queshuishuiwei"]=byteFieldObj.init(new settingField(), "se_queshuishuiwei", 139, 2, "缺水水位","mm")
+        this.getPointMap["se_shuiweizhouqi"]=byteFieldObj.init(new settingField(), "se_shuiweizhouqi", 141, 2, "水位  周期")
+        this.getPointMap["se_shuiweip"]=byteFieldObj.init(new settingField(), "se_shuiweip", 143, 2, "水位  p")
+        this.getPointMap["se_shuiweiI"]=byteFieldObj.init(new settingField(), "se_shuiweiI", 145, 2, "水位  I")
+        this.getPointMap["se_shuiweiD"]=byteFieldObj.init(new settingField(), "se_shuiweiD", 147, 2, "水位  D")
+        this.getPointMap["se_chongxiyanshi"]=byteFieldObj.init(new settingField(), "se_chongxiyanshi", 157, 2, "冲洗延时","S")
+        this.getPointMap["se_zhuanhuohuicha"]=byteFieldObj.init(new settingField(), "se_zhuanhuohuicha", 159, 2, "转火回差","Mpa",100)
     }
 }

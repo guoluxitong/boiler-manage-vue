@@ -22,7 +22,7 @@ export default class device_CTL_NJZJ_IPK2 extends device_CTL{
         }else if(pointPower.value==power.Mei){
             return this.getDeviceInfoFields()[key_point_yin_feng_ji].value > 0x7F ? 1 : 0
         }
-        return this.getDeviceInfoFields()[key_point_ran_shao_qi].value
+      return this.getDeviceInfoFields()[key_point_ran_shao_qi].value> 0x7F ? 1 : 0
     }
     getBeng(){
         return this.getElements(device_suffix_beng,element.prefix_beng,element.index_beng_count)

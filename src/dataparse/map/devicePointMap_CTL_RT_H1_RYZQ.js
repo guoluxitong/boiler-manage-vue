@@ -33,11 +33,10 @@ export default class devicePointMap_CTL_RT_H1_RYZQ extends map {
 
         this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new mediaField(),deviceModel.key_point_media, 1, 0, "介质类型", coms_media)
         this.getPointMap[deviceModel.key_point_run_life]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_run_life, 53, 2, "累计燃烧时间","时")
-
         this.getPointMap["de_jishuibengzhubei"]=byteFieldObj.init(new deviceField(),"de_jishuibengzhubei", 49, 2, "给水泵",0,ctl_njrt_common_valueMap.coms_master)
         this.getPointMap["de_jishuibengshouzi"]=byteFieldObj.init(new deviceField(),"de_jishuibengshouzi", 49, 2, "给水泵",1,ctl_njrt_common_valueMap.coms_atuo)
-        this.getPointMap["de_jishuibeng1"]=byteFieldObj.init(new openCloseField(),"de_jishuibeng1", 7, 2,  "给水泵主控制",3,coms_open_close)
-        this.getPointMap["de_jishuibeng2"]=byteFieldObj.init(new openCloseField(),"de_jishuibeng2", 7, 2, "给水泵备控制", 4, coms_open_close)
+        this.getPointMap["oc_1_addshuibeng_start_stop"]=byteFieldObj.init(new openCloseField(),"oc_1_addshuibeng_start_stop", 7, 2,  "给水泵主控制",3,coms_open_close)
+        this.getPointMap["oc_2_addshuibeng_start_stop"]=byteFieldObj.init(new openCloseField(),"oc_2_addshuibeng_start_stop", 7, 2, "给水泵备控制", 4, coms_open_close)
 
         this.getPointMap["ex_jixiandishuiweibaojing"]=byteFieldObj.init(new exceptionField(),"ex_jixiandishuiweibaojing", 45, 2, "极限低水位报警",0)
         this.getPointMap["ex_zhengqiyalibiansongqiduanlu"]=byteFieldObj.init(new exceptionField(),"ex_zhengqiyalibiansongqiduanlu", 45, 2, "蒸汽压力变送器断路",1)
@@ -71,8 +70,9 @@ export default class devicePointMap_CTL_RT_H1_RYZQ extends map {
         this.getPointMap["oc_ranshaoqiguzhangxinhao"]=byteFieldObj.init(new openCloseField(),"oc_ranshaoqiguzhangxinhao", 5, 2, "燃烧器故障信号",10,coms_open_close)
         this.getPointMap["oc_ranqiyaliyichangbaojingxinhao"]=byteFieldObj.init(new openCloseField(),"oc_ranqiyaliyichangbaojingxinhao", 5, 2, "燃气压力异常报警信号",11,coms_open_close)
         this.getPointMap["oc_ranqixieloubaojingxinhao"]=byteFieldObj.init(new openCloseField(),"oc_ranqixieloubaojingxinhao", 5, 2, "燃气泄漏报警信号",12,coms_open_close)
-        this.getPointMap["oc_ranshaoqikongzhi"]=byteFieldObj.init(new openCloseField(),"oc_ranshaoqikongzhi", 7, 2, "燃烧器启停控制",0,coms_open_close)
-        this.getPointMap["oc_ranshaoqitiaojie"]=byteFieldObj.init(new openCloseField(), "oc_ranshaoqitiaojie", 0, 0, "燃烧器调节",ctl_njrt_common_valueMap.coms_ranshaoqi_status)
+        this.getPointMap["oc_ranshaoqikongzhi"]=byteFieldObj.init(new deviceField(),"oc_ranshaoqikongzhi", 9, 2, "燃烧器启停控制",0,coms_open_close)
+        this.getPointMap["oc_ranshaoqibilijianda"]=byteFieldObj.init(new openCloseField(),"oc_ranshaoqibilijianda", 9, 2, "燃烧器比例增加", 1, coms_open_close)
+        this.getPointMap["oc_ranshaoqibilijianxiao"]=byteFieldObj.init(new openCloseField(),"oc_ranshaoqibilijianxiao", 9, 2, "燃烧器比例减小", 2, coms_open_close)
        //燃烧器调节需要将两个点位合成一个进行运算
         this.getPointMap["oc_ranshaoqifuhediaojie/zengdadiaojie"]=byteFieldObj.init(new openCloseField(),"oc_ranshaoqifuhediaojie/zengdadiaojie", 7, 2, "燃烧器负荷调节/增大调节",1,coms_open_close)
         this.getPointMap["oc_jianxiaodiaojie"]=byteFieldObj.init(new openCloseField(),"oc_jianxiaodiaojie", 7, 2, "减小调节",2,coms_open_close)

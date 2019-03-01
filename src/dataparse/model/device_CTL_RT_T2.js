@@ -41,7 +41,7 @@ export default class device_CTL_RT_T2 extends device_CTL{
      */
     getPowerInfo(){
         if(this.getOpenCloseFields()[key_point_ran_shao_qi_kongzhi].value>0){
-            return this.getOpenCloseFields()[key_point_ran_shao_qi_status].value
+            return this.getOpenCloseFields()[key_point_ran_shao_qi_status].value > 0 ? 1:0
         }
         return 0
     }
@@ -103,6 +103,8 @@ export default class device_CTL_RT_T2 extends device_CTL{
             }
         }
         return listElement
+
+
     }
     getFan(){
         return []

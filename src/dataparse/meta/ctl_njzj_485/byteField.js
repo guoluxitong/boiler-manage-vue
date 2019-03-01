@@ -1,4 +1,4 @@
-import parentByteField from '../../byteField';
+import parentByteField from '../byteField';
 export default class byteField extends parentByteField {
     init() {
         arguments[0].name=arguments[1]
@@ -28,6 +28,19 @@ export default class byteField extends parentByteField {
                     arguments[0].unit=arguments[5]
                     arguments[0].baseNumber=arguments[6]
                 }
+                break;
+            case 9:
+                arguments[0].valueMap = arguments[5]
+                arguments[0].address = arguments[6]
+                arguments[0].minValue = arguments[7]
+                arguments[0].maxValue = arguments[8]
+                break;
+            case 10:
+                arguments[0].unit=arguments[5]
+                arguments[0].cmdGorupKey = arguments[6]
+                arguments[0].address = arguments[7]
+                arguments[0].minValue = arguments[8]
+                arguments[0].maxValue = arguments[9]
                 break;
         }
         return arguments[0]
