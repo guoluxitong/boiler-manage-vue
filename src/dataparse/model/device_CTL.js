@@ -1,5 +1,4 @@
 import sdcSoftDevice from "./sdcSoftDevice";
-import { getUnit32Number} from '../../utils/dataparse'
 export default class device_PLC extends sdcSoftDevice{
   constructor(){
     super()

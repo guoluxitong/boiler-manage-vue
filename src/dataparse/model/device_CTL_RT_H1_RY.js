@@ -26,7 +26,7 @@ export default class device_CTL_RT_H1_RY extends device_CTL{
     }
     getPowerInfo(){
         if(this.getDeviceInfoFields()[key_point_ran_shao_qi_kongzhi].value>0){
-            return this.getOpenCloseFields()["oc_ranshaoqibilijianda"].value>0?1:0
+            return this.getOpenCloseFields()["oc_ranshaoqifuhediaojie/zengdadiaojie"].value>0?1:0
         }
         return 0
     }
@@ -43,6 +43,40 @@ export default class device_CTL_RT_H1_RY extends device_CTL{
             }
             if(this.getDeviceInfoFields().hasOwnProperty(key_point_add_shui_beng_2)){
                 d2=this.getDeviceInfoFields()[key_point_add_shui_beng_2]
+                count+=2
+            }
+            let [v1,v2]=[0,0]
+            switch (count) {
+                case 1:
+                    v1=d1.value>0?1:0
+                    elementObj.setValues(element.index_beng_count,1,v1)
+                    listElement.push(elementObj)
+                    break
+                case 2:
+                    v2=d2.value>0?1:0
+                    elementObj.setValues(element.index_beng_count,1,v2)
+                    listElement.push(elementObj)
+                    break
+                case 3:
+                    v1=d1.value>0?1:0
+                    v2=d2.value>0?2:0
+                    elementObj.setValues(element.index_beng_count,2,v1+v2)
+                    listElement.push(elementObj)
+                    break
+
+            }
+        }
+        if(this.getCountFields().hasOwnProperty(key_point_xun_huan_beng)){
+            let deviceFieldForUI=this.getCountFields()[key_point_xun_huan_beng]
+            let elementObj=new element(deviceFieldForUI.title,element.prefix_beng)
+            let [d1,d2]=[null,null]
+            let count=0
+            if(this.getDeviceInfoFields().hasOwnProperty(key_point_xun_huan_beng_1)){
+                d1=this.getDeviceInfoFields()[key_point_xun_huan_beng_1]
+                count+=1
+            }
+            if(this.getDeviceInfoFields().hasOwnProperty(key_point_xun_huan_beng_2)){
+                d2=this.getDeviceInfoFields()[key_point_xun_huan_beng_2]
                 count+=2
             }
             let [v1,v2]=[0,0]

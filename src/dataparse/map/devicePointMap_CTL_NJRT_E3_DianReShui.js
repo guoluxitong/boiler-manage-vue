@@ -6,24 +6,25 @@ import baseInfoField from '../meta/ctl_njrt/baseInfoField'
 import exceptionField from '../meta/ctl_njrt/exceptionField'
 import mockField from '../meta/ctl_njrt/mockField'
 import openCloseField from '../meta/ctl_njrt/openCloseField'
-import powerField from "../meta/ctl_njrt/e3/powerField";
-import mediaField from "../meta/ctl_njrt/e3/mediaField";
+import countField from "../meta/countField";
+import countShowField from "../meta/countShowField";
+import fixedValueField from "../meta/fixedValueField";
 
 export default class devicePointMap_CTL_NJRT_E3_DianReShui extends map {
     constructor() {
         super();
         const byteFieldObj =new byteField();
         /*************start 计算属性（不显示）****************/
-        this.getPointMap["_jiarezu"]=byteFieldObj.init(new baseInfoField(),"_jiarezu", 0, 0, "加热组", false)
-        this.getPointMap["_addshuibeng"]=byteFieldObj.init(new baseInfoField(),"_addshuibeng", 0, 0, "给水泵", false)
+        this.getPointMap["_jiarezu"]=byteFieldObj.init(new countField(),"_jiarezu","加热组")
+        this.getPointMap["_addshuibeng"]=byteFieldObj.init(new countField(),"_addshuibeng", "给水泵")
         /*************end 计算属性（不显示）****************/
 
         this.getPointMap[deviceModel.key_point_system_status]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_system_status,3,2,"系统状态",ctl_njrt_common_valueMap.coms_status)
         this.getPointMap[deviceModel.key_point_run_life]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_run_life,53,2,"运行时间")
-        this.getPointMap[deviceModel.key_point_run_days]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_run_days,0,0,"运行天数","天")
-        this.getPointMap[deviceModel.key_point_run_hours]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_run_hours,0,0,"运行小时数","时")
-        this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new powerField(),deviceModel.key_point_power,power.Dian,0,"燃料类型",coms_power)
-        this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new mediaField(),deviceModel.key_point_media,media.ReShui,0,"介质类型",coms_media)
+        this.getPointMap[deviceModel.key_point_run_days]=byteFieldObj.init(deviceModel.key_base,new countShowField(),deviceModel.key_point_run_days,"运行天数","天")
+        this.getPointMap[deviceModel.key_point_run_hours]=byteFieldObj.init(deviceModel.key_base,new countShowField(),deviceModel.key_point_run_hours,"运行小时数","时")
+        this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new fixedValueField(),deviceModel.key_point_power,"燃料类型",1,coms_power)
+        this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new fixedValueField(),deviceModel.key_point_media,"介质类型",0,coms_media)
 
         this.getPointMap["oc_jixiandishuiweidianji"]=byteFieldObj.init(new openCloseField(),"oc_jixiandishuiweidianji", 4, 2, "极限低水位电极", coms_open_close,0)
         this.getPointMap["oc_dishuiweidianji"]=byteFieldObj.init(new openCloseField(),"oc_dishuiweidianji", 4, 2, "低水位电极", coms_open_close,1)

@@ -10,6 +10,7 @@ export default class device_CTL_RT_H1_RYZQ extends device_CTL_RT_H1_RY {
         let runLife=map[this.deviceModel.key_point_run_life].value
         map[this.deviceModel.key_point_run_days].value=runLife/24
         map[this.deviceModel.key_point_run_hours].value=runLife%24
+        map.mo_zhengqiyali = this.getMockFields()["mo_zhengqiyali"]
         return map
     }
 }

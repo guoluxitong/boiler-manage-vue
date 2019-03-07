@@ -1,6 +1,6 @@
 import parentMockField from '../../mockField'
 import {deviceModel} from "../../../../model/sdcSoftDevice";
-import {getInt16Number,getFloat32Number} from '../../../../../utils/dataparse';
+import {getInt16Number,getFloat32Number} from '../../../../../dataparse';
 export default class settingField extends parentMockField {
     setDeviceFieldForUIKey(deviceFieldForUI){
         deviceFieldForUI.key=deviceModel.key_setting
