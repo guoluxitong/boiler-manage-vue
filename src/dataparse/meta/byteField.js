@@ -35,9 +35,13 @@ export default class byteField{
             this.setDeviceFieldForUIKey(deviceFieldForUIObj)
         }
         deviceFieldForUIObj.name=this.name
-        deviceFieldForUIObj.title=this.title
+        if(this.title == "报警"){
+            deviceFieldForUIObj.title=this.getValueString()
+        }else{
+            deviceFieldForUIObj.title=this.title
+        }
         deviceFieldForUIObj.value=this.value
-        deviceFieldForUIObj.valueString= this.getValueString()
+        deviceFieldForUIObj.valueString= this.getValueString()        
         return deviceFieldForUIObj
     }
     init() {

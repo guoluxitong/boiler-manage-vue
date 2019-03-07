@@ -6,6 +6,7 @@ export default class exceptionField  extends parentExceptionField {
     }
     getValueString(){
         if (JSON.stringify(this.valueMap) != '{}') {
+            this.title = this.valueMap[this.value]
             return this.valueMap[this.value]
         } else {
             return super.getValueString()
