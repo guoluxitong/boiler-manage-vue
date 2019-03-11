@@ -51,6 +51,7 @@
                 controllerFormData:{
                     activeName:'second',
                     stoveAnimation:'',
+                    deviceFocusInfoMap:{},
                     fanAnimationList:[],
                     bengAnimationList:[],
                     exceptionInfoMap:{},
@@ -123,6 +124,7 @@
             },
             getDeviceByByteDataAndType(byteData,deviceType){
                 getDeviceByByteDataAndType(byteData,deviceType).then(data=>{
+                    this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields()
                     this.controllerFormData.bengAnimationList=data.getBeng()
                     this.controllerFormData.fanAnimationList=data.getFan()
                     this.controllerFormData.stoveAnimation=data.getStoveElement().GetElementPrefixAndValuesString()

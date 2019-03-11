@@ -18,24 +18,25 @@ import ranShaoQiField from "../meta/ctl_njzj_485/ranShaoQiField"
 import runDayField from "../meta/ctl_njzj_485/runDayField"
 import settingField from "../meta/ctl_njzj_485/settingField"
 import startStopField from "../meta/ctl_njzj_485/startStopField"
+import countShowField from '../meta/countShowField'
 
 export default class devicePointMap_CTL_NJZJ_IPK2_485 extends map {
   constructor() {
     super();
-    // const Commands_Key_Parameters_Setting = "设置参数";
-    // const Commands_Key_System_Ctl = "系统控制";
-    // this.commandsMap[Commands_Key_Parameters_Setting]=null;
-    // this.commandsMap[Commands_Key_System_Ctl]=null;
+    const Commands_Key_Parameters_Setting = "设置参数";
+    const Commands_Key_System_Ctl = "系统控制";
+    this.commandsMap[Commands_Key_Parameters_Setting]=null;
+    this.commandsMap[Commands_Key_System_Ctl]=null;
     const byteFieldObj =new byteField();
-      this.getPointMap[deviceModel.key_point_system_status]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_system_status,7,2,"系统状态",ctl_njzj_common_valueMap.coms_status,"0602",1,2)	
-      this.getPointMap[deviceModel.key_point_run_days]=byteFieldObj.init(new runDayField(),deviceModel.key_point_run_days,0,0,"运行天数","天")
-      this.getPointMap[deviceModel.key_point_run_hours]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_run_hours,0,0,"运行小时数","时")
+      this.getPointMap[deviceModel.key_point_system_status]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_system_status,7,2,"系统状态",ctl_njzj_common_valueMap.coms_status,Commands_Key_System_Ctl,"0602",1,2)
+      this.getPointMap[deviceModel.key_point_run_days]=byteFieldObj.init(deviceModel.key_base,new countShowField(), deviceModel.key_point_run_days, "运行天数", "天")
+      this.getPointMap[deviceModel.key_point_run_hours]=byteFieldObj.init(deviceModel.key_base,new countShowField(), deviceModel.key_point_run_hours, "运行小时数", "时")
       this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new powerField(),deviceModel.key_point_power,3,2,"燃料类型",coms_power)
       this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new mediaField(),deviceModel.key_point_media,5,2,"介质类型",coms_media)
       this.getPointMap["ba_guolushuiweizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_guolushuiweizhuangtai", 25, 2, "锅炉液位状态", coms_level)
       this.getPointMap["ba_shuixiangshuiweizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_shuixiangshuiweizhuangtai", 27, 2, "水箱液位状态", coms_level)
 
-        this.getPointMap["ba_guoluyalizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_guoluyalizhuangtai", 29, 2, "锅炉压力状态", CTL_NJZJ_Common_ValueMaps.coms_yalistatus)
+        this.getPointMap["ba_guoluyalizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_guoluyalizhuangtai", 29, 2, "锅炉压力状态", ctl_njzj_common_valueMap.coms_yalistatus)
 
         this.getPointMap["ba_leijijiaretianshu"]=byteFieldObj.init(new baseInfoField(),"ba_leijijiaretianshu", 51, 2, "累计加热", "天")
 
@@ -45,8 +46,8 @@ export default class devicePointMap_CTL_NJZJ_IPK2_485 extends map {
 
         this.getPointMap["ba_xiaohuoshijian"]=byteFieldObj.init(new baseInfoField(),"ba_xiaohuoshijian", 57, 2, "小火工作时间", "时")
 
-        this.getPointMap["ba_fangdongkaiguan"]=byteFieldObj.init(new baseInfoField(),"ba_fangdongkaiguan", 61, 2, "防冻开关", DevicePointMap.coms_open_close)
-        //
+        this.getPointMap["ba_fangdongkaiguan"]=byteFieldObj.init(new baseInfoField(),"ba_fangdongkaiguan", 61, 2, "防冻开关",coms_open_close)
+
         this.getPointMap["ex_paiyanwendugaobaojing"]=byteFieldObj.init(new exceptionField(), "ex_paiyanwendugaobaojing", 88, 2, "排烟温度高报警")
 
         this.getPointMap["ex_lushuiwendugaobaojing"]=byteFieldObj.init(new exceptionField(), "ex_lushuiwendugaobaojing", 90, 2, "炉水温度高报警")
@@ -734,43 +735,43 @@ export default class devicePointMap_CTL_NJZJ_IPK2_485 extends map {
         this.getPointMap["st_qidongshijian6_shifen_"]=byteFieldObj.init(new startStopField(),"st_qidongshijian6_shifen_", 1578, 2, "启动时间6（时 分）")
         this.getPointMap["st_tingzhishijian6_shifen_"]=byteFieldObj.init(new startStopField(),"st_tingzhishijian6_shifen_", 1580, 2, "停止时间6（时 分）")
         //
-        this.getPointMap["de_ranshaoqi"]=byteFieldObj.init(new deviceField(),"de_ranshaoqi", 1587, 2, "燃烧器", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_jiarezu"]=byteFieldObj.init(new deviceField(),"de_jiarezu", 1589, 2, "加热组", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_bushui_beng"]=byteFieldObj.init(new deviceField(),"de_bushui_beng", 1591, 2, "补水泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_jishui_beng"]=byteFieldObj.init(new deviceField(),"de_jishui_beng", 1593, 2, "给水泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_buyou_beng"]=byteFieldObj.init(new deviceField(),"de_buyou_beng", 1595, 2, "补油泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_xunhuan_beng", 1597, 2, "循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_lengning_beng"]=byteFieldObj.init(new deviceField(),"de_lengning_beng", 1599, 2, "冷凝泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_reshui_beng"]=byteFieldObj.init(new deviceField(),"de_reshui_beng", 1601, 2, "热水泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_zhenkong_beng"]=byteFieldObj.init(new deviceField(),"de_zhenkong_beng", 1603, 2, "真空泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_ecixunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_ecixunhuan_beng", 1605, 2, "二次循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_yinfengji_fan"]=byteFieldObj.init(new deviceField(),"de_yinfengji_fan", 1607, 2, "引风机", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_gufengji_fan"]=byteFieldObj.init(new deviceField(),"de_gufengji_fan", 1609, 2, "鼓风机", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_lupai_fan"]=byteFieldObj.init(new deviceField(),"de_lupai_fan", 1611, 2, "炉排", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_chuzhaji_fan"]=byteFieldObj.init(new deviceField(),"de_chuzhaji_fan", 1613, 2, "出渣机", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_ecigufengji_fan"]=byteFieldObj.init(new deviceField(),"de_ecigufengji_fan", 1615, 2, "二次鼓风机", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_dianhuoqi"]=byteFieldObj.init(new deviceField(),"de_dianhuoqi", 1617, 2, "点火器", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_shangmeiji_fan"]=byteFieldObj.init(new deviceField(),"de_shangmeiji_fan", 1619, 2, "上煤机", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_songliaoji"]=byteFieldObj.init(new deviceField(),"de_songliaoji", 1621, 2, "送料机", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_jiayao_beng"]=byteFieldObj.init(new deviceField(),"de_jiayao_beng", 1623, 2, "加药泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_paiwufa"]=byteFieldObj.init(new deviceField(),"de_paiwufa", 1625, 2, "排污阀", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_huilu1xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu1xunhuan_beng", 1627, 2, "回路1循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_huilu2xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu2xunhuan_beng", 1629, 2, "回路2循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_huilu3xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu3xunhuan_beng", 1631, 2, "回路3循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_huilu4xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu4xunhuan_beng", 1633, 2, "回路4循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_huilu5xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu5xunhuan_beng", 1635, 2, "回路5循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_cainuanxunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_cainuanxunhuan_beng", 1637, 2, "采暖循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_reshuixunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_reshuixunhuan_beng", 1639, 2, "热水循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_paiqifa"]=byteFieldObj.init(new deviceField(),"de_paiqifa", 1641, 2, "排汽阀", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_xieyafa"]=byteFieldObj.init(new deviceField(),"de_xieyafa", 1643, 2, "泄压阀", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_zhenkongfa"]=byteFieldObj.init(new deviceField(),"de_zhenkongfa", 1645, 2, "真空阀", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_pangtongfa"]=byteFieldObj.init(new deviceField(),"de_pangtongfa", 1647, 2, "旁通阀", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_churexunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_churexunhuan_beng", 1649, 2, "储热循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_huanrexunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huanrexunhuan_beng", 1651, 2, "换热循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_xitongxunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_xitongxunhuan_beng", 1653, 2, "系统循环泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_churebushui_beng"]=byteFieldObj.init(new deviceField(),"de_churebushui_beng", 1655, 2, "储热补水泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_yandaodiefa"]=byteFieldObj.init(new deviceField(),"de_yandaodiefa", 1657, 2, "烟道蝶阀", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_huishui_beng"]=byteFieldObj.init(new deviceField(),"de_huishui_beng", 1659, 2, "回水泵", CTL_NJZJ_Common_ValueMaps.coms_device)
-        this.getPointMap["de_santongfa"]=byteFieldObj.init(new deviceField(),"de_santongfa", 1661, 2, "三通阀", CTL_NJZJ_Common_ValueMaps.coms_device)
+        this.getPointMap["de_ranshaoqi"]=byteFieldObj.init(new deviceField(),"de_ranshaoqi", 1587, 2, "燃烧器", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_jiarezu"]=byteFieldObj.init(new deviceField(),"de_jiarezu", 1589, 2, "加热组", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_bushui_beng"]=byteFieldObj.init(new deviceField(),"de_bushui_beng", 1591, 2, "补水泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_jishui_beng"]=byteFieldObj.init(new deviceField(),"de_jishui_beng", 1593, 2, "给水泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_buyou_beng"]=byteFieldObj.init(new deviceField(),"de_buyou_beng", 1595, 2, "补油泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_xunhuan_beng", 1597, 2, "循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_lengning_beng"]=byteFieldObj.init(new deviceField(),"de_lengning_beng", 1599, 2, "冷凝泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_reshui_beng"]=byteFieldObj.init(new deviceField(),"de_reshui_beng", 1601, 2, "热水泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_zhenkong_beng"]=byteFieldObj.init(new deviceField(),"de_zhenkong_beng", 1603, 2, "真空泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_ecixunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_ecixunhuan_beng", 1605, 2, "二次循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_yinfengji_fan"]=byteFieldObj.init(new deviceField(),"de_yinfengji_fan", 1607, 2, "引风机", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_gufengji_fan"]=byteFieldObj.init(new deviceField(),"de_gufengji_fan", 1609, 2, "鼓风机", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_lupai_fan"]=byteFieldObj.init(new deviceField(),"de_lupai_fan", 1611, 2, "炉排", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_chuzhaji_fan"]=byteFieldObj.init(new deviceField(),"de_chuzhaji_fan", 1613, 2, "出渣机", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_ecigufengji_fan"]=byteFieldObj.init(new deviceField(),"de_ecigufengji_fan", 1615, 2, "二次鼓风机", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_dianhuoqi"]=byteFieldObj.init(new deviceField(),"de_dianhuoqi", 1617, 2, "点火器", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_shangmeiji_fan"]=byteFieldObj.init(new deviceField(),"de_shangmeiji_fan", 1619, 2, "上煤机", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_songliaoji"]=byteFieldObj.init(new deviceField(),"de_songliaoji", 1621, 2, "送料机", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_jiayao_beng"]=byteFieldObj.init(new deviceField(),"de_jiayao_beng", 1623, 2, "加药泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_paiwufa"]=byteFieldObj.init(new deviceField(),"de_paiwufa", 1625, 2, "排污阀", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_huilu1xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu1xunhuan_beng", 1627, 2, "回路1循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_huilu2xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu2xunhuan_beng", 1629, 2, "回路2循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_huilu3xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu3xunhuan_beng", 1631, 2, "回路3循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_huilu4xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu4xunhuan_beng", 1633, 2, "回路4循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_huilu5xunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huilu5xunhuan_beng", 1635, 2, "回路5循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_cainuanxunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_cainuanxunhuan_beng", 1637, 2, "采暖循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_reshuixunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_reshuixunhuan_beng", 1639, 2, "热水循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_paiqifa"]=byteFieldObj.init(new deviceField(),"de_paiqifa", 1641, 2, "排汽阀", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_xieyafa"]=byteFieldObj.init(new deviceField(),"de_xieyafa", 1643, 2, "泄压阀", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_zhenkongfa"]=byteFieldObj.init(new deviceField(),"de_zhenkongfa", 1645, 2, "真空阀", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_pangtongfa"]=byteFieldObj.init(new deviceField(),"de_pangtongfa", 1647, 2, "旁通阀", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_churexunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_churexunhuan_beng", 1649, 2, "储热循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_huanrexunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_huanrexunhuan_beng", 1651, 2, "换热循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_xitongxunhuan_beng"]=byteFieldObj.init(new deviceField(),"de_xitongxunhuan_beng", 1653, 2, "系统循环泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_churebushui_beng"]=byteFieldObj.init(new deviceField(),"de_churebushui_beng", 1655, 2, "储热补水泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_yandaodiefa"]=byteFieldObj.init(new deviceField(),"de_yandaodiefa", 1657, 2, "烟道蝶阀", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_huishui_beng"]=byteFieldObj.init(new deviceField(),"de_huishui_beng", 1659, 2, "回水泵", ctl_njzj_common_valueMap.coms_device)
+        this.getPointMap["de_santongfa"]=byteFieldObj.init(new deviceField(),"de_santongfa", 1661, 2, "三通阀", ctl_njzj_common_valueMap.coms_device)
     }
 }

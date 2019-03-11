@@ -20,6 +20,11 @@ import fixedValueField from '../meta/fixedValueField'
 export default class devicePointMap_CTL_RT_H1_RYZQ extends map {
     constructor() {
         super();
+        const commands_key_paramenters_setting = "参数设置"
+        const commands_key_system_ctl = "系统控制"
+        this.commandsMap[commands_key_paramenters_setting]=null
+        this.commandsMap[commands_key_system_ctl]=null
+
         const byteFieldObj = new byteField();
         this.getPointMap["_addshuibeng"]=byteFieldObj.init(new countField(),"_addshuibeng", "给水泵")
         this.getPointMap["_jiarezu"]=byteFieldObj.init(new countField(),"_jiarezu", "燃烧器")
@@ -36,8 +41,8 @@ export default class devicePointMap_CTL_RT_H1_RYZQ extends map {
         this.getPointMap[deviceModel.key_point_run_life]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_run_life, 53, 2, "累计燃烧时间","时")
         this.getPointMap["de_jishuibengzhubei"]=byteFieldObj.init(new deviceField(),"de_jishuibengzhubei", 49, 2, "给水泵",0,ctl_njrt_common_valueMap.coms_master)
         this.getPointMap["de_jishuibengshouzi"]=byteFieldObj.init(new deviceField(),"de_jishuibengshouzi", 49, 2, "给水泵",1,ctl_njrt_common_valueMap.coms_atuo)
-        this.getPointMap["oc_1_addshuibeng_start_stop"]=byteFieldObj.init(new deviceField(),"oc_1_addshuibeng_start_stop", 9, 2,  "给水泵主控制",3,coms_open_close)
-        this.getPointMap["oc_2_addshuibeng_start_stop"]=byteFieldObj.init(new deviceField(),"oc_2_addshuibeng_start_stop", 9, 2, "给水泵备控制", 4, coms_open_close)
+        this.getPointMap["oc_1_addshuibeng_start_stop"]=byteFieldObj.init(new openCloseField(),"oc_1_addshuibeng_start_stop", 9, 2,  "给水泵主控制",3,coms_open_close)
+        this.getPointMap["oc_2_addshuibeng_start_stop"]=byteFieldObj.init(new openCloseField(),"oc_2_addshuibeng_start_stop", 9, 2, "给水泵备控制", 4, coms_open_close)
 
         this.getPointMap["ex_jixiandishuiweibaojing"]=byteFieldObj.init(new exceptionField(),"ex_jixiandishuiweibaojing", 45, 2, "极限低水位报警",0)
         this.getPointMap["ex_zhengqiyalibiansongqiduanlu"]=byteFieldObj.init(new exceptionField(),"ex_zhengqiyalibiansongqiduanlu", 45, 2, "蒸汽压力变送器断路",1)

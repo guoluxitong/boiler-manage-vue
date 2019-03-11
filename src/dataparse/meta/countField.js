@@ -5,7 +5,7 @@ export default class countField extends countShowField{
     getDeviceFieldForUI(){
         return null
     }
-    setDeviceFieldForUiKey(fieldForUI){
+    setDeviceFieldForUIKey(fieldForUI){
         fieldForUI.key = deviceModel.key_count_fields
     }
     getValue(){

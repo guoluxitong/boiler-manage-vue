@@ -11,7 +11,7 @@ export default class countShowField extends byteField{
     haveValue(...bytes){
         return true
     }
-    setDeviceFieldForUiKey(fieldForUI){
-        fieldForUI.key = this.groupKey
+    setDeviceFieldForUIKey(deviceFieldForUI){
+        deviceFieldForUI.key=this.groupKey
     }
 }

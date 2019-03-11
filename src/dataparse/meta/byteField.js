@@ -78,7 +78,7 @@ export default class byteField extends commandField{
                         arguments[0].title = arguments[2]
                         arguments[0].value = arguments[3]
                         arguments[0].valueMap = arguments[4]
-                    }else if(typeof arguments[2] == 'int'){
+                    }else if(typeof arguments[2] == 'number'){
                         arguments[0].name=arguments[1]
                         arguments[0].startIndex=arguments[2]
                         arguments[0].byteLength=arguments[3]
