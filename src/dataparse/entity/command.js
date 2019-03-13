@@ -6,7 +6,7 @@ export default class command {
     static open_close_value = 5;
     static system_value = 6;
 
-    constructor(name, address, valueString, value, unit, title, maxValue, minvalue, script) {
+    constructor(name, address, valueString, value, unit, title, maxValue, minvalue, script,modbusNo) {
         this.name = name;
         this.address = address;
         this.valueString = valueString;
@@ -19,7 +19,7 @@ export default class command {
         this.action = "06";
         this.valueType = command.int_value;
         this.valueIsSet = false;
-        this.modbusNo = ""
+        this.modbusNo = modbusNo
     }
     handleValue(...value) {
     }

@@ -4,6 +4,7 @@ import byteField from '../meta/byteField'
 import commandField from '../meta/commandField'
 import {coms_media,coms_power} from '../map/commonValueMap'
 
+
 export const deviceModel= {
     power_media_value_null : -1,
     key_point_system_status:'o_system_status',
@@ -46,7 +47,10 @@ export default class sdcSoftDevice {
         this.deviceNo=''
         this.nickName = ""
         this.deviceType = ""
-        this.commandsMap = {}
+        this.commandsMap = {
+          "设置参数" : [],
+          "系统控制" : []
+        }
         this.byteArrayLength=0
         this.deviceModel=deviceModel
         //modbus 设备编号
@@ -75,24 +79,17 @@ export default class sdcSoftDevice {
      * @param {meta数据点位对象} fields
      */
     addField(fields){
-      if(null == fields){
+      if (null!=fields.getCommand()){
+        this.addCommand(fields.commandGroupKey,fields.getCommand())
+      }
+      let deviceField = fields.getDeviceFieldForUI()
+      if (null == deviceField) {
         return
       }
-      if (fields.constructor == byteField) {
-        this.addField(fields.getDeviceFieldForUI())
-        if (null!=fields.getCommand()){
-          this.addCommand(fields.groupKey,fields.command)
-        }
-      }
-      if (fields.constructor == deviceFieldForUI) {
-        for(let key in this.fieldMap){
-          if(key==fields.key){
-            this.fieldMap[key].push(fields)
+      for(let key in this.fieldMap){
+          if(key==deviceField.key){
+            this.fieldMap[key].push(deviceField)
           }
-        }
-      }
-      if (fields.constructor == commandField) {
-        this.addCommand(fields.groupKey,fields.command)
       }
     }
     getFieldsByGroupKey(key){
@@ -158,30 +155,11 @@ export default class sdcSoftDevice {
     getCommands(){
       for (let i in this.commandsMap) {
         let cmds = this.commandsMap[i]
-        for (let cmd in cmds) {
-          cmd.modbusNo = this.modbusNo
+        for (let j in cmds) {
+          cmds[j].modbusNo = this.modbusNo
         }
       }
+      return this.commandsMap
     }
 }
-/*export  default class deviceAdapterUtil {
-  static DEVICE_POWER_MEDIA_MAP_PACKAGE_PATH = "cn.com.sdcsoft.devices.map.%sDevicePointMap"
-  static STRING_FORMAT_DEVICE_MAP_PACKAGE_PATH = "cn.com.sdcsoft.devices.map.%sDevicePointMap_%s"
-  static STRING_FORMAT_DEVICE_PACKAGE_PATH = "cn.com.sdcsoft.devices.Device_%s"
-  static devices
-  static maps
-  getMediaString(key){
-    for (let tempKey in coms_media){
-      if(tempKey.indexOf(key)!=-1){
-        return coms_media[key]
-      }
-    }
-  }
-  getPowerString(key){
-    for (let tempKey in coms_power){
-      if(tempKey.indexOf(key)!=-1){
-        return coms_media[key]
-      }
-    }
-  }
-}*/
+

@@ -1,7 +1,7 @@
 export default class pointField {
-    constructor() {
-        this.name = ''
-        this.unit=''
-        this.title=''
+    constructor(name,unit,title) {
+        this.name = name
+        this.unit=unit?"":unit
+        this.title=title
     }
 }

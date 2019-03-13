@@ -5,29 +5,29 @@ export default class CRC16Util{
 
     static calcCrc16(){
         switch (arguments.length) {
-            case 1:
-                return calcCrc16(arguments[1],0,arguments[1].length)
+            case 0:
+                return this.calcCrc16(arguments[0],0,arguments[0].length)
+            case 2:
+                return this.calcCrc16(arguments[0],arguments[1],arguments[2],0xffff)
             case 3:
-                return calcCrc16(arguments[1],arguments[2],arguments[3],0xffff)
-            case 4:
-                let ucCRCHi = (arguments[4] & 0xff00) >> 8
-                let ucCRCLo = arguments[4] & 0x00ff
+                let ucCRCHi = (arguments[3] & 0xff00) >> 8
+                let ucCRCLo = arguments[3] & 0x00ff
                 let iIndex = 0
-                for(let i = 0;i<arguments[3];++i){
-                    iIndex = (ucCRCLo ^ arguments[1][arguments[2] + i]) & 0x00ff
-                    ucCRCLo = ucCRCHi ^ crc16_tab_h[iIndex]
-                    ucCRCHi = crc16_tab_l[iIndex]
+                for(let i = 0;i<arguments[2];++i){
+                    iIndex = (ucCRCLo ^ arguments[0][arguments[1] + i]) & 0x00ff
+                    ucCRCLo = ucCRCHi ^ this.crc16_tab_h[iIndex]
+                    ucCRCHi = this.crc16_tab_l[iIndex]
                 }
                 return ((ucCRCHi & 0x00ff)<<8) | (ucCRCLo & 0x00ff) & 0xffff
         }
     }
     static getCrc(){
         switch (arguments.length) {
+            case 0:
+                return(arguments[0],false)
             case 1:
-                return(arguments[1],false)
-            case 2:
-                let str = String.format("%04x",res)
-                if(arguments[2]){
+                let str = String.format("%04x",arguments[0])
+                if(arguments[1]){
                     return str
                 }
                 let substring = str.substring(0,2)
