@@ -10,7 +10,7 @@ export default class deviceFieldForUI {
   }
   getValueString(){
     if(this.needFormat){
-      return String.format(this.valueString,this.value)
+      return this.valueString+this.value
     }
     return this.valueString
   }

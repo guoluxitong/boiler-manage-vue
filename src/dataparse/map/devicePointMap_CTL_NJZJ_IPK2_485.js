@@ -11,28 +11,23 @@ import byteField from '../meta/byteField'
 import baseInfoField from "../meta/ctl_njzj_485/baseInfoField"
 import deviceField from "../meta/ctl_njzj_485/deviceField"
 import exceptionField from "../meta/ctl_njzj_485/exceptionField"
-import mediaField from "../meta/ctl_njzj_485/mediaField"
 import mockField from "../meta/ctl_njzj_485/mockField"
-import powerField from "../meta/ctl_njzj_485/powerField"
-import ranShaoQiField from "../meta/ctl_njzj_485/ranShaoQiField"
 import runDayField from "../meta/ctl_njzj_485/runDayField"
 import settingField from "../meta/ctl_njzj_485/settingField"
 import startStopField from "../meta/ctl_njzj_485/startStopField"
-import countShowField from '../meta/countShowField'
+import systemStatusField from '../meta/ctl_njzj_485/systemStatusField'
 
 export default class devicePointMap_CTL_NJZJ_IPK2_485 extends map {
   constructor() {
     super();
     const Commands_Key_Parameters_Setting = "设置参数";
     const Commands_Key_System_Ctl = "系统控制";
-    this.commandsMap[Commands_Key_Parameters_Setting]=null;
-    this.commandsMap[Commands_Key_System_Ctl]=null;
     const byteFieldObj =new byteField();
-      this.getPointMap[deviceModel.key_point_system_status]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_system_status,7,2,"系统状态",ctl_njzj_common_valueMap.coms_status,Commands_Key_System_Ctl,"0602",1,2)
-      this.getPointMap[deviceModel.key_point_run_days]=byteFieldObj.init(deviceModel.key_base,new countShowField(), deviceModel.key_point_run_days, "运行天数", "天")
-      this.getPointMap[deviceModel.key_point_run_hours]=byteFieldObj.init(deviceModel.key_base,new countShowField(), deviceModel.key_point_run_hours, "运行小时数", "时")
-      this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new powerField(),deviceModel.key_point_power,3,2,"燃料类型",coms_power)
-      this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new mediaField(),deviceModel.key_point_media,5,2,"介质类型",coms_media)
+      this.getPointMap[deviceModel.key_point_system_status]=byteFieldObj.init(new systemStatusField(),deviceModel.key_point_system_status,7,2,"系统状态",ctl_njzj_common_valueMap.coms_status,Commands_Key_System_Ctl,"0602",1,2)
+      this.getPointMap[deviceModel.key_point_run_days]=byteFieldObj.init(new runDayField(),deviceModel.key_point_run_days,0,0, "运行天数", "天")
+      this.getPointMap[deviceModel.key_point_run_hours]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_run_hours,0,0, "运行小时数", "时")
+      this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_power,3,2,"燃料类型",coms_power)
+      this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_media,5,2,"介质类型",coms_media)
       this.getPointMap["ba_guolushuiweizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_guolushuiweizhuangtai", 25, 2, "锅炉液位状态", coms_level)
       this.getPointMap["ba_shuixiangshuiweizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_shuixiangshuiweizhuangtai", 27, 2, "水箱液位状态", coms_level)
 
@@ -618,7 +613,7 @@ export default class devicePointMap_CTL_NJZJ_IPK2_485 extends map {
         this.getPointMap["se_lutangchukouwendu"]=byteFieldObj.init(new settingField(),"se_lutangchukouwendu", 1108, 2, "炉膛出口温度", "℃")
         this.getPointMap["se_baohuwendu"]=byteFieldObj.init(new settingField(),"se_baohuwendu", 1110, 2, "保护温度", "℃")
         this.getPointMap["se_bentipaiyanwendu"]=byteFieldObj.init(new settingField(),"se_bentipaiyanwendu", 1112, 2, "本体排烟温度", "℃")
-        this.getPointMap["se_jiarezushu"]=byteFieldObj.init(new settingField(),"se_jiarezushu", 1114, 2, "加热组数", "组", Commands_Key_Parameters_Setting, "0517", 1, 100)
+        this.getPointMap["se_jiarezushu"]=byteFieldObj.init(new settingField(),"se_jiarezushu", 1114, 2, "加热组数","组",Commands_Key_Parameters_Setting,"0517",1,15)
         this.getPointMap["se_jianceyalishijian"]=byteFieldObj.init(new settingField(),"se_jianceyalishijian", 1116, 2, "检测压力时间", "s")
         this.getPointMap["se_houyanshi"]=byteFieldObj.init(new settingField(),"se_houyanshi", 1118, 2, "后延时", "m")
         this.getPointMap["se_shedingwendu"]=byteFieldObj.init(new settingField(),"se_shedingwendu", 1120, 2, "设定温度", "℃")

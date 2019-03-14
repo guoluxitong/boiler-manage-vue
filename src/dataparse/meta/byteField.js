@@ -1,7 +1,5 @@
 import deviceFieldForUI from "./deviceFieldForUI"
 import intCommand from '../entity/intCommand'
-import {deviceModel} from '../model/sdcSoftDevice'
-import { type } from "os";
 import commandField from "./commandField";
 export default class byteField extends commandField{
     constructor(startIndex,bytesLength,baseNumber,bit,needFormat,valueMap,address,maxValue,minValue,value) {
@@ -11,7 +9,7 @@ export default class byteField extends commandField{
         this.baseNumber=baseNumber
         this.bit=bit
         this.needFormat = false
-        this.valueMap=valueMap
+        this.valueMap={}
         this.address = address
         this.maxValue = maxValue
         this.minValue = minValue
