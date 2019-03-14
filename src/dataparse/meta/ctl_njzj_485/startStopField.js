@@ -7,14 +7,16 @@ export default class startStopField extends parentStartStopField {
     return 0x7FFF != this.value;
   }
   getValueString(){
-      return  (this.value/60)+":"+(this.value%60)
+    let h = parseInt(this.value/60)
+    let m = this.value%60
+      return  ((h>9)?h:("0" + h))+":"+((m>9)?m:("0"+m))
   }
   getCommand(){
     let cmd = new timeCommand()
     cmd.address = this.address
     cmd.maxValue = this.maxValue
     cmd.minValue = this.minValue
-    cmd.initValue(this.value/60,this.value%60)
+    cmd.initValue(parseInt(this.value/60),this.value%60)
     cmd.title = this.title
     return cmd
   }

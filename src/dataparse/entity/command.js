@@ -61,7 +61,12 @@ export default class command {
         return Number.parseInt(hexString,16);
     }
     static integerToHexString(x){
-        return String.format("%04x",x);
+      let value = Number.parseInt(x,16)
+      while (value.length < 4) {
+        value = "0" + value
+      }
+      return value
+        //return String.format("%04x",x);
     }
     static intToByte4(n){
         let b = new ArrayBuffer(4);
