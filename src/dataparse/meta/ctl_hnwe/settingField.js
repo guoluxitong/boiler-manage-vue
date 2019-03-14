@@ -19,7 +19,7 @@ export default class settingField extends parentMockField {
         return true
     }
     getValueString(){
-        if (JSON.stringify(this.valueMap) != null) {
+        if (JSON.stringify(this.valueMap)!='{}') {
             return this.valueMap[this.value]
         } else {
             return super.getValueString()
