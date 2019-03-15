@@ -133,6 +133,7 @@
                     this.controllerFormData.mockInfoMap=data.getMockFields()
                     this.controllerFormData.settingInfoMap=data.getSettingFields()
                     this.controllerFormData.deviceInfoMap=data.getDeviceInfoFields()
+                    console.log(data.getCommands())
                 })
             },
             initControllerInfo(){

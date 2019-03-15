@@ -5,6 +5,7 @@ export default class mockField extends byteField {
     deviceFieldForUI.key=deviceModel.key_mock
   }
   getValueBitString(){
-    return String.format("%.2f",this.value)
+    //return String.format("%.2f",this.value)
+    return this.value.toFixed(2)
   }
 }

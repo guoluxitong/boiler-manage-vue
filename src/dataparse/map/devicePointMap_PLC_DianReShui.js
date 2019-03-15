@@ -6,35 +6,40 @@ import {
     coms_open_close,
     coms_start_stop,
     plc_common_valueMap,
-    media,
-    power
 } from './commonValueMap'
 import {deviceModel} from '../model/sdcSoftDevice'
 import byteField from '../meta/byteField'
+import countField from '../meta/countField'
+import fixedValueField from '../meta/fixedValueField'
 import baseInfoField from '../meta/plc/baseInfoField'
-import mediaField from '../meta/plc/mediaField'
-import powerField from '../meta/plc/powerField'
 import mockField from '../meta/plc/mockField'
 import settingField from '../meta/plc/settingField'
 import deviceField from '../meta/plc/deviceField'
 import exceptionField from '../meta/plc/exceptionField'
+import openCloseField from '../meta/plc/openCloseField'
 
 export default class devicePointMap_PLC_DianReShui extends map {
     constructor() {
         super();
+        //控制点位
+        const commands_key_parameters_setting = "设置参数";
+        const commands_key_system_ctl = "系统控制";
+
         const byteFieldObj =new byteField();
+
         /*************start 计算属性（不显示）****************/
-        this.getPointMap["_addshuibeng"]=byteFieldObj.init(new deviceField(),"_addshuibeng", 0, 0, "补水泵",false)
-        this.getPointMap["_addshuibeng"]=byteFieldObj.init(new deviceField(),"_xunhuanbeng", 0, 0, "循环泵", false)
+        this.getPointMap["_addshuibeng"]=byteFieldObj.init(new countField(),"_addshuibeng","补水泵")
+        this.getPointMap["_addshuibeng"]=byteFieldObj.init(new countField(),"_xunhuanbeng","循环泵")
         /*************end 计算属性（不显示）****************/
 
         this.getPointMap["ba_yunxingxiaoshishu"]=byteFieldObj.init(new baseInfoField(),"ba_yunxingxiaoshishu",9,2,"运行小时数","时")
         this.getPointMap["ba_yunxingtianshu"]=byteFieldObj.init(new baseInfoField(),"ba_yunxingtianshu",11,2,"运行天数","天")
         this.getPointMap[deviceModel.key_point_system_status]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_system_status,13,2,"系统状态",plc_common_valueMap.coms_status)
-        this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new powerField(),deviceModel.key_point_power,power.Dian,0,"燃料",coms_power)
-        this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new mediaField(),deviceModel.key_point_media,media.ReShui,0,"介质",coms_media)
+        this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new fixedValueField(),deviceModel.key_point_power,"燃料",1,coms_power)
+        this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new fixedValueField(),deviceModel.key_point_media,"介质",0,coms_media)
         this.getPointMap["ba_shuiweizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_shuiweizhuangtai",19,2,"水位状态",coms_level)
         this.getPointMap["ba_ranshaoqizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_ranshaoqizhuangtai",21,2,"燃烧器状态",plc_common_valueMap.coms_ranshaoqi_status)
+
         this.getPointMap["mo_chushuiwendu"]=byteFieldObj.init(new mockField(),"mo_chushuiwendu", 35, 4, "出水温度", "℃")
         this.getPointMap["mo_huishuiwendu"]=byteFieldObj.init(new mockField(),"mo_huishuiwendu", 39, 4, "回水温度", "℃")
         this.getPointMap["mo_chushuiyali"]=byteFieldObj.init(new mockField(),"mo_chushuiyali", 43, 4, "出水压力", "Mpa")
@@ -42,7 +47,7 @@ export default class devicePointMap_PLC_DianReShui extends map {
         this.getPointMap["mo_qidongjiarezushu"]=byteFieldObj.init(new mockField(),"mo_qidongjiarezushu", 79, 4, "启动加热组数", "组")
         this.getPointMap["mo_qidongjiarezushubaifenbi"]=byteFieldObj.init(new mockField(),"mo_qidongjiarezushubaifenbi", 83, 4, "启动加热组数百分比", "%")
 
-        this.getPointMap["se_chaowenbaojingsheding"]=byteFieldObj.init(new settingField(),"se_chaowenbaojingsheding", 127, 4, "超温报警设定", "℃")
+        this.getPointMap["se_chaowenbaojingsheding"]=byteFieldObj.init(new settingField(),"se_chaowenbaojingsheding", 127, 4, "超温报警设定", "℃",commands_key_parameters_setting,"003E",10,200)
         this.getPointMap["se_shiyongjiarezushusheding"]=byteFieldObj.init(new settingField(),"se_shiyongjiarezushusheding", 131, 4, "使用加热组数设定", "组")
         this.getPointMap["se_touqiejiangeshijiansheding"]=byteFieldObj.init(new settingField(),"se_touqiejiangeshijiansheding", 135, 4, "投切间隔时间设定", "S")
         this.getPointMap["se_kuaiqiejiangeshijiansheding"]=byteFieldObj.init(new settingField(),"se_kuaiqiejiangeshijiansheding", 139, 4, "快切间隔时间设定", "S")
@@ -72,7 +77,7 @@ export default class devicePointMap_PLC_DianReShui extends map {
         this.getPointMap["ex_xitongchaoyabaojing（dianjiedianyalibiao）"]=byteFieldObj.init(new exceptionField(),"ex_xitongchaoyabaojing（dianjiedianyalibiao）", 233, 2, "系统超压报警（电接点压力表）", 11)
         this.getPointMap["ex_xitongyalidibaojing（dianjiedianyalibiao）"]=byteFieldObj.init(new exceptionField(),"ex_xitongyalidibaojing（dianjiedianyalibiao）", 233, 2, "系统压力低报警（电接点压力表）", 12)
         this.getPointMap["ex_chushuiwenduchuanganqiguzhang"]=byteFieldObj.init(new exceptionField(),"ex_chushuiwenduchuanganqiguzhang", 233, 2, "出水温度传感器故障", 13)
-        this.getPointMap["ex_huishuiwenduchuanganqiguzhang）"]=byteFieldObj.init(new exceptionField(),"ex_huishuiwenduchuanganqiguzhang）", 233, 2, "回水温度传感器故障）", 14)
+        this.getPointMap["ex_huishuiwenduchuanganqiguzhang"]=byteFieldObj.init(new exceptionField(),"ex_huishuiwenduchuanganqiguzhang", 233, 2, "回水温度传感器故障", 14)
         this.getPointMap["ex_chushuiyalibiansongqiguzhang"]=byteFieldObj.init(new exceptionField(),"ex_chushuiyalibiansongqiguzhang", 233, 2, "出水压力变送器故障", 15)
         this.getPointMap["ex_huishuiyalibiansongqiguzhang"]=byteFieldObj.init(new exceptionField(),"ex_huishuiyalibiansongqiguzhang", 233, 2, "回水压力变送器故障", 0)
         this.getPointMap["ex_lubichaowenbaojing"]=byteFieldObj.init(new exceptionField(),"ex_lubichaowenbaojing", 233, 2, "炉壁超温报警", 1)
@@ -86,5 +91,37 @@ export default class devicePointMap_PLC_DianReShui extends map {
         this.getPointMap["ex_Bxiangguoliubaojing"]=byteFieldObj.init(new exceptionField(),"ex_Bxiangguoliubaojing", 235, 2, "B相过流报警", 9)
         this.getPointMap["ex_Cxiangguoliubaojing"]=byteFieldObj.init(new exceptionField(),"ex_Cxiangguoliubaojing", 235, 2, "C相过流报警",10)
 
+      this.getPointMap["oc_1#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_1#jiarezu", 237, 2, "1#加热组反馈", 1)
+      this.getPointMap["oc_2#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_2#jiarezu", 237, 2, "2#加热组反馈", 1)
+      this.getPointMap["oc_3#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_3#jiarezu", 237, 2, "3#加热组反馈", 1)
+      this.getPointMap["oc_4#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_4#jiarezu", 237, 2, "4#加热组反馈", 1)
+      this.getPointMap["oc_5#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_5#jiarezu", 237, 2, "5#加热组反馈", 1)
+      this.getPointMap["oc_6#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_6#jiarezu", 237, 2, "6#加热组反馈", 1)
+      this.getPointMap["oc_7#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_7#jiarezu", 237, 2, "7#加热组反馈", 1)
+      this.getPointMap["oc_8#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_8#jiarezu", 237, 2, "8#加热组反馈", 1)
+      this.getPointMap["oc_9#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_9#jiarezu", 237, 2, "9#加热组反馈", 1)
+      this.getPointMap["oc_10#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_10#jiarezu", 237, 2, "10#加热组反馈", 1)
+      this.getPointMap["oc_11#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_11#jiarezu", 237, 2, "11#加热组反馈", 1)
+      this.getPointMap["oc_12#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_12#jiarezu", 237, 2, "12#加热组反馈", 1)
+      this.getPointMap["oc_13#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_13#jiarezu", 237, 2, "13#加热组反馈", 1)
+      this.getPointMap["oc_14#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_14#jiarezu", 237, 2, "14#加热组反馈", 1)
+      this.getPointMap["oc_15#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_15#jiarezu", 237, 2, "15#加热组反馈", 1)
+      this.getPointMap["oc_16#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_16#jiarezu", 237, 2, "16#加热组反馈", 1)
+      this.getPointMap["oc_17#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_17#jiarezu", 239, 2, "17#加热组反馈", 1)
+      this.getPointMap["oc_18#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_18#jiarezu", 239, 2, "18#加热组反馈", 1)
+      this.getPointMap["oc_19#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_19#jiarezu", 239, 2, "19#加热组反馈", 1)
+      this.getPointMap["oc_20#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_20#jiarezu", 239, 2, "20#加热组反馈", 1)
+      this.getPointMap["oc_21#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_21#jiarezu", 239, 2, "21#加热组反馈", 1)
+      this.getPointMap["oc_22#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_22#jiarezu", 239, 2, "22#加热组反馈", 1)
+      this.getPointMap["oc_23#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_23#jiarezu", 239, 2, "23#加热组反馈", 1)
+      this.getPointMap["oc_24#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_24#jiarezu", 239, 2, "24#加热组反馈", 1)
+      this.getPointMap["oc_25#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_25#jiarezu", 239, 2, "25#加热组反馈", 1)
+      this.getPointMap["oc_26#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_26#jiarezu", 239, 2, "26#加热组反馈", 1)
+      this.getPointMap["oc_27#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_27#jiarezu", 239, 2, "27#加热组反馈", 1)
+      this.getPointMap["oc_28#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_28#jiarezu", 239, 2, "28#加热组反馈", 1)
+      this.getPointMap["oc_29#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_29#jiarezu", 239, 2, "29#加热组反馈", 1)
+      this.getPointMap["oc_30#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_30#jiarezu", 239, 2, "30#加热组反馈", 1)
+      this.getPointMap["oc_31#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_31#jiarezu", 239, 2, "31#加热组反馈", 1)
+      this.getPointMap["oc_32#jiarezu"]=byteFieldObj.init(new openCloseField(),  "oc_32#jiarezu", 239, 2, "32#加热组反馈", 1)
     }
 }

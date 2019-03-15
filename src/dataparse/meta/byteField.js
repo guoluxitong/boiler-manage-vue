@@ -28,6 +28,9 @@ export default class byteField extends commandField{
     }
     haveValue(...bytes){}
     getValueString(){
+      if (this.title == "压力设置"){
+        console.log("========")
+      }
         if(this.bytesLength > 0){
             return this.value+this.unit
         }
@@ -73,6 +76,7 @@ export default class byteField extends commandField{
                         arguments[0].title = arguments[2]
                         arguments[0].value = arguments[3]
                         arguments[0].valueMap = arguments[4]
+                        arguments[0].bytesLength = 0
                     }else if(typeof arguments[2] == 'number'){
                         arguments[0].name=arguments[1]
                         arguments[0].startIndex=arguments[2]
@@ -80,6 +84,7 @@ export default class byteField extends commandField{
                         arguments[0].title=arguments[4]
                     }
                 }else{
+                    arguments[1].groupKey = arguments[0]
                     arguments[1].commandGroupKey = arguments[0]
                     arguments[1].name = arguments[2]
                     arguments[1].title = arguments[3]

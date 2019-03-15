@@ -104,6 +104,13 @@ export default class sdcSoftDevice {
         elementObj.setValues(element.index_a_power,this.getPower().value,this.getMedia().value,sdcSoftDevice.style_horizontal,this.getPowerInfo())
         return elementObj
     }
+    /*getStoveElement(){
+      let elementObj = new element()
+      elementObj.title = "锅炉"
+      elementObj.prefix = element.prefix_stove
+      elementObj.values.push(element.index_a_power,this.getPower().value,this.getMedia().value,sdcSoftDevice.style_horizontal,this.getPowerInfo())
+      return elementObj
+    }*/
     getBaseInfoFields(){return this.getFieldsMap(deviceModel.key_base)}
     getExceptionFields(){return this.getFieldsMap(deviceModel.key_exception)}
     getMockFields(){return this.getFieldsMap(deviceModel.key_mock)}

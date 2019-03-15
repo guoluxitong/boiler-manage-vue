@@ -43,20 +43,20 @@ const key_point_chu_zha_fan_1 = "de_chuzha_start_stop";
 
 export default class device_PLC extends sdcSoftDevice{
     handleByteField(byteField,bytes=[]){
-        switch (byteField.byteLength) {
+        switch (byteField.bytesLength) {
             case 0:
                 if(byteField.haveValue()){
-                    this.addField(byteField.getDeviceFieldForUI())
+                    this.addField(byteField)
                 }
                 break
             case 2:
                 if(byteField.haveValue(bytes[byteField.startIndex],bytes[byteField.startIndex+1])){
-                    this.addField(byteField.getDeviceFieldForUI())
+                    this.addField(byteField)
                 }
                 break
             case 4:
                 if(byteField.haveValue(bytes[byteField.startIndex],bytes[byteField.startIndex+1],bytes[byteField.startIndex+2],bytes[byteField.startIndex+3])){
-                    this.addField(byteField.getDeviceFieldForUI())
+                    this.addField(byteField)
                 }
                 break
         }
@@ -68,6 +68,7 @@ export default class device_PLC extends sdcSoftDevice{
         }
         this.deviceNo=deviceNo
     }
+    getMode(){return 0}
     getBeng(){
         let listElement=[]
         if(this.getCountFields().hasOwnProperty(key_point_add_shui_beng)) {

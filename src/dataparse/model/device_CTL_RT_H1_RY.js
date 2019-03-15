@@ -14,7 +14,7 @@ const key_point_xun_huan_beng_3 = "oc_3_xunhuanbeng_start_stop"
 export default class device_CTL_RT_H1_RY extends device_CTL{
     handleByteField(byteField,bytes=[]){
         if(byteField.haveValue(bytes[byteField.startIndex],bytes[byteField.startIndex+1])){
-            this.addField(byteField.getDeviceFieldForUI())
+            this.addField(byteField)
         }
     }
     handleDeviceNo(bytes=[]){
