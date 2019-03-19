@@ -1,3 +1,5 @@
+import {format} from '../../utils/stringFormat'
+
 export default class command {
     static int_value = 1;
     static float_value = 2;
@@ -61,7 +63,9 @@ export default class command {
         return Number.parseInt(hexString,16);
     }
     static integerToHexString(x){
-        return String.format("%04x",x);
+        //return String.format("%04x",x);
+        let str = format("x",4,x)
+        return str
     }
     static intToByte4(n){
         let b = new ArrayBuffer(4);

@@ -1,5 +1,6 @@
 import intCommand from "./intCommand";
 import command from "./command";
+import {format} from '../../utils/stringFormat'
 
 export default class timeCommand extends intCommand{
     constructor(){
@@ -11,7 +12,7 @@ export default class timeCommand extends intCommand{
     handleValue(...values){
         let h = Number.parseInt(values[0])
         let m = Number.parseInt(values[1])
-        this.valueString = String.format("%02d:%02d",h,m)
+        this.valueString = format('d',2,h)+':'+format('d',2,m)
         this.value = command.integerToHexString(h*60+m)
     }
 }
