@@ -11,7 +11,8 @@ export default class timeCommand extends intCommand{
     handleValue(...values){
         let h = Number.parseInt(values[0])
         let m = Number.parseInt(values[1])
-        this.valueString = String.format("%02d:%02d",h,m)
+        //this.valueString = String.format("%02d:%02d",h,m)
+      this.valueString = h + ":" + m
         this.value = command.integerToHexString(h*60+m)
     }
 }

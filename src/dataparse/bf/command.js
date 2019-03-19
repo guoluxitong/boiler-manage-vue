@@ -27,14 +27,14 @@ export default class command {
         this.handleValue(values)
     }
     setValue(...values){
-      if (null == values) {
-          return
-      }
-      if (null == values[0]) {
-          return
-      }
-      this.handleValue(values);
-      this.valueIsSet = true
+       if (null == values) {
+           return
+       }
+       if (null == values[0]) {
+           return
+       }
+       this.handleValue(values);
+       this.valueIsSet = true
     }
     convertToString(){}
     getCommandString(){
@@ -42,7 +42,7 @@ export default class command {
             this.valueIsSet = false;
             let str = this.convertToString();
             this.valueString = "";
-          return str.toUpperCase ();
+            return str.toUpperCase();
         }
         return "";
     }
@@ -61,7 +61,12 @@ export default class command {
         return Number.parseInt(hexString,16);
     }
     static integerToHexString(x){
-        return String.format("%04x",x);
+      let value = Number.parseInt(x,16)
+      while (value.length < 4) {
+        value = "0" + value
+      }
+      return value
+        //return String.format("%04x",x);
     }
     static intToByte4(n){
         let b = new ArrayBuffer(4);

@@ -3,6 +3,7 @@ import deviceFieldForUI from '../meta/deviceFieldForUI'
 import byteField from '../meta/byteField'
 import commandField from '../meta/commandField'
 import {coms_media,coms_power} from '../map/commonValueMap'
+import command from '../entity/command'
 
 
 export const deviceModel= {
@@ -160,6 +161,30 @@ export default class sdcSoftDevice {
       return sdcSoftDevice.byte_array_length>bytesLength
     }
     getCommands(){
+      /*let commands = {}
+      for (let i in this.commandsMap) {
+        let cmds = []
+        let temp = this.commandsMap[i]
+        for (let j in temp) {
+          let cmd = new command()
+          cmd.name = temp[j].name
+          cmd.address = temp[j].address
+          cmd.valueString = temp[j].valueString
+          cmd.value = temp[j].value
+          cmd.unit = temp[j].unit
+          cmd.title = temp[j].title
+          cmd.maxValue = temp[j].maxValue
+          cmd.minValue = temp[j].minValue
+          cmd.script = temp[j].script
+          cmd.action = temp[j].action
+          cmd.valueType = temp[j].valueType
+          cmd.valueIsSet = temp[j].valueIsSet
+          cmd.modbusNo = this.modbusNo
+          cmds.push(cmd)
+        }
+        commands[i] = cmds
+      }
+      return commands*/
       for (let i in this.commandsMap) {
         let cmds = this.commandsMap[i]
         for (let j in cmds) {

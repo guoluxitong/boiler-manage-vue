@@ -32,9 +32,11 @@
 </template>
 <script>
     import {getControllerByteData,getControllerType} from '@/api/controller'
-    import {getDeviceByByteDataAndType} from "@/dataparse/model/deviceAdapter";
+    import {getDeviceByByteDataAndType,getCmdMapByDevice} from "@/dataparse/model/deviceAdapter";
     import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
     import animation from './components/animation'
+    //import cmd from '../../dataparse/entity/command'
+    //import icmd from '../../dataparse/entity/intCommand'
     //const {remote} = require('electron')
     //const {Menu, MenuItem} = remote
     export default {
@@ -133,7 +135,19 @@
                     this.controllerFormData.mockInfoMap=data.getMockFields()
                     this.controllerFormData.settingInfoMap=data.getSettingFields()
                     this.controllerFormData.deviceInfoMap=data.getDeviceInfoFields()
-                    console.log(data.getCommands())
+                    getCmdMapByDevice(data).then(cmds=>{
+                      for (let key in cmds) {
+                        if (key == '设置参数') {
+                          let cmd = cmds[key]
+                          let str = cmd[0].getCommandString()
+                          console.log("value修改前==>"+cmd[0].value+"CommandString修改前==>"+str)
+                          cmd[0].setValue(12)
+                          str = cmd[0].getCommandString()
+                          console.log("value修改后==>"+cmd[0].value+"CommandString修改后==>"+str)
+                        }
+
+                      }
+                    })
                 })
             },
             initControllerInfo(){

@@ -37,4 +37,11 @@ export function getDeviceByByteDataAndType(byteData=[],type='') {
         console.log(r);
     })
 }
-
+export function getCmdMapByDevice (device) {
+  return new Promise((resolve,reject)=>{
+    let cmdMap = device.getCommands()
+    resolve(cmdMap)
+  }).catch(function (r) {
+    console.log(r)
+  })
+}
