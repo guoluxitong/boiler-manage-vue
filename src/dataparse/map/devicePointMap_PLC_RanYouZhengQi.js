@@ -18,6 +18,7 @@ import mockField from '../meta/plc/mockField'
 import settingField from '../meta/plc/settingField'
 import deviceField from '../meta/plc/deviceField'
 import exceptionField from '../meta/plc/exceptionField'
+import fixedValueField from '../meta/fixedValueField'
     export default class devicePointMap_PLC_RanYouZhengQi extends map {
     constructor() {
         super();
@@ -33,8 +34,8 @@ import exceptionField from '../meta/plc/exceptionField'
         this.getPointMap["ba_yunxingxiaoshishu"]=byteFieldObj.init(new baseInfoField(),"ba_yunxingxiaoshishu",9,2,"运行小时数","时")
         this.getPointMap["ba_yunxingtianshu"]=byteFieldObj.init(new baseInfoField(),"ba_yunxingtianshu",11,2,"运行天数","天")
         this.getPointMap[deviceModel.key_point_system_status]=byteFieldObj.init(new baseInfoField(),deviceModel.key_point_system_status,13,2,"系统状态",plc_common_valueMap.coms_status)
-        this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new powerField(),deviceModel.key_point_power,power.YouQi,0,"燃料",coms_power)
-        this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new mediaField(),deviceModel.key_point_media,media.ZhengQi,0,"介质",coms_media)
+        this.getPointMap[deviceModel.key_point_power]=byteFieldObj.init(new fixedValueField(),deviceModel.key_point_power,"燃料",0,coms_power)
+        this.getPointMap[deviceModel.key_point_media]=byteFieldObj.init(new fixedValueField(),deviceModel.key_point_media,"介质",1,coms_media)
         this.getPointMap["ba_shuiweizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_shuiweizhuangtai",19,2,"水位状态",coms_level)
         this.getPointMap["ba_ranshaoqizhuangtai"]=byteFieldObj.init(new baseInfoField(),"ba_ranshaoqizhuangtai",21,2,"燃烧器状态",plc_common_valueMap.coms_ranshaoqi_status)
 
@@ -42,7 +43,7 @@ import exceptionField from '../meta/plc/exceptionField'
         this.getPointMap["mo_guorezhengqiyali"]=byteFieldObj.init(new mockField(),"mo_guorezhengqiyali",39,4,"过热蒸汽压力","MPa")
         this.getPointMap["mo_zhengqiwendu"]=byteFieldObj.init(new mockField(),"mo_zhengqiwendu",43,4,"蒸汽温度","℃")
         this.getPointMap["mo_guorezhengqiwendu"]=byteFieldObj.init(new mockField(),"mo_guorezhengqiwendu",47,4,"过热蒸汽温度","℃")
-        this.getPointMap["mo_guolushuiwei"]=byteFieldObj.init(new mockField(),"mo_guolushuiwei",51,4,"锅炉水位")
+        this.getPointMap["mo_guolushuiwei"]=byteFieldObj.init(new mockField(),"mo_guolushuiwei",51,4,"锅炉水位","")
         this.getPointMap["mo_zhengqishunshiliuliang"]=byteFieldObj.init(new mockField(),"mo_zhengqishunshiliuliang",55,4,"蒸汽瞬时流量","m³/h")
         this.getPointMap["mo_bushuishunshiliuliang"]=byteFieldObj.init(new mockField(),"mo_bushuishunshiliuliang",59,4,"补水瞬时流量","m³/h")
         this.getPointMap["mo_lutangwendu"]=byteFieldObj.init(new mockField(),"mo_lutangwendu",63,4,"炉膛温度","℃")
@@ -63,7 +64,7 @@ import exceptionField from '../meta/plc/exceptionField'
         this.getPointMap["mo_jienengqichushuiwendu"]=byteFieldObj.init(new mockField(),"mo_jienengqichushuiwendu",123,4,"节能器出水温度","℃")
         this.getPointMap["mo_lengningqichushuiyali"]=byteFieldObj.init(new mockField(),"mo_lengningqichushuiyali",127,4,"冷凝器出水压力","MPa")
         this.getPointMap["mo_jienengqichushuiyali"]=byteFieldObj.init(new mockField(),"mo_jienengqichushuiyali",131,4,"节能器出水压力","MPa")
-        this.getPointMap["mo_bushuibengpinlüfankui"]=byteFieldObj.init(new mockField(),"mo_bushuibengpinlüfankui",135,4,"补水泵频率反馈")
+        this.getPointMap["mo_bushuibengpinlüfankui"]=byteFieldObj.init(new mockField(),"mo_bushuibengpinlüfankui",135,4,"补水泵频率反馈","")
         this.getPointMap["mo_ruanshuixiangyewei"]=byteFieldObj.init(new mockField(),"mo_ruanshuixiangyewei",139,4,"软水箱液位","mm")
         this.getPointMap["mo_chuyangqiyewei"]=byteFieldObj.init(new mockField(),"mo_chuyangqiyewei",143,4,"除氧器液位","mm")
         this.getPointMap["mo_chuyangqiwendu"]=byteFieldObj.init(new mockField(),"mo_chuyangqiwendu",147,4,"除氧器温度","℃")

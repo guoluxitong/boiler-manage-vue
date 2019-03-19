@@ -139,6 +139,9 @@
                       for (let key in cmds) {
                         if (key == '设置参数') {
                           let cmd = cmds[key]
+                          if (cmd.length == 0) {
+                            break
+                          }
                           let str = cmd[0].getCommandString()
                           console.log("value修改前==>"+cmd[0].value+"CommandString修改前==>"+str)
                           cmd[0].setValue(12)
