@@ -105,13 +105,6 @@ export default class sdcSoftDevice {
         elementObj.setValues(element.index_a_power,this.getPower().value,this.getMedia().value,sdcSoftDevice.style_horizontal,this.getPowerInfo())
         return elementObj
     }
-    /*getStoveElement(){
-      let elementObj = new element()
-      elementObj.title = "锅炉"
-      elementObj.prefix = element.prefix_stove
-      elementObj.values.push(element.index_a_power,this.getPower().value,this.getMedia().value,sdcSoftDevice.style_horizontal,this.getPowerInfo())
-      return elementObj
-    }*/
     getBaseInfoFields(){return this.getFieldsMap(deviceModel.key_base)}
     getExceptionFields(){return this.getFieldsMap(deviceModel.key_exception)}
     getMockFields(){return this.getFieldsMap(deviceModel.key_mock)}
@@ -161,30 +154,6 @@ export default class sdcSoftDevice {
       return sdcSoftDevice.byte_array_length>bytesLength
     }
     getCommands(){
-      /*let commands = {}
-      for (let i in this.commandsMap) {
-        let cmds = []
-        let temp = this.commandsMap[i]
-        for (let j in temp) {
-          let cmd = new command()
-          cmd.name = temp[j].name
-          cmd.address = temp[j].address
-          cmd.valueString = temp[j].valueString
-          cmd.value = temp[j].value
-          cmd.unit = temp[j].unit
-          cmd.title = temp[j].title
-          cmd.maxValue = temp[j].maxValue
-          cmd.minValue = temp[j].minValue
-          cmd.script = temp[j].script
-          cmd.action = temp[j].action
-          cmd.valueType = temp[j].valueType
-          cmd.valueIsSet = temp[j].valueIsSet
-          cmd.modbusNo = this.modbusNo
-          cmds.push(cmd)
-        }
-        commands[i] = cmds
-      }
-      return commands*/
       for (let i in this.commandsMap) {
         let cmds = this.commandsMap[i]
         for (let j in cmds) {

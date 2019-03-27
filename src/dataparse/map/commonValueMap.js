@@ -96,8 +96,8 @@ export const ctl_njrt_common_valueMap={
         3:'关机'
     },
     coms_atuo:{
-        0:'手',
-        1:'自'
+        0:'自',
+        1:'手'
     },
     coms_master:{
         0:"主",

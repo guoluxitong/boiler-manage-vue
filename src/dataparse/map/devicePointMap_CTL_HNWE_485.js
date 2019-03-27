@@ -125,7 +125,7 @@ export default class devicePointMap_CTL_HNWE_485 extends map{
  //
         this.getPointMap["mo_jiarexuqiu"]=byteFieldObj.init(new baseInfoField(),"mo_jiarexuqiu", 19, 1, "加热需求",coms_xuqiu)
  
-        this.getPointMap["mo_shedingzhi"]=byteFieldObj.init(new settingField(), "mo_shedingzhi", 22, 2, "设定值","",commands_key_parameters_setting, "0515", 10, 95)
+        this.getPointMap["mo_shedingzhi"]=byteFieldObj.init(new settingField(), "mo_shedingzhi", 22, 2, "设定值","",commands_key_parameters_setting, "0202", 10, 95)
         this.getPointMap["mo_CHgongshuiwendu"]=byteFieldObj.init(new mockField(), "mo_CHgongshuiwendu", 29, 2, "CH供水温度","℃",10)
         this.getPointMap["mo_CHhuishuiwendu"]=byteFieldObj.init(new mockField(), "mo_CHhuishuiwendu", 31, 2, "CH回水温度","℃")
         this.getPointMap["de_yanwen"]=byteFieldObj.init(new mockField(), "de_yanwen", 35, 2, "烟温","℃")
@@ -134,7 +134,7 @@ export default class devicePointMap_CTL_HNWE_485 extends map{
         this.getPointMap["mo_huoyandianliu"]=byteFieldObj.init(new mockField(),"mo_huoyandianliu", 41, 2, "火焰电流","uA")
         this.getPointMap["mo_diaojieshuiping"]=byteFieldObj.init(new mockField(), "mo_diaojieshuiping", 43, 2, "调节水平","")
         this.getPointMap["mo_jisuanhoudeshedingzhi"]=byteFieldObj.init(new mockField(), "mo_jisuanhoudeshedingzhi", 45, 2, "计算后的设定值")
-        this.getPointMap["mo_CHzuidashedingzhi"]=byteFieldObj.init(new settingField(), "mo_CHzuidashedingzhi", 52, 2, "CH最大设定值","",commands_key_parameters_setting, "1281", 20, 95)
+        this.getPointMap["mo_CHzuidashedingzhi"]=byteFieldObj.init(new settingField(), "mo_CHzuidashedingzhi", 52, 2, "CH最大设定值","",commands_key_parameters_setting, "0500", 20, 95)
  
         this.getPointMap["oc_ceshimoshi"]=byteFieldObj.init(new openCloseField(), "oc_ceshimoshi", 12, 1, "测试模式",coms_open_close)
         this.getPointMap["oc_CHmoshi"]=byteFieldObj.init(new openCloseField(), "oc_CHmoshi", 12, 1, "CH模式",2,coms_open_close)

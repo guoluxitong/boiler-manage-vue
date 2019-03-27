@@ -13,7 +13,7 @@ const key_point_add_shui_beng_2 = "oc_2_addshuibeng_start_stop"
 const key_point_leng_ning_beng = "_lengningbeng"
 const key_point_leng_ning_beng_1 = "oc_1_lengningxunhuanbeng_start_stop"
 
-export default class device_CTL_RT_T2 extends device_CTL{
+export default class device_CTL_RT_T3 extends device_CTL{
     constructor(){
         super()
         this.byteArrayLength=109
@@ -27,7 +27,7 @@ export default class device_CTL_RT_T2 extends device_CTL{
             this.addField(byteField)
         }
     }
-    getBaseInfoFields(){
+    getDeviceFocusFields(){
         let map=this.getFieldsMap(deviceModel.key_base)
         let runLife=map[this.deviceModel.key_point_run_life].value
         map[this.deviceModel.key_point_run_days].value=runLife/24

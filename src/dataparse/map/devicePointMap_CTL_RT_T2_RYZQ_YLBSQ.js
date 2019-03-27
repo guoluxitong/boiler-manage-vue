@@ -16,11 +16,11 @@ export default class devicePointMap_CTL_RT_T2_RYZQ_YLBSQ extends map {
     constructor() {
         super();
 
-        // const coms_status = {
-        //     0: '待命',
-        //     1: '报警',
-        //     2: '运行',
-        // }
+        const coms_status = {
+            0: '待命',
+            1: '报警',
+            2: '运行',
+        }
 
         const byteFieldObj = new byteField();
 
@@ -30,7 +30,7 @@ export default class devicePointMap_CTL_RT_T2_RYZQ_YLBSQ extends map {
         this.getPointMap["_lengningbeng"] = byteFieldObj.init(new countField(), "_lengningbeng", "冷凝泵")
         /*************end 计算属性（不显示）****************/
 
-        this.getPointMap[deviceModel.key_point_system_status] = byteFieldObj.init(new baseInfoField(), deviceModel.key_point_system_status, 3, 2, "系统状态", ctl_njrt_common_valueMap.coms_status)
+        this.getPointMap[deviceModel.key_point_system_status] = byteFieldObj.init(new baseInfoField(), deviceModel.key_point_system_status, 3, 2, "系统状态", coms_status)
         this.getPointMap[deviceModel.key_point_run_life] = byteFieldObj.init(new baseInfoField(), deviceModel.key_point_run_life, 53, 2, "运行时间", "时")
         this.getPointMap[deviceModel.key_point_run_days] = byteFieldObj.init(deviceModel.key_base,new countShowField(), deviceModel.key_point_run_days,"运行天数", "天")
         this.getPointMap[deviceModel.key_point_run_hours] = byteFieldObj.init(deviceModel.key_base,new countShowField(),deviceModel.key_point_run_hours, "运行小时数", "时")
@@ -49,8 +49,8 @@ export default class devicePointMap_CTL_RT_T2_RYZQ_YLBSQ extends map {
         this.getPointMap["oc_ranqixieloubaojing"] = byteFieldObj.init(new openCloseField(), "oc_ranqixieloubaojing", 5, 2, "燃气泄漏报警", 11, coms_open_close)
         this.getPointMap["oc_ranqiyalidibaojing"] = byteFieldObj.init(new openCloseField(), "oc_ranqiyalidibaojing", 5, 2, "燃气压力低报警", 12, coms_open_close)
         this.getPointMap["oc_ranqiyaligaobaojing"] = byteFieldObj.init(new openCloseField(), "oc_ranqiyaligaobaojing", 5, 2, "燃气压力高报警", 13, coms_open_close)
-        this.getPointMap["oc_ranshaoqikongzhi"] = byteFieldObj.init(new openCloseField(), "oc_ranshaoqikongzhi", 9, 2, "燃烧器启停控制", coms_open_close)
-        this.getPointMap["oc_ranshaoqitiaojie"] = byteFieldObj.init(new openCloseField(), "oc_ranshaoqitiaojie", 0, 0, "燃烧器调节", ctl_njrt_common_valueMap.coms_ranshaoqi_status)
+        this.getPointMap["oc_ranshaoqiqitingkongzhi"] = byteFieldObj.init(new openCloseField(), "oc_ranshaoqiqitingkongzhi", 9, 2, "燃烧器启停控制", coms_open_close)
+        this.getPointMap["oc_ranshaoqifuhetiaojie"] = byteFieldObj.init(new openCloseField(), "oc_ranshaoqifuhetiaojie", 0, 0, "燃烧器调节", ctl_njrt_common_valueMap.coms_ranshaoqi_status)
 
         this.getPointMap["oc_ranshaoqifuhediaojie/zengdadiaojie"] = byteFieldObj.init(new openCloseField(), "oc_ranshaoqifuhediaojie/zengdadiaojie", 9, 2, "燃烧器负荷调节/增大调节", 1)
         this.getPointMap["oc_jianxiaodiaojie"] = byteFieldObj.init(new openCloseField(), "oc_jianxiaodiaojie", 9, 2, "减小调节", 2)
