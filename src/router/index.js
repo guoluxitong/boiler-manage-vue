@@ -22,7 +22,7 @@ export const constantRouterMap = [
     { path: '/product-auxiliary-machine-info-form',name: 'product-auxiliary-machine-info-form', component: () => import('@/views/product/product-auxiliary-machine-info-form'), hidden: true },
     { path: '/map-complete-page',name: 'map-complete-page', component: () => import('@/views/map/map-complete-page'), hidden: true },
     { path: '/controller-run-info',name: 'controller-run-info', component: () => import('@/views/controller-run-info'), hidden: true },
-    { path: '/base-run-info-complete-page',name: 'base-run-info-complete-page', component: () => import('@/views/run-info/base-run-info'), hidden: true },
+    { path: '/device-run-info-page',name: 'device-run-info-page', component: () => import('@/views/run-info/device-run-info'), hidden: true },
 
 
     { path: '/product-map',name: 'product-map', component: () => import('@/views/product/product-map'), hidden: true },

@@ -101,6 +101,7 @@
     import {deleteFile} from '@/api/upload'
     import axios from 'axios'
     import { config } from '@/config/index'
+    import { logoutByCAS } from '@/api/login'
 
     const baseURL = process.env.NODE_ENV === 'development'
       ? 'http://' + config.development_base_ip + ':' + config.development_base_port
@@ -248,13 +249,20 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    window.close()
-                }).catch(() => {
+                    logoutByCAS()
                     this.$message({
                         type: 'info',
-                        message: '已取消退出'
+                        message: '退出成功'
                     });
-                });
+                    window.close()
+                }).catch(err => {
+                    this.$message({
+                        type: 'info',
+                        message: '退出取消'
+                    });
+                    console.log(err)
+                })
+
             },
           //文件上传成功的钩子函数
           handleLogoSuccess(res, file) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="loginBox" :style="{backgroundImage: 'url(' + backgroundUrl + ')'}">
+  <!--<div class="loginBox" :style="{backgroundImage: 'url(' + backgroundUrl + ')'}">
     <el-form
       :model="loginForm"
       :rules="rules"
@@ -18,7 +18,7 @@
       <el-form-item prop="passWord">
         <el-input type="password" v-model="loginForm.passWord" auto-complete="off" placeholder="密码"></el-input>
       </el-form-item>
-      <!--<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>-->
+      &lt;!&ndash;<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>&ndash;&gt;
       <el-form-item style="width:100%;">
         <el-button
           type="primary"
@@ -30,15 +30,15 @@
       <p class="copyright" v-if="copyrightInfo1!=''">{{copyrightInfo1}} © 2000-2019</p>
       <p class="copyright" v-if="copyrightInfo2!=''">{{copyrightInfo2}} © 2000-2019</p>
     </el-form>
-  </div>
+  </div>-->
 </template>
 <script>
-
+import axios from 'axios'
 export default {
   name: "login",
   data() {
     return {
-      loading: false,
+      /*loading: false,
       copyrightInfo1:'',
       copyrightInfo2:'',
       logoUrl:'/static/common/defaultLogo.png',
@@ -50,49 +50,76 @@ export default {
       rules: {
         account: [{ required: true, message: "请输入账号", trigger: "blur" }],
         passWord: [{ required: true, message: "请输入密码", trigger: "blur" }]
-      }
+      }*/
     };
   },
   created(){
-    this.initCopyrightInfoAndLogoUrl()
+      this.gotoLogin()
+    //this.initCopyrightInfoAndLogoUrl()
   },
   methods: {
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-          if (valid) {
-            this.loading = true
-            this.$store.dispatch('LoginByUsername', this.loginForm).then((data) => {
-              this.loading = false
-              this.$store.dispatch('setUserToken',data)
-              this.$router.push({ path: this.redirect || '/home/index' })
-            }).catch((msg) => {
-              this.$message.error(msg);
-              this.loading = false
-            })
-          } else {
-            return false
+      /*handleLogin () {
+          this.$refs.loginForm.validate(valid => {
+              if (valid) {
+                  this.loading = true
+                  this.$store.dispatch('LoginByUsername', this.loginForm).then((data) => {
+                      this.loading = false
+                      this.$store.dispatch('setUserToken', data)
+                      this.$router.push({path: this.redirect || '/home/index'})
+                  }).catch((msg) => {
+                      this.$message.error(msg);
+                      this.loading = false
+                  })
+              } else {
+                  return false
+              }
+          })
+      },
+      initCopyrightInfoAndLogoUrl () {
+          let copyrightInfo1 = window.localStorage["copyrightInfo1"];
+          let copyrightInfo2 = window.localStorage["copyrightInfo2"];
+          if (copyrightInfo1) {
+              this.copyrightInfo1 = window.localStorage["copyrightInfo1"];
           }
-        })
-    },
-    initCopyrightInfoAndLogoUrl(){
-      let copyrightInfo1 = window.localStorage["copyrightInfo1"];
-      let copyrightInfo2 = window.localStorage["copyrightInfo2"];
-      if (copyrightInfo1) {
-        this.copyrightInfo1 = window.localStorage["copyrightInfo1"];
-      }
-      if (copyrightInfo2) {
-        this.copyrightInfo2 = window.localStorage["copyrightInfo2"];
-      }
-      let bgUrl = window.localStorage["bgUrl"];
-      let logoUrl = window.localStorage["logoUrl"];
-      if (logoUrl) {
-        this.logoUrl = window.localStorage["logoUrl"];
-      }
-      if (bgUrl) {
-        this.backgroundUrl = window.localStorage["bgUrl"]
+          if (copyrightInfo2) {
+              this.copyrightInfo2 = window.localStorage["copyrightInfo2"];
+          }
+          let bgUrl = window.localStorage["bgUrl"];
+          let logoUrl = window.localStorage["logoUrl"];
+          if (logoUrl) {
+              this.logoUrl = window.localStorage["logoUrl"];
+          }
+          if (bgUrl) {
+              this.backgroundUrl = window.localStorage["bgUrl"]
+          }
+      },*/
+
+      gotoLogin () {
+          console.log("token===>" + this.$store.getters.token)
+          this.$store.dispatch('LoginByUsername').then((data) => {
+              console.log("登录成功")
+              this.loading = false
+              this.$store.dispatch('setUserToken', data)
+              this.$router.push({path: this.redirect || '/home/index'})
+          }).catch((msg) => {
+              this.$message.error(msg)
+          })
       }
 
-    }
+      /*loginByCAS().then((res) => {
+              let data = res.data
+              if(data.code!=0){
+                  this.dispatch('initWebSock',data.data.id)
+                  resolve(userName)
+              }else{
+                  reject(data.msg)
+              }
+              this.$store.dispatch('setUserToken', data)
+              this.$router.push({path: this.redirect || '/home/index'})
+          }).catch((msg) => {
+              this.$message.error(msg);
+              this.loading = false
+          })*/
   }
 };
 </script>
