@@ -35,8 +35,10 @@
     import {getDeviceByByteDataAndType,getCmdMapByDevice} from "@/dataparse/model/deviceAdapter";
     import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
     import animation from './components/animation'
-    //import {SdcSoftDevice,Web_DeviceAdapterUtil,Commands,CRC16Util} from 'dataparse'
-
+    //import cmd from '../../dataparse/entity/command'
+    //import icmd from '../../dataparse/entity/intCommand'
+    //const {remote} = require('electron')
+    //const {Menu, MenuItem} = remote
     export default {
             name:'controller-run-info',
         components:{
@@ -123,7 +125,6 @@
                 })
             },
             getDeviceByByteDataAndType(byteData,deviceType){
-                //console.log(Web_DeviceAdapterUtil.getSdcSoftDevice(deviceType,byteData,0,0))
                 getDeviceByByteDataAndType(byteData,deviceType).then(data=>{
                     this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields()
                     this.controllerFormData.bengAnimationList=data.getBeng()

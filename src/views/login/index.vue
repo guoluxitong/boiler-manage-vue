@@ -1,5 +1,9 @@
 <template>
+<<<<<<< HEAD
   <!--<div class="loginBox" :style="{backgroundImage: 'url(' + backgroundUrl + ')'}">
+=======
+  <div class="loginBox">
+>>>>>>> parent of 101bbec... 修复npm包版本不兼容bug
     <el-form
       :model="loginForm"
       :rules="rules"
@@ -8,10 +12,7 @@
       label-width="0px"
       class="login-container"
     >
-      <div class="picBox">
-        <img class="pic" :src="logoUrl" v-if="logoUrl!=''">
-      </div>
-      <h3 class="title"> 锅炉远程监控平台</h3>
+      <h3 class="title">锅炉远程监控平台</h3>
       <el-form-item prop="account">
         <el-input type="text" v-model="loginForm.account" auto-complete="off" placeholder="账号"></el-input>
       </el-form-item>
@@ -27,8 +28,6 @@
           :loading="loading"
         >登录</el-button>
       </el-form-item>
-      <p class="copyright" v-if="copyrightInfo1!=''">{{copyrightInfo1}} © 2000-2019</p>
-      <p class="copyright" v-if="copyrightInfo2!=''">{{copyrightInfo2}} © 2000-2019</p>
     </el-form>
   </div>-->
 </template>
@@ -38,11 +37,15 @@ export default {
   name: "login",
   data() {
     return {
+<<<<<<< HEAD
       /*loading: false,
       copyrightInfo1:'',
       copyrightInfo2:'',
       logoUrl:'/static/common/defaultLogo.png',
       backgroundUrl:'/static/common/loginBackground.jpg',
+=======
+      loading: false,
+>>>>>>> parent of 101bbec... 修复npm包版本不兼容bug
       loginForm: {
         account: "",
         passWord: ""
@@ -53,6 +56,7 @@ export default {
       }*/
     };
   },
+<<<<<<< HEAD
   created(){
       this.gotoLogin()
     //this.initCopyrightInfoAndLogoUrl()
@@ -120,6 +124,43 @@ export default {
               this.$message.error(msg);
               this.loading = false
           })*/
+=======
+  methods: {
+    handleLogin() {
+
+      // let self=this
+      // this.loading = true
+      // this.$store.dispatch('LoginByUsername',this.loginForm).then((data) => {
+      //   this.loading = false
+      //   this.$store.state.user.websock.onmessage=function (e) {
+      //     if(e.data=="false"){
+      //       self.$message.error("当前账号已经在其它地方登陆，不可再登陆");
+      //     }else{
+      //       self.$store.dispatch('setUserToken',data)
+      //       this.$router.push({ path: this.redirect || "/home/index" })
+      //     }
+      //   }
+      // }).catch((msg) => {
+      //   this.$message.error(msg);
+      //   this.loading = false
+      // })
+      this.$refs.loginForm.validate(valid => {
+          if (valid) {
+            this.loading = true
+            this.$store.dispatch('LoginByUsername', this.loginForm).then((data) => {
+              this.loading = false
+              this.$store.dispatch('setUserToken',data)
+              this.$router.push({ path: this.redirect || '/home/index' })
+            }).catch((msg) => {
+              this.$message.error(msg);
+              this.loading = false
+            })
+          } else {
+            return false
+          }
+        })
+    }
+>>>>>>> parent of 101bbec... 修复npm包版本不兼容bug
   }
 };
 </script>
@@ -141,7 +182,7 @@ export default {
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
   .title {
-    margin: 20px auto 20px auto;
+    margin: 0px auto 40px auto;
     text-align: center;
     color: #505458;
   }
@@ -154,30 +195,10 @@ export default {
     width: 100%;
     height: 100%;
     top: 0px;
+    background-image: url("../../../static/common/loginBackground.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size:cover;
   }
-  .copyright{
-    margin: 0px auto;
-    text-align: center;
-    color: #505458;
-    font-size: small;
-  }
-  .picBox{
-    text-align: center;
-  }
-  .pic{
-    margin: auto,15px;
-    width: auto;
-    height: 100px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    background-clip: padding-box;
-    background: #fff;
-    border: 1px solid #eaeaea;
-    box-shadow: 0 0 25px #cac6c6;
-    }
 </style>

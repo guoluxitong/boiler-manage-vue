@@ -5,6 +5,7 @@
         <el-menu-item :index="item.path+'/'+item.children[0].path">
           <span v-if="item.children[0].meta&&item.children[0].meta.title" slot="title">{{item.children[0].meta.title}}</span>
         </el-menu-item>
+
       </router-link>
       <el-submenu v-else :index="item.name||item.path" :key="item.name">
         <template slot="title">
@@ -20,11 +21,7 @@
         </template>
       </el-submenu>
     </template>
-<!--    <el-menu-item index="4"><a :href="helpDocumentHref" style="text-decoration: none;color:#FFF;">帮助</a></el-menu-item>-->
-    <el-submenu index="2">
-      <template slot="title">帮助</template>
-      <el-menu-item index="2-1"><a :href="helpDocumentHref" style="text-decoration: none;color:#FFF;">使用说明文档</a></el-menu-item>
-    </el-submenu>
+    <el-menu-item index="4"><a :href="helpDocumentHref" style="text-decoration: none;color:#FFF;">帮助</a></el-menu-item>
   </div>
 </template>
 
