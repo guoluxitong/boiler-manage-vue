@@ -14,5 +14,13 @@ export const config={
     //首页地址
     default_home_url:'https://www.baidu.com',
     //升级地址
-    helpDocumentHref:'http://autoupdate.sdcsoft.com.cn/files/BoilerPlantSystem/document/help.docx?'+Math.random()
+    helpDocumentHref:'http://autoupdate.sdcsoft.com.cn/files/BoilerPlantSystem/document/help.docx?'+Math.random(),
+
+  baidu_weather_url:'http://api.map.baidu.com/telematics/v3/weather',
+  //城市编码URL
+  baidu_map_url:'http://api.map.baidu.com',
+  //百度AK
+  baidu_ak:'eqPZV35edaZZGefOIopjLNqTSj4qI89Y',
+  //高德key
+  amap_key:'be461fa7f18a297d520ddd1c7dedc753'
 }

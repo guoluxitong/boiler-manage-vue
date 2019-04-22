@@ -21,7 +21,10 @@
         </template>
       </el-submenu>
     </template>
-    <el-menu-item index="4"><a :href="helpDocumentHref" style="text-decoration: none;color:#FFF;">帮助</a></el-menu-item>
+    <el-submenu index="2">
+      <template slot="title">帮助</template>
+      <el-menu-item index="2-1"><a :href="helpDocumentHref" style="text-decoration: none;color:#FFF;">使用说明文档</a></el-menu-item>
+    </el-submenu>
   </div>
 </template>
 

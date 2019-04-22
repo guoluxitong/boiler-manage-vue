@@ -79,34 +79,22 @@ const user = {
             commit('SET_TOKEN', userName)
             setToken(userName)
         },
-        LoginByUsername () {
-            //const userName = userInfo.account.trim()
-            return new Promise((resolve, reject) => {
-                //loginByUsername(userName, userInfo.passWord).then(response => {
-                //const data = userInfo.data
-                loginByCAS().then(res => {
-                    let data = res.data
-                    if (data.code != 0) {
-                        this.dispatch('initWebSock', data.data.id)
-                        resolve(data.data.mobile)
-                    } else {
-                        reject(data.msg)
-                    }
-                }).catch(err=>{
-                    console.log("111")
-                    window.location.href = "http://localhost:8091/test/li"
-                })
-                /*if(res.code!=0){
-                  this.dispatch('initWebSock',res.data.id)
-                  resolve(userName)
-                }else{
-                  reject(data.msg)
-                }*/
-            }).catch(error => {
-                reject(error)
-            })
-            //})
-        },
+      LoginByUsername({ commit }, userInfo) {
+        const userName = userInfo.account.trim()
+        return new Promise((resolve, reject) => {
+          loginByUsername(userName, userInfo.passWord).then(response => {
+            const data = response.data
+            if(data.code!=0){
+              this.dispatch('initWebSock',data.data.id)
+              resolve(userName)
+            }else{
+              reject(data.msg)
+            }
+          }).catch(error => {
+            reject(error)
+          })
+        })
+      },
         GetUserInfo ({commit, state}) {
             return new Promise((resolve, reject) => {
                 getLoginUserInfo(state.token).then(response => {

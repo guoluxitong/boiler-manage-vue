@@ -1,17 +1,11 @@
 <template>
-  <el-dialog
-    title="运行信息"
-    :visible.sync="visible"
-    @close="controllerRunInfoClose"
-    :show="show"
-    @open="controllerRunInfoOpen"
-    >
-    <div class="product-runInfo" style="overflow-y:auto">
+    <div class="product-runInfo"  style="overflow-y:auto">
         <animation :stove-animation="controllerFormData.stoveAnimation" :fan-animation-list="controllerFormData.fanAnimationList" :beng-animation-list="controllerFormData.bengAnimationList"></animation>
         <el-row class="run-tab">
             <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto'}">
                 <el-tab-pane label="异常信息" name="first" v-if="controllerFormData.exceptionInfoMap&&Object.keys(controllerFormData.exceptionInfoMap).length>0">
-                    <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}</span> </el-row>
+
+                  <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}</span> </el-row>
                 </el-tab-pane>
                 <el-tab-pane label="基本信息" name="second">
                     <el-row v-for="item in controllerFormData.baseInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}：</span>{{item.valueString}} </el-row>
@@ -28,17 +22,12 @@
             </el-tabs>
         </el-row>
     </div>
-  </el-dialog>
 </template>
 <script>
     import {getControllerByteData,getControllerType} from '@/api/controller'
     import {getDeviceByByteDataAndType,getCmdMapByDevice} from "@/dataparse/model/deviceAdapter";
     import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
     import animation from './components/animation'
-    //import cmd from '../../dataparse/entity/command'
-    //import icmd from '../../dataparse/entity/intCommand'
-    //const {remote} = require('electron')
-    //const {Menu, MenuItem} = remote
     export default {
       name: 'controller-run-info',
       components: {
@@ -46,14 +35,12 @@
       },
       data () {
         return {
-          visible: this.show,
           dialogDeviceFormVisible: false,
           runTabHeight: document.body.clientHeight - 125,
-          timeInterVal: 3,
+          //timeInterVal:3,
           controllerFormData: {
             activeName: 'second',
             stoveAnimation: '',
-            deviceFocusInfoMap: {},
             fanAnimationList: [],
             bengAnimationList: [],
             exceptionInfoMap: {},
@@ -64,61 +51,31 @@
           },
         }
       },
-      props: {
-        show: {
-          type: Boolean,
-          default: false
-        },
-        controllerNo: {
-          type: String,
-          default: ''
-        }
-      },
-      watch: {
-        show () {
-          this.visible = this.show;
-        },
-      },
       created () {
-
+        let self = this
+        window.onresize = function () {
+          self.runTabHeight = document.body.clientHeight - 160
+        }
+        /*   this.configContextMenu()*/
+        this.setTimeInterval()
+        this.showControllerData()
       },
       methods: {
-        controllerRunInfoOpen () {
-          this.initControllerInfo()
-          let self = this
-          window.onresize = function () {
-            self.runTabHeight = document.body.clientHeight - 160
-          }
-          this.setTimeInterval()
-          this.showControllerData()
-        },
-        controllerRunInfoClose () {
-          this.initControllerInfo()
-
-          this.$emit('controllerRunInfoDialogClose', {controllerRunInfoDialogVisible: false})
-        },
         setTimeInterval () {
           let timeInterVal = window.localStorage['timeInterVal']
           if (timeInterVal) this.timeInterVal = timeInterVal
-
-          var timer = setInterval(() => {
-            this.showControllerData(timer)
-
-          }, 1000 * (this.timeInterVal));
+          setInterval(() => {
+            this.showControllerData()
+          }, 5000);
         },
-        showControllerData (timer) {
-          Promise.all([getControllerByteData(this.controllerNo), getControllerType(this.controllerNo)]).then((data) => {
+        showControllerData () {
+          Promise.all([getControllerByteData(this.$store.state.user.deviceRunInfoNo), getControllerType(this.$store.state.user.deviceRunInfoNo)]).then((data) => {
             let controllerByteData = data[0].data
-            if (controllerByteData.length === 0) {
-              this.$message({
-                message: '设备未在线',
-                type: 'warning'
-              })
-              clearInterval(timer)
-            }
             let controllerType = data[1].data.deviceType
             if (controllerByteData.length > 0 && controllerType) {
               this.getDeviceByByteDataAndType(controllerByteData, controllerType)
+            } else {
+              this.initControllerInfo()
             }
           }).catch(function (r) {
             console.log(r);
@@ -126,7 +83,6 @@
         },
         getDeviceByByteDataAndType (byteData, deviceType) {
           getDeviceByByteDataAndType(byteData, deviceType).then(data => {
-            this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields()
             this.controllerFormData.bengAnimationList = data.getBeng()
             this.controllerFormData.fanAnimationList = data.getFan()
             this.controllerFormData.stoveAnimation = data.getStoveElement().GetElementPrefixAndValuesString()
@@ -135,22 +91,6 @@
             this.controllerFormData.mockInfoMap = data.getMockFields()
             this.controllerFormData.settingInfoMap = data.getSettingFields()
             this.controllerFormData.deviceInfoMap = data.getDeviceInfoFields()
-            getCmdMapByDevice(data).then(cmds => {
-              for (let key in cmds) {
-                if (key == '设置参数') {
-                  let cmd = cmds[key]
-                  if (cmd.length == 0) {
-                    break
-                  }
-                  let str = cmd[0].getCommandString()
-                  console.log("value修改前==>" + cmd[0].value + "CommandString修改前==>" + str)
-                  cmd[0].setValue(12)
-                  str = cmd[0].getCommandString()
-                  console.log("value修改后==>" + cmd[0].value + "CommandString修改后==>" + str)
-                }
-
-              }
-            })
           })
         },
         initControllerInfo () {

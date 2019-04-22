@@ -15,7 +15,7 @@
                 </div>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item divided>
-                        <span  @click="dialogHomeFormVisible = true"  style="display:block;">首页设置</span>
+                      <span  @click="dialogHomeFormVisible = true"  style="display:block;">软件设置</span>
                     </el-dropdown-item>
                     <el-dropdown-item divided>
                         <span  @click="dialogFormVisible = true"  style="display:block;">修改密码</span>
@@ -42,11 +42,49 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
-        <el-dialog title="首页设置" :visible.sync="dialogHomeFormVisible" width="30%">
-            <el-form :model="homeFormData" :rules="homeRules" ref="homeForm" label-width="90px"  style='width: 90%; margin-left:15px;' label-position="right">
-                <el-form-item label="首页地址" prop="homeUrl">
-                    <el-input  v-model="homeFormData.homeUrl" auto-complete="off" placeholder="说明：以http或者https开头"></el-input>
-                </el-form-item>
+      <el-dialog title="软件设置" :visible.sync="dialogHomeFormVisible" width="40%">
+
+        <el-form :model="homeFormData" :rules="homeRules" ref="homeForm" label-width="90px"  style='width: 90%; margin-left:15px;' label-position="right">
+          <el-form-item label="版权信息1" prop="copyrightInfo1">
+            <el-input  v-model="homeFormData.copyrightInfo1" auto-complete="off" placeholder="说明：请填写企业名称"></el-input>
+          </el-form-item>
+          <el-form-item label="版权信息2" prop="copyrightInfo2">
+            <el-input  v-model="homeFormData.copyrightInfo2" auto-complete="off" placeholder="说明：请填写企业名称"></el-input>
+          </el-form-item>
+          <el-form-item label="首页地址" prop="homeUrl">
+            <el-input  v-model="homeFormData.homeUrl" auto-complete="off" placeholder="说明：以http或者https开头"></el-input>
+          </el-form-item>
+          <el-form-item label="企业logo" prop="" >
+            <el-upload
+              ref="upload"
+              :action="logoUploadPath"
+              name="picture"
+              list-type="picture-card"
+              :limit="1"
+              :file-list="logoFile"
+              :on-exceed="onExceed"
+              :before-upload="beforeUpload"
+              :on-success="handleLogoSuccess"
+              :on-remove="handleLogoRemove">
+              <i class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="登陆背景" prop="">
+            <!--              <el-input  v-model="homeFormData.bgPic" auto-complete="off" placeholder="说明：以http或者https开头"></el-input>-->
+            <el-upload
+              ref="upload"
+              :action="bgUploadPath"
+              name="picture"
+              list-type="picture-card"
+              :limit="1"
+              :file-list="backgroundFile"
+              :on-exceed="onExceed"
+              :before-upload="beforeUpload"
+              :on-success="handleBgSuccess"
+              :on-remove="handleBgRemove">
+              <i class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="submitHomeForm">提交</el-button>
                 </el-form-item>
@@ -56,21 +94,17 @@
 </template>
 
 <script>
-    import { validateURL} from '@/utils/validate'
-    import { mapGetters } from 'vuex'
-    import sidebarItem from './sidebar/sidebarItem'
-    import {editUserPass} from '@/api/user'
-<<<<<<< HEAD
-    import {deleteFile} from '@/api/upload'
-    import axios from 'axios'
-    import { config } from '@/config/index'
-    import { logoutByCAS } from '@/api/login'
+  import { validateURL} from '@/utils/validate'
+  import { mapGetters } from 'vuex'
+  import sidebarItem from './sidebar/sidebarItem'
+  import {editUserPass} from '@/api/user'
+  import {deleteFile} from '@/api/upload'
+  import axios from 'axios'
+  import { config } from '@/config/index'
 
-    const baseURL = process.env.NODE_ENV === 'development'
-      ? 'http://' + config.development_base_ip + ':' + config.development_base_port
-      : 'http://' + config.product_base_ip + ':' + config.product_base_port
-=======
->>>>>>> parent of 101bbec... 修复npm包版本不兼容bug
+  const baseURL = process.env.NODE_ENV === 'development'
+    ? 'http://' + config.development_base_ip + ':' + config.development_base_port
+    : 'http://' + config.product_base_ip + ':' + config.product_base_port
     export default {
         components: { sidebarItem },
         computed: {
@@ -133,15 +167,39 @@
                 dialogHomeFormVisible:false,
                 homeFormData:{
                     homeUrl:'',
+                  copyrightInfo1:'',
+                  copyrightInfo2:'',
+                  logoUrl:'',
+                  bgUrl:'',
                 },
                 homeRules:{
                     homeUrl: [{trigger: 'blur',validator: validateHomeUrl}],
-                }
+                },
+              //文件上传路径
+              logoUploadPath:baseURL+"/upload/uploadFile?orgId="+this.$store.state.user.orgId+ "&type=logo",
+              bgUploadPath:baseURL+"/upload/uploadFile?orgId="+this.$store.state.user.orgId+ "&type=background",
+              //图片列表（用于在上传组件中回显图片）
+              logoFile: [{name: 'logo', url: '/static/common/defaultLogo.png'}],
+              backgroundFile: [{name: 'background', url: '/static/common/loginBackground.jpg'}],
             }
         },
         created(){
-            let homeUrl= window.localStorage['homeUrl']
-            if(homeUrl) this.homeFormData.homeUrl=window.localStorage['homeUrl']
+          let homeUrl= window.localStorage['homeUrl']
+          let copyrightInfo1 = window.localStorage['copyrightInfo1']
+          let copyrightInfo2 = window.localStorage['copyrightInfo2']
+          if(homeUrl) this.homeFormData.homeUrl=window.localStorage['homeUrl']
+          if (copyrightInfo1) this.homeFormData.copyrightInfo1 = window.localStorage['copyrightInfo1']
+          if (copyrightInfo2) this.homeFormData.copyrightInfo2 = window.localStorage['copyrightInfo2']
+          let logoUrl = window.localStorage['logoUrl']
+          if (logoUrl) {
+            this.homeFormData.logoUrl = window.localStorage['logoUrl']
+            this.logoFile = [{name:'logo',url: this.homeFormData.logoUrl}]
+          }
+          let bgUrl = window.localStorage['bgUrl']
+          if (bgUrl) {
+            this.homeFormData.bgUrl =  window.localStorage['bgUrl']
+            this.backgroundFile = [{name:'background',url: this.homeFormData.bgUrl}]
+          }
         },
         methods: {
             handleSubmit(){
@@ -172,6 +230,8 @@
                 this.$refs['homeForm'].validate((valid) => {
                     if (valid) {
                         window.localStorage['homeUrl']=this.homeFormData.homeUrl
+                      window.localStorage['copyrightInfo1']=this.homeFormData.copyrightInfo1
+                      window.localStorage['copyrightInfo2']=this.homeFormData.copyrightInfo2
                         this.dialogHomeFormVisible = false
                         this.$message( {
                             message: '成功',
@@ -188,18 +248,13 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    logoutByCAS()
-                    this.$message({
-                        type: 'info',
-                        message: '退出成功'
-                    });
+
                     window.close()
                 }).catch(err => {
                     this.$message({
                         type: 'info',
                         message: '退出取消'
                     });
-<<<<<<< HEAD
                     console.log(err)
                 })
 
@@ -231,30 +286,30 @@
           },
           //删除文件之前的钩子函数
           handleLogoRemove(file, fileList) {
-              let path = window.localStorage['logoPath']
-              if (path) {
-                deleteFile(path).then(()=>{
-                  this.$message({
-                    type: 'info',
-                    message: '已删除原有图片',
-                    duration: 6000
-                  });
-                  window.localStorage.removeItem("logoPath")
-                  window.localStorage.removeItem("logoUrl")
-                }).catch(()=> {
-                  this.$message({
-                    type: 'info',
-                    message: '删除失败',
-                    duration: 6000
-                  });
-                })
-              }else {
+            let path = window.localStorage['logoPath']
+            if (path) {
+              deleteFile(path).then(()=>{
                 this.$message({
                   type: 'info',
                   message: '已删除原有图片',
                   duration: 6000
                 });
-              }
+                window.localStorage.removeItem("logoPath")
+                window.localStorage.removeItem("logoUrl")
+              }).catch(()=> {
+                this.$message({
+                  type: 'info',
+                  message: '删除失败',
+                  duration: 6000
+                });
+              })
+            }else {
+              this.$message({
+                type: 'info',
+                message: '已删除原有图片',
+                duration: 6000
+              });
+            }
 
 
           },
@@ -309,10 +364,9 @@
             }
             if (!isLt2M) {
               this.$message.error('上传图片大小不能超过 2MB!');
-=======
-                });
->>>>>>> parent of 101bbec... 修复npm包版本不兼容bug
             }
+            return (isJPG || isPNG) && isLt2M;
+          },
         }
     }
 </script>

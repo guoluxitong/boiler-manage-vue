@@ -1,9 +1,5 @@
 <template>
-<<<<<<< HEAD
-  <!--<div class="loginBox" :style="{backgroundImage: 'url(' + backgroundUrl + ')'}">
-=======
-  <div class="loginBox">
->>>>>>> parent of 101bbec... 修复npm包版本不兼容bug
+  <div class="loginBox" :style="{backgroundImage: 'url(' + backgroundUrl + ')'}">
     <el-form
       :model="loginForm"
       :rules="rules"
@@ -12,14 +8,17 @@
       label-width="0px"
       class="login-container"
     >
-      <h3 class="title">锅炉远程监控平台</h3>
+      <div class="picBox">
+        <img class="pic" :src="logoUrl" v-if="logoUrl!=''">
+      </div>
+      <h3 class="title"> 锅炉远程监控平台</h3>
       <el-form-item prop="account">
         <el-input type="text" v-model="loginForm.account" auto-complete="off" placeholder="账号"></el-input>
       </el-form-item>
       <el-form-item prop="passWord">
         <el-input type="password" v-model="loginForm.passWord" auto-complete="off" placeholder="密码"></el-input>
       </el-form-item>
-      &lt;!&ndash;<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>&ndash;&gt;
+<!--      &lt;!&ndash;<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>&ndash;&gt;-->
       <el-form-item style="width:100%;">
         <el-button
           type="primary"
@@ -28,141 +27,75 @@
           :loading="loading"
         >登录</el-button>
       </el-form-item>
+      <p class="copyright" v-if="copyrightInfo1!=''">{{copyrightInfo1}} © 2000-2019</p>
+      <p class="copyright" v-if="copyrightInfo2!=''">{{copyrightInfo2}} © 2000-2019</p>
     </el-form>
-  </div>-->
+  </div>
 </template>
 <script>
-import axios from 'axios'
 export default {
   name: "login",
-  data() {
+  data () {
     return {
-<<<<<<< HEAD
-      /*loading: false,
-      copyrightInfo1:'',
-      copyrightInfo2:'',
-      logoUrl:'/static/common/defaultLogo.png',
-      backgroundUrl:'/static/common/loginBackground.jpg',
-=======
       loading: false,
->>>>>>> parent of 101bbec... 修复npm包版本不兼容bug
+      copyrightInfo1: '',
+      copyrightInfo2: '',
+      logoUrl: '/static/common/defaultLogo.png',
+      backgroundUrl: '/static/common/loginBackground.jpg',
+
+      loading: false,
+
       loginForm: {
         account: "",
         passWord: ""
       },
       rules: {
-        account: [{ required: true, message: "请输入账号", trigger: "blur" }],
-        passWord: [{ required: true, message: "请输入密码", trigger: "blur" }]
-      }*/
+        account: [{required: true, message: "请输入账号", trigger: "blur"}],
+        passWord: [{required: true, message: "请输入密码", trigger: "blur"}]
+      }
     };
   },
-<<<<<<< HEAD
   created(){
-      this.gotoLogin()
-    //this.initCopyrightInfoAndLogoUrl()
+    this.initCopyrightInfoAndLogoUrl()
   },
   methods: {
-      /*handleLogin () {
-          this.$refs.loginForm.validate(valid => {
-              if (valid) {
-                  this.loading = true
-                  this.$store.dispatch('LoginByUsername', this.loginForm).then((data) => {
-                      this.loading = false
-                      this.$store.dispatch('setUserToken', data)
-                      this.$router.push({path: this.redirect || '/home/index'})
-                  }).catch((msg) => {
-                      this.$message.error(msg);
-                      this.loading = false
-                  })
-              } else {
-                  return false
-              }
-          })
-      },
-      initCopyrightInfoAndLogoUrl () {
-          let copyrightInfo1 = window.localStorage["copyrightInfo1"];
-          let copyrightInfo2 = window.localStorage["copyrightInfo2"];
-          if (copyrightInfo1) {
-              this.copyrightInfo1 = window.localStorage["copyrightInfo1"];
-          }
-          if (copyrightInfo2) {
-              this.copyrightInfo2 = window.localStorage["copyrightInfo2"];
-          }
-          let bgUrl = window.localStorage["bgUrl"];
-          let logoUrl = window.localStorage["logoUrl"];
-          if (logoUrl) {
-              this.logoUrl = window.localStorage["logoUrl"];
-          }
-          if (bgUrl) {
-              this.backgroundUrl = window.localStorage["bgUrl"]
-          }
-      },*/
-
-      gotoLogin () {
-          console.log("token===>" + this.$store.getters.token)
-          this.$store.dispatch('LoginByUsername').then((data) => {
-              console.log("登录成功")
-              this.loading = false
-              this.$store.dispatch('setUserToken', data)
-              this.$router.push({path: this.redirect || '/home/index'})
-          }).catch((msg) => {
-              this.$message.error(msg)
-          })
-      }
-
-      /*loginByCAS().then((res) => {
-              let data = res.data
-              if(data.code!=0){
-                  this.dispatch('initWebSock',data.data.id)
-                  resolve(userName)
-              }else{
-                  reject(data.msg)
-              }
-              this.$store.dispatch('setUserToken', data)
-              this.$router.push({path: this.redirect || '/home/index'})
-          }).catch((msg) => {
-              this.$message.error(msg);
-              this.loading = false
-          })*/
-=======
-  methods: {
-    handleLogin() {
-
-      // let self=this
-      // this.loading = true
-      // this.$store.dispatch('LoginByUsername',this.loginForm).then((data) => {
-      //   this.loading = false
-      //   this.$store.state.user.websock.onmessage=function (e) {
-      //     if(e.data=="false"){
-      //       self.$message.error("当前账号已经在其它地方登陆，不可再登陆");
-      //     }else{
-      //       self.$store.dispatch('setUserToken',data)
-      //       this.$router.push({ path: this.redirect || "/home/index" })
-      //     }
-      //   }
-      // }).catch((msg) => {
-      //   this.$message.error(msg);
-      //   this.loading = false
-      // })
+    handleLogin () {
       this.$refs.loginForm.validate(valid => {
-          if (valid) {
-            this.loading = true
-            this.$store.dispatch('LoginByUsername', this.loginForm).then((data) => {
-              this.loading = false
-              this.$store.dispatch('setUserToken',data)
-              this.$router.push({ path: this.redirect || '/home/index' })
-            }).catch((msg) => {
-              this.$message.error(msg);
-              this.loading = false
-            })
-          } else {
-            return false
-          }
-        })
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('LoginByUsername', this.loginForm).then((data) => {
+            this.loading = false
+            this.$store.dispatch('setUserToken', data)
+            this.$router.push({path: this.redirect || '/home/index'})
+          }).catch((msg) => {
+            this.$message.error(msg);
+            this.loading = false
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    initCopyrightInfoAndLogoUrl(){
+      let copyrightInfo1 = window.localStorage["copyrightInfo1"];
+      let copyrightInfo2 = window.localStorage["copyrightInfo2"];
+      if (copyrightInfo1) {
+        this.copyrightInfo1 = window.localStorage["copyrightInfo1"];
+      }
+      if (copyrightInfo2) {
+        this.copyrightInfo2 = window.localStorage["copyrightInfo2"];
+      }
+      let bgUrl = window.localStorage["bgUrl"];
+      let logoUrl = window.localStorage["logoUrl"];
+      if (logoUrl) {
+        this.logoUrl = window.localStorage["logoUrl"];
+      }
+      if (bgUrl) {
+        this.backgroundUrl = window.localStorage["bgUrl"]
+      }
     }
->>>>>>> parent of 101bbec... 修复npm包版本不兼容bug
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -182,7 +115,7 @@ export default {
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
   .title {
-    margin: 0px auto 40px auto;
+    margin: 20px auto 20px auto;
     text-align: center;
     color: #505458;
   }
@@ -195,10 +128,31 @@ export default {
     width: 100%;
     height: 100%;
     top: 0px;
-    background-image: url("../../../static/common/loginBackground.jpg");
+    /*background-image: url("../../../static/common/loginBackground.jpg");*/
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size:cover;
+  }
+  .copyright{
+    margin: 0px auto;
+    text-align: center;
+    color: #505458;
+    font-size: small;
+  }
+  .picBox{
+    text-align: center;
+  }
+  .pic{
+    margin: auto,15px;
+    width: auto;
+    height: 100px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    background-clip: padding-box;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 0 25px #cac6c6;
   }
 </style>
