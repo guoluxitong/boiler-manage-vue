@@ -4,6 +4,7 @@
       <controller-run-info-dialog
         :show.sync="controllerRunInfoDialogVisible"
         :controllerNo="controllerNo"
+        :address="this.address"
         @controllerRunInfoDialogClose="controllerRunInfoDialogClose">
       </controller-run-info-dialog>
     </div>
@@ -30,6 +31,7 @@
                 mapPoints:[],
                 userId:'',
               controllerRunInfoDialogVisible:false,
+              address:"",
             }
         },
         mounted() {
@@ -59,11 +61,8 @@
                     let mk = new BMap.Marker(points);
                     markers.push(mk);
                     mk.addEventListener("click",()=>{
-                        // let newWindow=openElectronWindow("/controller-run-info?controllerNo="+this.mapPoints[i].controllerNo,{width: 600, height: 500,title:"运行信息"})
-                        // newWindow.on('closed', () => {
-                        //     newWindow = null
-                        // })
-                        // newWindow.setTitle("运行信息")
+                        let point = this.mapPoints[i]
+                        this.address = point.province + point.city + point.district
                       this.controllerRunInfoDialogVisible = true
                       this.controllerNo = this.mapPoints[i].controllerNo
                     })

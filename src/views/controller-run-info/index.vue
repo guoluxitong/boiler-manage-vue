@@ -1,12 +1,13 @@
 <template>
   <el-dialog
-    title="运行信息"
+    :title="this.controllerNo"
     :visible.sync="visible"
     @close="controllerRunInfoClose"
     :show="show"
     @open="controllerRunInfoOpen"
     >
     <div class="product-runInfo" style="overflow-y:auto">
+        <p style="margin:0">{{this.sellAddress}}</p>
         <animation :stove-animation="controllerFormData.stoveAnimation" :fan-animation-list="controllerFormData.fanAnimationList" :beng-animation-list="controllerFormData.bengAnimationList"></animation>
         <el-row class="run-tab">
             <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto'}">
@@ -35,10 +36,6 @@
     import {getDeviceByByteDataAndType,getCmdMapByDevice} from "@/dataparse/model/deviceAdapter";
     import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
     import animation from './components/animation'
-    //import cmd from '../../dataparse/entity/command'
-    //import icmd from '../../dataparse/entity/intCommand'
-    //const {remote} = require('electron')
-    //const {Menu, MenuItem} = remote
     export default {
       name: 'controller-run-info',
       components: {
@@ -62,6 +59,7 @@
             settingInfoMap: {},
             deviceInfoMap: {},
           },
+          sellAddress:this.address
         }
       },
       props: {
@@ -72,12 +70,19 @@
         controllerNo: {
           type: String,
           default: ''
+        },
+        address:{
+          type:String,
+          default:''
         }
       },
       watch: {
         show () {
           this.visible = this.show;
         },
+        address(){
+          this.sellAddress = this.address;
+        }
       },
       created () {
 
@@ -108,6 +113,7 @@
         },
         showControllerData (timer) {
           Promise.all([getControllerByteData(this.controllerNo), getControllerType(this.controllerNo)]).then((data) => {
+            console.log("产品列表页面正在请求数据")
             let controllerByteData = data[0].data
             if (controllerByteData.length === 0) {
               this.$message({
@@ -143,10 +149,10 @@
                     break
                   }
                   let str = cmd[0].getCommandString()
-                  console.log("value修改前==>" + cmd[0].value + "CommandString修改前==>" + str)
+                  //console.log("value修改前==>" + cmd[0].value + "CommandString修改前==>" + str)
                   cmd[0].setValue(12)
                   str = cmd[0].getCommandString()
-                  console.log("value修改后==>" + cmd[0].value + "CommandString修改后==>" + str)
+                  //console.log("value修改后==>" + cmd[0].value + "CommandString修改后==>" + str)
                 }
 
               }

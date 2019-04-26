@@ -130,6 +130,7 @@
       <controller-run-info-dialog
         :show.sync="controllerRunInfoDialogVisible"
         :controllerNo="controllerNo"
+        :address="address"
         @controllerRunInfoDialogClose="controllerRunInfoDialogClose">
       </controller-run-info-dialog>
         <!--辅机信息-->
@@ -256,6 +257,7 @@
                 controllerRunInfoDialogVisible:false,
                 mapCompleteDialogVisible:false,
                 titleName:'',
+                address:'',
             }
         },
         filters: {
@@ -354,6 +356,7 @@
             showControllerData(row){
                   this.controllerRunInfoDialogVisible = true
                   this.controllerNo = row.controllerNo
+                  this.address =  row.province+row.city+row.district+row.street
             },
             // 辅机信息
             auxiliaryMachineInfo(row){
@@ -542,7 +545,10 @@
                             return "无"
                         })(),
                         saleAddress:(()=>{
-                            if(row.province||row.city||row.district||row.street) return row.province+row.city+row.district+row.street
+                            if(row.province||row.city||row.district||row.street){                                
+                                return row.province+row.city+row.district+row.street
+                            }
+                             
                             return "无"
                         })(),
                     }

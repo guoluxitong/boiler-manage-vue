@@ -44,15 +44,9 @@
         this.controllerNoArray = data
       },
       receiveToControllerRunInfo(index) {
-        /*if (controllerNo !== '') {
-          console.log(this.controllerNoArray,controllerNo)
-          let index = this.controllerNoArray.indexOf(controllerNo)
-          console.log(index)*/
-        console.log(this.controllerNoArray, index)
         if (index > -1) {
           this.controllerNoArray.splice(index, 1)
         }
-        console.log(this.controllerNoArray)
       }
 
     }

@@ -1,104 +1,131 @@
 <template>
-    <div class="product-runInfo"  style="overflow-y:auto">
-
-        <animation  :stove-animation="controllerFormData.stoveAnimation" :fan-animation-list="controllerFormData.fanAnimationList" :beng-animation-list="controllerFormData.bengAnimationList"></animation>
-
-      <el-row class="run-tab">
-            <el-tabs  type="card" v-model="controllerFormData.activeName" :style="{'float':'left','width':'100%','overflow-y':'auto'}">
-                <el-tab-pane label="异常信息" name="first" v-if="controllerFormData.exceptionInfoMap&&Object.keys(controllerFormData.exceptionInfoMap).length>0">
-
-                  <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}</span> </el-row>
-                </el-tab-pane>
-                <el-tab-pane label="基本信息" name="second">
-                    <el-row v-for="item in controllerFormData.baseInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}：</span>{{item.valueString}} </el-row>
-                </el-tab-pane>
-                <el-tab-pane label="当前模拟量" name="third">
-                    <el-row v-for="item in controllerFormData.mockInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}：</span>{{item.valueString}} </el-row>
-                </el-tab-pane>
-                <el-tab-pane label="设定参数" name="fourth">
-                    <el-row v-for="item in controllerFormData.settingInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}：</span>{{item.valueString}} </el-row>
-                </el-tab-pane>
-                <el-tab-pane label="设备信息" name="five">
-                    <el-row v-for="item in controllerFormData.deviceInfoMap" :key="item.name"><span class="dataTitle">{{item.title}}：</span>{{item.valueString}} </el-row>
-                </el-tab-pane>
-            </el-tabs>
-        </el-row>
-    </div>
+  <div class="product-runInfo" style="overflow-y:auto">
+    <animation
+      :stove-animation="controllerFormData.stoveAnimation"
+      :fan-animation-list="controllerFormData.fanAnimationList"
+      :beng-animation-list="controllerFormData.bengAnimationList"
+    ></animation>
+    <el-row class="run-tab">
+      <el-tabs
+        type="card"
+        v-model="controllerFormData.activeName"
+        :style="{'float':'left','width':'100%','overflow-y':'auto'}"
+      >
+        <el-tab-pane
+          label="异常信息"
+          name="first"
+          v-if="controllerFormData.exceptionInfoMap&&Object.keys(controllerFormData.exceptionInfoMap).length>0"
+        >
+          <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name">
+            <span class="dataTitle">{{item.title}}</span>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="基本信息" name="second">
+          <el-row v-for="item in controllerFormData.baseInfoMap" :key="item.name">
+            <span class="dataTitle">{{item.title}}：</span>
+            {{item.valueString}}
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="当前模拟量" name="third">
+          <el-row v-for="item in controllerFormData.mockInfoMap" :key="item.name">
+            <span class="dataTitle">{{item.title}}：</span>
+            {{item.valueString}}
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="设定参数" name="fourth">
+          <el-row v-for="item in controllerFormData.settingInfoMap" :key="item.name">
+            <span class="dataTitle">{{item.title}}：</span>
+            {{item.valueString}}
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="设备信息" name="five">
+          <el-row v-for="item in controllerFormData.deviceInfoMap" :key="item.name">
+            <span class="dataTitle">{{item.title}}：</span>
+            {{item.valueString}}
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+    </el-row>
+  </div>
 </template>
 <script>
     import {getControllerByteData,getControllerType} from '@/api/controller'
     import {getDeviceByByteDataAndType,getCmdMapByDevice} from "@/dataparse/model/deviceAdapter";
     import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
     import animation from './components/animation'
-    export default {
-      name: 'controller-run-info',
-      components: {
-        animation
+export default {
+  name: "controller-run-info",
+  components: {
+    animation
+  },
+  props: {
+    controllerNo: {
+      type: String,
+      default: ""
+    }
+  },
+  data() {
+    return {
+      dialogDeviceFormVisible: false,
+      runTabHeight: document.documentElement.clientHeight / 2 - 80,
+      timeInterVal:3,
+      controllerFormData: {
+        activeName: "second",
+        stoveAnimation: "",
+        fanAnimationList: [],
+        bengAnimationList: [],
+        exceptionInfoMap: {},
+        baseInfoMap: {},
+        mockInfoMap: {},
+        settingInfoMap: {},
+        deviceInfoMap: {}
       },
-      props: {
-        controllerNo: {
-          type: String,
-          default: ""
-        }
-      },
-      data () {
-        return {
-          dialogDeviceFormVisible: false,
-          runTabHeight: document.documentElement.clientHeight/2-80 ,
-          //timeInterVal:3,
-          controllerFormData: {
-            activeName: 'second',
-            stoveAnimation: '',
-            fanAnimationList: [],
-            bengAnimationList: [],
-            exceptionInfoMap: {},
-            baseInfoMap: {},
-            mockInfoMap: {},
-            settingInfoMap: {},
-            deviceInfoMap: {},
-          },
-          controllerNumber: this.controllerNo,
-          divHeight:document.documentElement.clientHeight/2-80
-        }
-      },
-      watch: {
-        controllerNo(){
-          this.controllerNumber = this.controllerNo
-        }
-      },
-      created () {
-        let self = this
-        window.onresize = function () {
-          self.runTabHeight = document.documentElement.clientHeight/2-80
-        }
-        this.setTimeInterval()
-        this.showControllerData();
-        console.log(document.documentElement.clientHeight)
-      },
-      methods: {
-        setTimeInterval () {
+      controllerNumber: this.controllerNo,
+      divHeight: document.documentElement.clientHeight / 2 - 80
+    };
+  },
+  watch: {
+    controllerNo() {
+      this.controllerNumber = this.controllerNo;
+    }
+  },
+  created() {
+    let self = this;
+    window.onresize = function() {
+      self.runTabHeight = document.documentElement.clientHeight / 2 - 80;
+    };
+    this.setTimeInterval();
+    this.showControllerData();
+  },
+  methods: {
+    setTimeInterval () {
           let timeInterVal = window.localStorage['timeInterVal']
           if (timeInterVal) this.timeInterVal = timeInterVal
-          setInterval(() => {
+
+          var timer = setInterval(() => {
             this.showControllerData()
-          }, 5000);
+
+          }, 5000 * (this.timeInterVal));
         },
-        showControllerData () {
-         // console.log(this.controllerNumber)
+    showControllerData () {
           Promise.all([getControllerByteData(this.controllerNumber), getControllerType(this.controllerNumber)]).then((data) => {
+            console.log("多设备监控页面正在请求数据")
             let controllerByteData = data[0].data
+            if (controllerByteData.length === 0) {
+            }
             let controllerType = data[1].data.deviceType
             if (controllerByteData.length > 0 && controllerType) {
               this.getDeviceByByteDataAndType(controllerByteData, controllerType)
-            } else {
+            }else{
               this.initControllerInfo()
             }
           }).catch(function (r) {
             console.log(r);
           })
         },
-        getDeviceByByteDataAndType (byteData, deviceType) {
+   getDeviceByByteDataAndType (byteData, deviceType) {
           getDeviceByByteDataAndType(byteData, deviceType).then(data => {
+            this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields()
             this.controllerFormData.bengAnimationList = data.getBeng()
             this.controllerFormData.fanAnimationList = data.getFan()
             this.controllerFormData.stoveAnimation = data.getStoveElement().GetElementPrefixAndValuesString()
@@ -107,9 +134,9 @@
             this.controllerFormData.mockInfoMap = data.getMockFields()
             this.controllerFormData.settingInfoMap = data.getSettingFields()
             this.controllerFormData.deviceInfoMap = data.getDeviceInfoFields()
-          })
-        },
-        initControllerInfo () {
+      });
+    },
+    initControllerInfo () {
           this.controllerFormData.bengAnimationList = []
           this.controllerFormData.fanAnimationList = []
           this.controllerFormData.stoveAnimation = ''
@@ -118,26 +145,25 @@
           this.controllerFormData.mockInfoMap = {}
           this.controllerFormData.settingInfoMap = {}
           this.controllerFormData.deviceInfoMap = {}
-        }
-      }
-    }
+        },
+  }
+};
 </script>
 <style rel="stylesheet/scss" lang="scss">
-    .product-runInfo {
-        padding-left: 5px;
-        padding-right: 5px;
-        .deviceImg{
-            float: left;
-        }
-        .deviceShuiBeng{
-            margin-top: 71.3px;
-            margin-left: 5%;
-        }
-        .run-tab{
-            font-size: 14px;
-            font-weight: 500;
-            color: #303133;
-        }
-
-    }
+.product-runInfo {
+  padding-left: 5px;
+  padding-right: 5px;
+  .deviceImg {
+    float: left;
+  }
+  .deviceShuiBeng {
+    margin-top: 71.3px;
+    margin-left: 5%;
+  }
+  .run-tab {
+    font-size: 14px;
+    font-weight: 500;
+    color: #303133;
+  }
+}
 </style>

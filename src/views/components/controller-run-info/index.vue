@@ -73,25 +73,26 @@
         }
         this.setTimeInterval()
         this.showControllerData();
-        console.log(document.documentElement.clientHeight)
       },
       methods: {
         setTimeInterval () {
           let timeInterVal = window.localStorage['timeInterVal']
           if (timeInterVal) this.timeInterVal = timeInterVal
-          setInterval(() => {
-            this.showControllerData()
-          }, 5000);
+
+          var timer = setInterval(() => {
+            this.showControllerData(timer)
+
+          }, 1000 * (this.timeInterVal));
         },
-        showControllerData () {
-         // console.log(this.controllerNumber)
-          Promise.all([getControllerByteData(this.controllerNumber), getControllerType(this.controllerNumber)]).then((data) => {
+        showControllerData (timer) {
+          Promise.all([getControllerByteData(this.controllerNo), getControllerType(this.controllerNo)]).then((data) => {
             let controllerByteData = data[0].data
+            if (controllerByteData.length === 0) {
+              clearInterval(timer)
+            }
             let controllerType = data[1].data.deviceType
             if (controllerByteData.length > 0 && controllerType) {
               this.getDeviceByByteDataAndType(controllerByteData, controllerType)
-            } else {
-              this.initControllerInfo()
             }
           }).catch(function (r) {
             console.log(r);
@@ -99,6 +100,7 @@
         },
         getDeviceByByteDataAndType (byteData, deviceType) {
           getDeviceByByteDataAndType(byteData, deviceType).then(data => {
+            this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields()
             this.controllerFormData.bengAnimationList = data.getBeng()
             this.controllerFormData.fanAnimationList = data.getFan()
             this.controllerFormData.stoveAnimation = data.getStoveElement().GetElementPrefixAndValuesString()
@@ -107,6 +109,22 @@
             this.controllerFormData.mockInfoMap = data.getMockFields()
             this.controllerFormData.settingInfoMap = data.getSettingFields()
             this.controllerFormData.deviceInfoMap = data.getDeviceInfoFields()
+            getCmdMapByDevice(data).then(cmds => {
+              for (let key in cmds) {
+                if (key == '设置参数') {
+                  let cmd = cmds[key]
+                  if (cmd.length == 0) {
+                    break
+                  }
+                  let str = cmd[0].getCommandString()
+                  //console.log("value修改前==>" + cmd[0].value + "CommandString修改前==>" + str)
+                  cmd[0].setValue(12)
+                  str = cmd[0].getCommandString()
+                  //console.log("value修改后==>" + cmd[0].value + "CommandString修改后==>" + str)
+                }
+
+              }
+            })
           })
         },
         initControllerInfo () {
@@ -118,7 +136,7 @@
           this.controllerFormData.mockInfoMap = {}
           this.controllerFormData.settingInfoMap = {}
           this.controllerFormData.deviceInfoMap = {}
-        }
+        },
       }
     }
 </script>

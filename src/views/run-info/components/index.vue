@@ -19,7 +19,7 @@
     <div class="rightDiv">
       <div style="margin: 30px 30px 30px 15px">
         <div style="width: 50%;float: left">
-          <span style="font-size: large;font-weight: bold">{{this.getDeviceFocusMap.title}}实时曲线</span>
+          <span style="font-size: large;font-weight: bold">{{this.mockInfoMap.title}}实时曲线</span>
         </div>
         <div style="width: 50%;float: right">
           <span style="font-size: large;font-weight: bold">锅炉设备数量统计</span>
@@ -29,8 +29,16 @@
           <div class="chart" id="barChart" :style="{height:mapHeight/8*2.5+'px',float:'right'}"></div>
         </div>
       </div>
-      <div v-show="flag" class="runInfo" :style="{height:mapHeight/8*3.5+'px'}">
-        <runinfo-show class="runInfoShow" :controllerNo="this.controllerNo"></runinfo-show>
+      <div style="float: left;margin: 10px 1%;width: 66%;display: inline-block;">
+        <h3 style="margin:0 10px">控制器编号：{{this.controllerNo}}</h3>
+        <p style="margin:0 10px">{{this. productAddress}}</p>
+        <div class="runInfo" :style="{height:mapHeight/8*3.5+'px'}">
+          <runinfo-show v-show="flag" class="runInfoShow" :controllerNo="this.controllerNo"></runinfo-show>
+        </div>
+      </div>
+      <div style="float: left;margin: 65px 1%;width: 30%;display: inline-block;text-align:center">
+        <img class="pic" src="/static/common/wechat.jpg" alt="微信小程序">
+        <p>扫码在手机上查看</p>
       </div>
     </div>
   </div>
@@ -96,12 +104,11 @@ export default {
         chartName: ""
       },
       chartNameArray: [],
-      getDeviceFocusMap: {
+      mockInfoMap: {
         title: "",
         value: "",
         unit: ""
       },
-      mockInfoMap: {},
       controllerNo: "",
       listQuery: {
         total: 50,
@@ -117,9 +124,10 @@ export default {
         medium: null,
         fuel: null,
         userId: null,
-        isSell:null,
+        isSell: null
       },
-      productTypeArray:[],
+      productTypeArray: [],
+      productAddress:"",
     };
   },
   mounted() {
@@ -129,7 +137,7 @@ export default {
     map.enableScrollWheelZoom(true);
     map.enableDoubleClickZoom(true);
     this.loadMapData(map);
-    this.getProductList()
+    this.getProductList();
   },
   methods: {
     getlocation() {
@@ -193,11 +201,9 @@ export default {
               break;
           }
           this.weatherSrc = this.src + "&py=" + cityPinyin;
-          this.$store.state.user.deviceRunInfoNo = this.mapPoints[
-            i
-          ].controllerNo;
+          this.$store.state.user.deviceRunInfoNo = this.mapPoints[i].controllerNo;
           this.controllerNo = this.mapPoints[i].controllerNo;
-          this.getLineChartDeviceFocus(this.$store.state.user.deviceRunInfoNo);
+          this.getLineChartDeviceFocus();
           this.drawLine();
         });
       }
@@ -218,7 +224,7 @@ export default {
       function randomData() {
         now = new Date(+now + oneDay);
         //value = Math.round(Math.random() * 20 + 120 + 1);
-        value = that.getDeviceFocusMap.value;
+        value = that.mockInfoMap.value;
         return {
           name: now.toString(),
           value: [
@@ -237,7 +243,7 @@ export default {
       for (var i = 0; i < 100; i++) {
         data.push(randomData());
       }
-      var title = that.getDeviceFocusMap.title;
+      var title = that.mockInfoMap.title;
       console.log(optionLine);
       optionLine = {
         title: {},
@@ -254,7 +260,7 @@ export default {
                 : "0" + date.getMinutes()) +
               "=>" +
               params.value[1] +
-              (params.value[1] ? that.getDeviceFocusMap.unit : "无数据")
+              (params.value[1] ? that.mockInfoMap.unit : "无数据")
             );
           },
           axisPointer: {
@@ -338,7 +344,8 @@ export default {
      * 地址解析
      * @param address 地址字符串
      */
-    getArea(address) {
+    getArea(address) {      
+        this.productAddress = address;
       //地址解析
       let area = {};
       let index11 = 0;
@@ -378,36 +385,31 @@ export default {
      * 通过控制器编号获得设备类型和字节数据
      * @param controllerNo 控制器编号
      */
-    getLineChartDeviceFocus(controllerNo) {
-      Promise.all([
-        getControllerByteData(this.$store.state.user.deviceRunInfoNo),
-        getControllerType(this.$store.state.user.deviceRunInfoNo)
-      ])
-        .then(data => {
-          let controllerByteData = data[0].data;
-          let controllerType = data[1].data.deviceType;
-          if (controllerByteData.length > 0 && controllerType) {
-            this.getDeviceByByteDataAndType(controllerByteData, controllerType);
-          }
-        })
-        .catch(function(r) {
-          console.log(r);
-        });
+    getLineChartDeviceFocus() {
+      Promise.all([getControllerByteData(this.controllerNo), getControllerType(this.controllerNo)]).then((data) => {
+            console.log("数据报表页面正在请求数据")
+            let controllerByteData = data[0].data
+            let controllerType = data[1].data.deviceType
+            if (controllerByteData.length > 0 && controllerType) {
+              this.getDeviceByByteDataAndType(controllerByteData, controllerType)
+            }
+          }).catch(function (r) {
+            console.log(r);
+          })
     },
     /**
      * 通过字节数据和设备类型获得设备数据
      * @param byteData 字节数据
      * @param deviceType 设备类型
      */
-    getDeviceByByteDataAndType(byteData, deviceType) {
-      getDeviceByByteDataAndType(byteData, deviceType).then(data => {
-        let focusMap = data.getDeviceFocusFields();
-        console.log(this.chartNameArray);
-        for (let key in focusMap) {
-          if (focusMap[key] != null && focusMap[key].key == "mockInfo") {
-            this.getDeviceFocusMap.title = focusMap[key].title;
-            this.getDeviceFocusMap.value = focusMap[key].value;
-            this.getDeviceFocusMap.unit = focusMap[key].unit;
+    getDeviceByByteDataAndType (byteData, deviceType) {
+          getDeviceByByteDataAndType(byteData, deviceType).then(data => {
+          let map = data.getMockFields();
+        for (let key in map) {
+          if (map[key] != null && map[key].key == "mockInfo") {
+            this.mockInfoMap.title = map[key].title;
+            this.mockInfoMap.value = map[key].value;
+            this.mockInfoMap.unit = map[key].unit;
             break;
           }
         }
@@ -418,16 +420,18 @@ export default {
         this.listQuery.userId = this.$store.state.user.userId;
       }
       //console.log(this.listQuery.userId)
-      productTypeAmountByCondition(this.$store.state.user.userId).then(response => {
-        let list = response.data.data
-        console.log(list)
-        for(let i in list){
-          console.log(list[i])
-          let typeName = list[i].fuelType + list[i].mediumType
-          this.productTypeArray.push({value : list[i].amount,name:typeName})
+      productTypeAmountByCondition(this.$store.state.user.userId).then(
+        response => {
+          let list = response.data.data;
+          for (let i in list) {
+            let typeName = list[i].fuelType + list[i].mediumType;
+            this.productTypeArray.push({
+              value: list[i].amount,
+              name: typeName
+            });
+          }
         }
-        console.log(this.productTypeArray)
-      })
+      );
     }
   }
 };
@@ -465,12 +469,20 @@ export default {
   background-color: #f5f5f5;
   border-radius: 10px;
   width: 49%;
+  background-clip: padding-box;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 0 25px #cac6c6;
 }
 .map {
   width: 100%;
   margin: 15px auto;
   background-color: #f5f5f5;
   border-radius: 10px;
+  background-clip: padding-box;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 0 25px #cac6c6;
 }
 .runInfo {
   float: left;
@@ -478,6 +490,22 @@ export default {
   margin: 10px;
   background-color: #f5f5f5;
   border-radius: 10px;
+  background-clip: padding-box;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 0 25px #cac6c6;
+}
+.pic {
+  margin: auto, 15px;
+  width: auto;
+  height: 200px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  background-clip: padding-box;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 0 25px #cac6c6;
 }
 </style>
 
