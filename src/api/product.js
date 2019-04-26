@@ -54,3 +54,11 @@ export function deleteProductById(id) {
     params:{id}
   })
 }
+export function productTypeAmountByCondition(userId) {
+  return request({
+    url:'/product/productTypeAmountByCondition',
+    method:'get',
+    params:{userId:userId}
+  })
+  
+}

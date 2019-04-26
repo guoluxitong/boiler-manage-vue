@@ -25,12 +25,14 @@ export default {
   },
   methods: {
     openTableMenu(row, event) {
-      window.event.returnValue=false;
+      window.event.returnValue=false
       this.visible = true
       this.row=row
-      this.left = event.clientX
-      this.top = event.clientY
+      console.log(window.event)
+      this.left = window.event.clientX
+      this.top = window.event.clientY
       this.$root.$emit('table-row',row)
+      return false
     },
     closeTableMenu() {
       this.visible = false

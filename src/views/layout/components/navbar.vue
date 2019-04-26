@@ -7,7 +7,7 @@
              active-text-color="#409EFF">
         <sidebar-item :routes="permission_routers"></sidebar-item>
         <div class="right-menu">
-            <span class="user-info"><span v-if="organizationName">组织：{{organizationName}}</span>&nbsp;&nbsp;<span v-if="realName">姓名：{{realName}}</span>&nbsp;&nbsp;</span>
+            <span class="user-info"><span v-if="organizationName">山东简洁软件有限公司&nbsp;&nbsp;&nbsp;&nbsp;组织：{{organizationName}}</span>&nbsp;&nbsp;<span v-if="realName">姓名：{{realName}}</span>&nbsp;&nbsp;</span>
             <el-dropdown class="avatar-container right-menu-item" trigger="click">
                 <div class="avatar-wrapper">
                     <img class="user-avatar" src="static/common/avator.png">
