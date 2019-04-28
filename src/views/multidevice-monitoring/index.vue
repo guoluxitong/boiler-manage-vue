@@ -9,6 +9,7 @@
             :index="index"
             :controller-no-array="controllerNoArray"
             :map-height="mapHeight"
+            :address-array="addressArray"
             v-for="(item,index) in controllerNoArray"
             @listenToControllerRunInfo="receiveToControllerRunInfo">
           </device-card>
@@ -31,6 +32,7 @@
         controllerNoArray:[],
         device:{},
         controllerNo:"",
+        addressArray:[],
       }
     },
     mounted (){
@@ -41,11 +43,25 @@
     },
     methods:{
       receiveToDeviceMap(data){
-        this.controllerNoArray = data
+        let array1 = []
+        let array2 = []
+        for(let no in data){
+
+          array1.push(data[no].name)
+          array2.push(data[no].value)
+        }
+        this.controllerNoArray=array1
+        this.addressArray=array2
+        array1 = []
+        array2 = []
+        console.log("添加后"+this.controllerNoArray,this.addressArray)
       },
       receiveToControllerRunInfo(index) {
         if (index > -1) {
           this.controllerNoArray.splice(index, 1)
+          this.addressArray.splice(index,1)
+          
+        console.log("删除后"+this.controllerNoArray,this.addressArray)
         }
       }
 

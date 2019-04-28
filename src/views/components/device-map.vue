@@ -53,7 +53,7 @@
           //点击气泡添加需要监控的设备数据
           mk.addEventListener("click", () => {
             if (this.controllerNoArray.indexOf(this.mapPoints[i].controllerNo) == -1){
-              this.controllerNoArray.push(this.mapPoints[i].controllerNo)
+              this.controllerNoArray.push({name:this.mapPoints[i].controllerNo,value:this.mapPoints[i].province + this.mapPoints[i].city + this.mapPoints[i].district})
               this.sendControllerNoArrayToParent()
             }
           })

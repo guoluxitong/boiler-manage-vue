@@ -244,7 +244,6 @@ export default {
         data.push(randomData());
       }
       var title = that.mockInfoMap.title;
-      console.log(optionLine);
       optionLine = {
         title: {},
         tooltip: {

@@ -2,7 +2,7 @@
   <div style="float: left;margin: 10px 1%;width: 31%;display: inline-block;">
       <el-card class="box-card">
         <div slot="header" class="clearfix" style="padding-bottom: 0px">
-          <span>{{controllerNoArray[index]}}</span>
+          <span>{{controllerNoArray[index]}}  {{addressArray[index]}}</span>
           <el-button style="float: right; padding: 3px 0" type="text" @click="sendDeleteCardToParent">X</el-button>
         </div>
         <div class="runInfo1" :style="{height:mapHeight/8*2.5+'px'}">
@@ -20,6 +20,12 @@
     name: 'index',
     props:{
       controllerNoArray:{
+        type:Array,
+        default:function () {
+          return []
+        }
+      },
+      addressArray:{
         type:Array,
         default:function () {
           return []
