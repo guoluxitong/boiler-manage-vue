@@ -1,0 +1,103 @@
+<template>
+  <div class="map-container">
+    <div id="map" class="map" :style="{height:mapHeight+'px'}"></div>
+  </div>
+</template>
+<script>
+import checkPermission from "@/utils/permission";
+import { productDataOnMap } from "@/api/product";
+export default {
+  name: "devicemap",
+  components: {},
+  props: {
+    mapHeight: {
+      type: Number,
+      default: document.documentElement.clientHeight - 100
+    }
+  },
+  data() {
+    return {
+      center: { lng: 105, lat: 34 },
+      mapPoints: [],
+      userId: "",
+      controllerNoArray: [],
+      addressArray: [],
+      address: "",
+      controllerNo: "",
+      controllerRunInfoDialogVisible: false
+    };
+  },
+  mounted() {
+    let map = new BMap.Map("map");
+    let point = new BMap.Point(this.center.lng, this.center.lat);
+    map.centerAndZoom(point, 6);
+    map.enableScrollWheelZoom(true);
+    map.enableDoubleClickZoom(true);
+    this.loadMapData(map);
+  },
+  methods: {
+    loadMapData(map) {
+      //3->锅炉厂管理员 5->锅炉厂普通用户
+      if (checkPermission(["3", "5"]))
+        this.userId = this.$store.state.user.userId;
+      productDataOnMap({ userId: this.userId }).then(res => {
+        this.showMapData(map, res.data.data);
+      });
+    },
+    showMapData(map, data) {
+      this.mapPoints = data;
+      let markers = [];
+      let self = this;
+      for (let i = 0; i < this.mapPoints.length; i++) {
+        if (
+          this.mapPoints[i].longitude == null ||
+          this.mapPoints[i].latitude == null
+        ) {
+          continue;
+        }
+        let points = new BMap.Point(
+          this.mapPoints[i].longitude,
+          this.mapPoints[i].latitude
+        );
+        let mk = new BMap.Marker(points);
+        markers.push(mk);
+        //点击气泡添加需要监控的设备数据
+        mk.addEventListener("click", () => {
+          let point = this.mapPoints[i];
+          if (this.controllerNoArray.indexOf(point.controllerNo) == -1) {
+            this.controllerNoArray.push(point.controllerNo);
+            this.addressArray.push(
+              point.province + point.city + point.district
+            );
+          }
+          this.address = point.province + point.city + point.district;
+          this.controllerRunInfoDialogVisible = true;
+          this.controllerNo = this.mapPoints[i].controllerNo;
+          this.sendControllerNoArrayToParent();
+        });
+      }
+      new BMapLib.MarkerClusterer(map, { markers: markers });
+    },
+    sendControllerNoArrayToParent() {
+      this.$emit(
+        "listenToDeviceMap",
+        this.controllerNoArray,
+        this.addressArray,
+        this.address,
+        this.controllerNo,
+        this.controllerRunInfoDialogVisible
+      );
+    }
+  }
+};
+</script>
+
+<style rel="stylesheet/scss" lang="scss">
+.map-container {
+  .map {
+    width: 98% !important;
+    margin: 5px auto;
+    border-radius: 10px;
+  }
+}
+</style>

@@ -1,5 +1,7 @@
 <template>
   <div class="product-runInfo" style="overflow-y:auto">
+    <h4 style="margin:0">{{this.controllerNumber}}</h4>
+    <p style="margin:0">{{this.sellAddress}}</p>
     <animation
       :stove-animation="controllerFormData.stoveAnimation"
       :fan-animation-list="controllerFormData.fanAnimationList"
@@ -49,29 +51,28 @@
   </div>
 </template>
 <script>
-    import {getControllerByteData,getControllerType} from '@/api/controller'
-    import {getDeviceByByteDataAndType,getCmdMapByDevice} from "@/dataparse/model/deviceAdapter";
-    import {deviceModel} from '@/dataparse/model/sdcSoftDevice'
-    import animation from './components/animation'
+import { getControllerByteData, getControllerType } from "@/api/controller";
+import {
+  getDeviceByByteDataAndType,
+  getCmdMapByDevice
+} from "@/dataparse/model/deviceAdapter";
+import { deviceModel } from "@/dataparse/model/sdcSoftDevice";
+import animation from "./components/animation";
 export default {
   name: "controller-run-info",
   components: {
     animation
   },
-  props: {
-    controllerNo: {
-      type: String,
-      default: ""
-    }
-  },
   data() {
     return {
+      //visible: this.show,
       dialogDeviceFormVisible: false,
-      runTabHeight: document.documentElement.clientHeight / 2 - 80,
-      timeInterVal:3,
+      runTabHeight: document.body.clientHeight - 125,
+      timeInterVal: 3,
       controllerFormData: {
         activeName: "second",
         stoveAnimation: "",
+        deviceFocusInfoMap: {},
         fanAnimationList: [],
         bengAnimationList: [],
         exceptionInfoMap: {},
@@ -80,72 +81,125 @@ export default {
         settingInfoMap: {},
         deviceInfoMap: {}
       },
-      controllerNumber: this.controllerNo,
-      divHeight: document.documentElement.clientHeight / 2 - 80
+      sellAddress: this.address,
+      controllerNumber: this.controllerNo
     };
   },
+  props: {
+    controllerNo: {
+      type: String,
+      default: ""
+    },
+    address: {
+      type: String,
+      default: ""
+    }
+  },
   watch: {
+    address() {
+      this.sellAddress = this.address;
+    },
     controllerNo() {
       this.controllerNumber = this.controllerNo;
     }
   },
   created() {
-    let self = this;
-    window.onresize = function() {
-      self.runTabHeight = document.documentElement.clientHeight / 2 - 80;
-    };
     this.setTimeInterval();
     this.showControllerData();
   },
   methods: {
-    setTimeInterval () {
-          let timeInterVal = window.localStorage['timeInterVal']
-          if (timeInterVal) this.timeInterVal = timeInterVal
+    /* controllerRunInfoOpen() {
+      this.initControllerInfo();
+      let self = this;
+      window.onresize = function() {
+        self.runTabHeight = document.body.clientHeight - 160;
+      };
+      this.setTimeInterval();
+      this.showControllerData();
+    }, */
+    /* controllerRunInfoClose () {
+          this.initControllerInfo()
 
-          var timer = setInterval(() => {
-            this.showControllerData()
+          this.$emit('controllerRunInfoDialogClose', {controllerRunInfoDialogVisible: false})
+        }, */
+    setTimeInterval() {
+      let timeInterVal = window.localStorage["timeInterVal"];
+      if (timeInterVal) this.timeInterVal = timeInterVal;
 
-          }, 5000 * (this.timeInterVal));
-        },
-    showControllerData () {
-          Promise.all([getControllerByteData(this.controllerNumber), getControllerType(this.controllerNumber)]).then((data) => {
-            console.log("多设备监控页面正在请求数据")
-            let controllerByteData = data[0].data
-            if (controllerByteData.length === 0) {
-            }
-            let controllerType = data[1].data.deviceType
-            if (controllerByteData.length > 0 && controllerType) {
-              this.getDeviceByByteDataAndType(controllerByteData, controllerType)
-            }else{
-              this.initControllerInfo()
-            }
-          }).catch(function (r) {
-            console.log(r);
-          })
-        },
-   getDeviceByByteDataAndType (byteData, deviceType) {
-          getDeviceByByteDataAndType(byteData, deviceType).then(data => {
-            this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields()
-            this.controllerFormData.bengAnimationList = data.getBeng()
-            this.controllerFormData.fanAnimationList = data.getFan()
-            this.controllerFormData.stoveAnimation = data.getStoveElement().GetElementPrefixAndValuesString()
-            this.controllerFormData.exceptionInfoMap = data.getExceptionFields()
-            this.controllerFormData.baseInfoMap = data.getBaseInfoFields()
-            this.controllerFormData.mockInfoMap = data.getMockFields()
-            this.controllerFormData.settingInfoMap = data.getSettingFields()
-            this.controllerFormData.deviceInfoMap = data.getDeviceInfoFields()
+      var timer = setInterval(() => {
+        this.showControllerData(timer);
+      }, 1000 * this.timeInterVal);
+    },
+    showControllerData() {
+      Promise.all([
+        getControllerByteData(this.controllerNo),
+        getControllerType(this.controllerNo)
+      ])
+        .then(data => {
+          this.initControllerInfo();
+          let controllerByteData = data[0].data;
+          let controllerType = data[1].data.deviceType;
+          if (controllerByteData.length > 0 && controllerType) {
+            this.getDeviceByByteDataAndType(controllerByteData, controllerType);
+          } else {
+            this.initControllerInfo();
+          }
+        })
+        .catch(function(r) {
+          console.log(r);
+        });
+    },
+    getDeviceByByteDataAndType(byteData, deviceType) {
+      //console.log(DeviceAdapterUtil.getSdcSoftDevice(deviceType,byteData,0,0))
+      getDeviceByByteDataAndType(
+        new Uint8Array(byteData),
+        deviceType,
+        0,
+        0
+      ).then(data => {
+        this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields().map;
+        this.controllerFormData.bengAnimationList = data.getBeng();
+        this.controllerFormData.fanAnimationList = data.getFan();
+        this.controllerFormData.stoveAnimation = data
+          .getStoveElement()
+          .getElementPrefixAndValuesString();
+        this.controllerFormData.exceptionInfoMap = data.getExceptionFields().map;
+        this.controllerFormData.baseInfoMap = data.getBaseInfoFields().map;
+        this.controllerFormData.mockInfoMap = data.getMockFields().map;
+        this.controllerFormData.settingInfoMap = data.getSettingFields().map;
+        this.controllerFormData.deviceInfoMap = data.getDeviceFields().map;
+        //console.log(this.controllerFormData.baseInfoMap)
+        /* for(let item in this.controllerFormData.baseInfoMap.map){
+              console.log(item.name+"==="+item.title+"==="+item.valueString)
+            } */
+        /* getCmdMapByDevice(data).then(cmds => {
+              for (let key in cmds) {
+                if (key == '设置参数') {
+                  let cmd = cmds[key]
+                  if (cmd.length == 0) {
+                    break
+                  }
+                  let str = cmd[0].getCommandString()
+                  //console.log("value修改前==>" + cmd[0].value + "CommandString修改前==>" + str)
+                  cmd[0].setValue(12)
+                  str = cmd[0].getCommandString()
+                  //console.log("value修改后==>" + cmd[0].value + "CommandString修改后==>" + str)
+                }
+
+              }
+            }) */
       });
     },
-    initControllerInfo () {
-          this.controllerFormData.bengAnimationList = []
-          this.controllerFormData.fanAnimationList = []
-          this.controllerFormData.stoveAnimation = ''
-          this.controllerFormData.exceptionInfoMap = {}
-          this.controllerFormData.baseInfoMap = {}
-          this.controllerFormData.mockInfoMap = {}
-          this.controllerFormData.settingInfoMap = {}
-          this.controllerFormData.deviceInfoMap = {}
-        },
+    initControllerInfo() {
+      this.controllerFormData.bengAnimationList = [];
+      this.controllerFormData.fanAnimationList = [];
+      this.controllerFormData.stoveAnimation = "";
+      this.controllerFormData.exceptionInfoMap = {};
+      this.controllerFormData.baseInfoMap = {};
+      this.controllerFormData.mockInfoMap = {};
+      this.controllerFormData.settingInfoMap = {};
+      this.controllerFormData.deviceInfoMap = {};
+    }
   }
 };
 </script>

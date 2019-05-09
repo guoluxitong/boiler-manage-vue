@@ -13,24 +13,24 @@
         </el-row>
         <el-row  class="animation beng">
             <div class="beng-item" v-for="item in bengAnimationList" v-if="bengAnimationList&&bengAnimationList.length>0">
-                <div v-if="item.GetElementPrefixAndValuesString().search('b-1')>-1">
-                    <beng :src="item.GetElementPrefixAndValuesString()" :title="item.title" :width="40" :styleObject="{'margin-top':'31px'}"></beng>
+                <div v-if="item.getElementPrefixAndValuesString().search('b-1')>-1">
+                    <beng :src="item.getElementPrefixAndValuesString()" :title="item.title" :width="40" :styleObject="{'margin-top':'31px'}"></beng>
                 </div>
-                <div v-if="item.GetElementPrefixAndValuesString().search('b-2')>-1">
-                    <beng :src="item.GetElementPrefixAndValuesString()" :title="item.title" :styleObject="{'margin-top':'40px'}"></beng>
+                <div v-if="item.getElementPrefixAndValuesString().search('b-2')>-1">
+                    <beng :src="item.getElementPrefixAndValuesString()" :title="item.title" :styleObject="{'margin-top':'40px'}"></beng>
                 </div >
-                <div v-if="item.GetElementPrefixAndValuesString().search('b-3')>-1">
-                    <beng :src="item.GetElementPrefixAndValuesString()" :title="item.title" :width="150"></beng>
+                <div v-if="item.getElementPrefixAndValuesString().search('b-3')>-1">
+                    <beng :src="item.getElementPrefixAndValuesString()" :title="item.title" :width="150"></beng>
                 </div>
             </div>
         </el-row>
         <el-row  class="animation">
             <div  v-for="item in fanAnimationList" v-if="fanAnimationList&&fanAnimationList.length>0" style="float: left">
-                <div v-if="item.GetElementPrefixAndValuesString().search('c-1')>-1" class="fan">
-                    <fan :src="item.GetElementPrefixAndValuesString()" :title="item.title" :width="32"  :styleObject="{'margin-top':'56px'}"></fan>
+                <div v-if="item.getElementPrefixAndValuesString().search('c-1')>-1" class="fan">
+                    <fan :src="item.getElementPrefixAndValuesString()" :title="item.title" :width="32"  :styleObject="{'margin-top':'56px'}"></fan>
                 </div>
-                <div v-if="item.GetElementPrefixAndValuesString().search('c-2')>-1" class="fan">
-                    <fan :src="item.GetElementPrefixAndValuesString()" :title="item.title" :width="70"  :styleObject="{'margin-top':'56px'}"></fan>
+                <div v-if="item.getElementPrefixAndValuesString().search('c-2')>-1" class="fan">
+                    <fan :src="item.getElementPrefixAndValuesString()" :title="item.title" :width="70"  :styleObject="{'margin-top':'56px'}"></fan>
                 </div>
             </div>
         </el-row>
@@ -75,7 +75,7 @@
         font-size: 14px;
         font-weight: 500;
         color: #303133;
-        height: 90px;
+        height: 120px;
         .animation{
             float: left;
         }

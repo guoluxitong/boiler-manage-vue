@@ -25,6 +25,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      'devices-lib':resolve('static/devices-lib')
     }
   },
   module: {

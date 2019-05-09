@@ -1,5 +1,5 @@
 <template>
-    <img class="user-avatar" :style="styleObject"  v-if="src" :src="'../../../../static/animation/stove/'+src+'.gif'" :width="width">
+    <img class="user-avatar" :style="styleObject"  v-if="src" :src="'static/animation/stove/'+src+'.gif'" :width="width">
 </template>
 <script>
     export default {
@@ -8,7 +8,7 @@
             styleObject:{
                 type:Object,
                 default:function () {
-                    return { 'margin-top': '0px' }
+                    return { 'margin-top': '30px' }
                 }
             },
             src:{
