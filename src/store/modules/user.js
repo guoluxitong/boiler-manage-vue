@@ -1,7 +1,7 @@
-import { loginByUsername,loginByCAS } from '../../api/login'
+import { loginByUsername, loginByCAS } from '../../api/login'
 import { getLoginUserInfo } from '../../api/user'
 import { getToken, setToken, removeToken } from '../../utils/auth'
-import {loginout} from "../../api/loginout";
+import { loginout } from "../../api/loginout";
 import { config } from '../../config/index'
 const user = {
     state: {
@@ -69,33 +69,33 @@ const user = {
     },
 
     actions: {
-        initWebSock ({commit}, userId) {
+        initWebSock({ commit }, userId) {
             const wsuri = process.env.NODE_ENV === 'development'
                 ? "ws://" + config.development_base_ip + ":" + config.development_base_port + "/websocket/" + userId
                 : "ws://" + config.product_base_ip + ":" + config.product_base_port + "/websocket/" + userId
             commit('INIT_WEBSOCK', new WebSocket(wsuri))
         },
-        setUserToken ({commit}, userName) {
+        setUserToken({ commit }, userName) {
             commit('SET_TOKEN', userName)
             setToken(userName)
         },
-      LoginByUsername({ commit }, userInfo) {
-        const userName = userInfo.account.trim()
-        return new Promise((resolve, reject) => {
-          loginByUsername(userName, userInfo.passWord).then(response => {
-            const data = response.data
-            if(data.code!=0){
-              this.dispatch('initWebSock',data.data.id)
-              resolve(userName)
-            }else{
-              reject(data.msg)
-            }
-          }).catch(error => {
-            reject(error)
-          })
-        })
-      },
-        GetUserInfo ({commit, state}) {
+        LoginByUsername({ commit }, userInfo) {
+            const userName = userInfo.account.trim()
+            return new Promise((resolve, reject) => {
+                loginByUsername(userName, userInfo.passWord).then(response => {
+                    const data = response.data
+                    if (data.code != 0) {
+                        this.dispatch('initWebSock', data.data.id)
+                        resolve(userName)
+                    } else {
+                        reject(data.msg)
+                    }
+                }).catch(error => {
+                    reject(error)
+                })
+            })
+        },
+        GetUserInfo({ commit, state }) {
             return new Promise((resolve, reject) => {
                 getLoginUserInfo(state.token).then(response => {
                     const data = response.data.data;
@@ -121,11 +121,11 @@ const user = {
 
     },
 }
-function getRoleIdArray(roles=[]) {
-  let roleIdArray=[]
-  roles.forEach(item=>{
-    roleIdArray.push(item.roleId)
-  })
-  return roleIdArray
+function getRoleIdArray(roles = []) {
+    let roleIdArray = []
+    roles.forEach(item => {
+        roleIdArray.push(item.roleId)
+    })
+    return roleIdArray
 }
 export default user

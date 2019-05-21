@@ -20,16 +20,20 @@
     </div>
     <div class="rightDiv">
       <div style="margin: 30px 30px 30px 15px">
-        <div style="width: 50%;float: left">
-          <span style="font-size: large;font-weight: bold">{{this.mockInfoMap.title}}实时曲线</span>
-        </div>
-        <div style="width: 50%;float: right">
-          <span style="font-size: large;font-weight: bold">锅炉设备数量统计</span>
-        </div>
-        <div>
-          <div class="chart" id="lineChart" :style="{height:mapHeight/8*2.5+'px',float:'left'}"></div>
-          <div class="chart" id="barChart" :style="{height:mapHeight/8*2.5+'px',float:'right'}"></div>
-        </div>
+        <line-chart-a
+          class="chart"
+          style="flot:'left'"
+          :chartHeight="mapHeight/8*2.5"
+          :chartWidth="mapWidth/4.5"
+          :chartData="lineChartData"
+        ></line-chart-a>
+        <pie-chart-a
+          class="chart"
+          style="flot:'left'"
+          :chartHeight="mapHeight/8*2.5"
+          :chartWidth="mapWidth/4.5"
+          :chartData="pieChartData"
+        ></pie-chart-a>
       </div>
       <div style="float: left;margin: 10px 1%;width: 66%;display: inline-block;">
         <div class="runInfo" :style="{height:mapHeight/8*3.5+'px'}">
@@ -70,11 +74,15 @@ import {
   insertManyProductUser,
   productTypeAmountByCondition
 } from "@/api/product";
+import lineChartA from "@/components/reportForms/lineChart";
+import pieChartA from "@/components/reportForms/pieChart";
 export default {
   name: "device-run-info",
   components: {
     runinfoShow: runinfo,
-    deviceMap
+    deviceMap,
+    lineChartA,
+    pieChartA
   },
   props: {
     mapHeight: {
@@ -89,32 +97,9 @@ export default {
   data() {
     return {
       center: { lng: 105, lat: 34 },
-      mapPoints: [],
-      enterpriseId: "",
-      weatherShow: false,
       flag: false,
-      weatherLives: null,
-      lives: {
-        province: "",
-        city: "",
-        weather: "", //天气
-        temperature: "", //气温
-        winddirection: "", //风向
-        windpower: "", //风力
-        humidity: "", //空气湿度
-        reporttime: "" //数据发布时间
-      },
       src: "//i.tianqi.com/index.php?c=code&id=19&icon=1&temp=1&num=5&site=12",
       weatherSrc: "",
-      chartDeviceInfo: {
-        chartName: ""
-      },
-      chartNameArray: [],
-      mockInfoMap: {
-        title: "",
-        value: "",
-        unit: ""
-      },
       controllerNo: "",
       listQuery: {
         total: 50,
@@ -132,11 +117,20 @@ export default {
         userId: null,
         isSell: null
       },
-      productTypeArray: [],
-      productAddress: ""
+      productAddress: "",
+      lineChartData: {
+        time: "",
+        title: "",
+        value: "",
+        unit: ""
+      },
+      pieChartData: {
+        title: "",
+        array: []
+      }
     };
   },
-  mounted() {
+  created() {
     this.getProductList();
   },
   methods: {
@@ -162,155 +156,6 @@ export default {
       this.$store.state.user.deviceRunInfoNo = controllerNo;
       this.controllerNo = controllerNo;
       this.getLineChartDeviceFocus();
-      this.drawLine();
-    },
-    /* getlocation() {
-      //定位方法
-      var map = new BMap.Map("weather");
-      var point = new BMap.Point(116.331398, 39.897445);
-      map.centerAndZoom(point, 12);
-      var geolocation = new BMap.Geolocation();
-      geolocation.getCurrentPosition(function(r) {
-        if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-          var mk = new BMap.Marker(r.point);
-          map.addOverlay(mk);
-          map.panTo(r.point);
-          alert("您的位置：" + r.point.lng + "," + r.point.lat);
-        } else {
-          alert("failed" + this.getStatus());
-        }
-      });
-    }, */
-
-    /**
-     * 绘制报表
-     */
-    drawLine() {
-      //绘制报表
-      let that = this;
-      var dom = document.getElementById("lineChart");
-      let dom2 = document.getElementById("barChart");
-      var myChart = this.$echarts.init(dom);
-      let myChart2 = this.$echarts.init(dom2);
-      let optionLine = null;
-      let optionPie = null;
-      function randomData() {
-        now = new Date(+now + oneDay);
-        //value = Math.round(Math.random() * 20 + 120 + 1);
-        value = that.mockInfoMap.value;
-        return {
-          name: now.toString(),
-          value: [
-            [now.getTime()],
-            //Math.round(value)
-            value
-          ]
-        };
-      }
-
-      var data = [];
-      var now = null;
-      now = new Date(new Date().getTime() - 2 * 60 * 1000);
-      var oneDay = 1 * 1000;
-      var value = "";
-      for (var i = 0; i < 100; i++) {
-        data.push(randomData());
-      }
-      var title = that.mockInfoMap.title;
-      optionLine = {
-        title: {},
-        tooltip: {
-          trigger: "axis",
-          formatter: function(params) {
-            params = params[0];
-            var date = new Date(params.name);
-            return (
-              date.getHours() +
-              ":" +
-              (date.getMinutes() > 9
-                ? date.getMinutes()
-                : "0" + date.getMinutes()) +
-              "=>" +
-              params.value[1] +
-              (params.value[1] ? that.mockInfoMap.unit : "无数据")
-            );
-          },
-          axisPointer: {
-            animation: false
-          }
-        },
-        xAxis: {
-          type: "time",
-          splitLine: {
-            show: false
-          }
-        },
-        yAxis: {
-          type: "value",
-          boundaryGap: [0, "100%"],
-          splitLine: {
-            show: false
-          }
-        },
-        grid: {
-          y: "10%",
-          x2: "10%",
-          y2: "10%",
-          x: "10%"
-        },
-        series: [
-          {
-            name: "模拟数据",
-            type: "line",
-            showSymbol: false,
-            hoverAnimation: false,
-            data: data
-          }
-        ]
-      };
-
-      setInterval(function() {
-        for (var i = 0; i < 10; i++) {
-          data.shift();
-          data.push(randomData());
-        }
-
-        myChart.setOption({
-          series: [
-            {
-              data: data
-            }
-          ]
-        });
-      }, 10000);
-      optionPie = {
-        title: {},
-        tooltip: {},
-        series: [
-          {
-            name: "数量统计",
-            type: "pie",
-            data: this.productTypeArray,
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)"
-              }
-            }
-          }
-        ]
-      };
-      if (
-        optionLine &&
-        typeof optionLine === "object" &&
-        (optionPie && typeof optionPie === "object")
-      ) {
-        myChart.clear();
-        myChart2.clear();
-        myChart.setOption(optionLine, true);
-        myChart2.setOption(optionPie, true);
-      }
     },
     /**
      * 地址解析
@@ -384,29 +229,32 @@ export default {
         let map = data.getMockFields().map;
         for (let key in map) {
           if (map[key] != null && map[key].key == "mockInfo") {
-            this.mockInfoMap.title = map[key].title;
-            this.mockInfoMap.value = map[key].value;
-            this.mockInfoMap.unit = map[key].unit;
+            this.lineChartData.title = map[key].title;
+            this.lineChartData.value = map[key].value;
+            this.lineChartData.unit = map[key].unit;
+            console.log(this.lineChartData);
             break;
           }
         }
       });
     },
+
     getProductList() {
       if (checkPermission(["3", "5"])) {
         this.listQuery.userId = this.$store.state.user.userId;
       }
-      //console.log(this.listQuery.userId)
       productTypeAmountByCondition(this.$store.state.user.userId).then(
         response => {
           let list = response.data.data;
+          this.pieChartData.title = "设备型号统计";
           for (let i in list) {
             let typeName = list[i].fuelType + list[i].mediumType;
-            this.productTypeArray.push({
+            this.pieChartData.array.push({
               value: list[i].amount,
               name: typeName
             });
           }
+          console.log(this.pieChartData);
         }
       );
     }
@@ -450,6 +298,7 @@ export default {
   background: #fff;
   border: 1px solid #eaeaea;
   box-shadow: 0 0 25px #cac6c6;
+  display: inline-block;
 }
 .map {
   width: 100%;
