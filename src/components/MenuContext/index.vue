@@ -26,11 +26,9 @@ export default {
   },
   methods: {
     openTableMenu(row, event, x, y) {
-      console.log(x, y);
       window.event.returnValue = false;
       this.visible = true;
       this.row = row;
-      console.log(window.event);
       this.left = x;
       this.top = y;
       this.$root.$emit("table-row", row);

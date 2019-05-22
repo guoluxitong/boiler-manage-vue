@@ -92,7 +92,7 @@ export default {
     },
     address: {
       type: String,
-      default: ""
+      default: "未出售"
     }
   },
   watch: {

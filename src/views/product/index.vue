@@ -470,7 +470,10 @@ export default {
     showControllerData(row) {
       this.controllerRunInfoDialogVisible = true;
       this.controllerNo = row.controllerNo;
-      this.address = row.province + row.city + row.district + row.street;
+      console.log(row);
+      row.province
+        ? (this.address = row.province + row.city + row.district + row.street)
+        : (this.address = "");
     },
     // 辅机信息
     auxiliaryMachineInfo(row) {
