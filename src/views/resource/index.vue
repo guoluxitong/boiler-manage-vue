@@ -156,7 +156,12 @@ export default {
       } else {
         this.isShowAddChildMenu = "none";
       }
-      this.$refs.menuContext.openTableMenu(row, event);
+      this.$refs.menuContext.openTableMenu(
+        row,
+        event,
+        window.event.clientX,
+        window.event.clientY
+      );
     },
     getList() {
       if (checkPermission(["3", "5"])) {

@@ -159,7 +159,12 @@
         },
         methods: {
             openTableMenu(row, event) {
-                this.$refs.menuContext.openTableMenu(row,event);
+                 this.$refs.menuContext.openTableMenu(
+        row,
+        event,
+        window.event.clientX,
+        window.event.clientY
+      );
             },
             initEnterpriseList(){
                 let enterpriseOption=[]

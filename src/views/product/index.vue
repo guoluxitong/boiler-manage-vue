@@ -410,7 +410,12 @@ export default {
       return options;
     },
     openTableMenu(row, event) {
-      this.$refs.menuContext.openTableMenu(row, event);
+      this.$refs.menuContext.openTableMenu(
+        row,
+        event,
+        window.event.clientX,
+        window.event.clientY
+      );
     },
     handleFilter() {
       this.listQuery.pageNum = 1;

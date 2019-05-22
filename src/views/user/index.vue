@@ -268,7 +268,12 @@
         },
         methods: {
             openTableMenu(row, event) {
-                this.$refs.menuContext.openTableMenu(row,event);
+                 this.$refs.menuContext.openTableMenu(
+        row,
+        event,
+        window.event.clientX,
+        window.event.clientY
+      );
                 if(row.id==this.$store.state.user.userId){
                     this.roleManageShow='none';
                 }else{
