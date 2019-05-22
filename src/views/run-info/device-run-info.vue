@@ -66,7 +66,7 @@ import checkPermission from "@/utils/permission";
 import { productDataOnMap } from "@/api/product";
 import runinfo from "@/components/controller-run-info/index";
 import { config } from "@/config/index";
-import { getDeviceByByteDataAndType } from "@/dataparse/model/deviceAdapter";
+import { getDeviceByByteDataAndType } from "@/deviceAdapter";
 import { getControllerByteData, getControllerType } from "@/api/controller";
 import {
   getProductListByCondition,

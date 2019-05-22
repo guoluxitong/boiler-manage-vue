@@ -55,8 +55,7 @@ import { getControllerByteData, getControllerType } from "@/api/controller";
 import {
   getDeviceByByteDataAndType,
   getCmdMapByDevice
-} from "@/dataparse/model/deviceAdapter";
-import { deviceModel } from "@/dataparse/model/sdcSoftDevice";
+} from "@/deviceAdapter";
 import animation from "./components/animation";
 export default {
   name: "controller-run-info",
