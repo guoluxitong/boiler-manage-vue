@@ -2,24 +2,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 //namespace DevicesLib.meta {
 var DeviceFieldForUI = /** @class */ (function () {
-    function DeviceFieldForUI() {
+    function DeviceFieldForUI(valueMap) {
         this.name = '';
         this.value = 0;
         this.key = '';
         this.title = '';
         this.valueString = '';
+        this.valueMap = null;
         this.unit = '';
-        this.needFormat = false;
+        if (valueMap) {
+            this.valueMap = valueMap;
+        }
     }
+    DeviceFieldForUI.prototype.getValueMap = function () {
+        return this.valueMap;
+    };
     DeviceFieldForUI.prototype.getUnit = function () {
         return this.unit;
     };
     DeviceFieldForUI.prototype.setUnit = function (unit) {
         this.unit = unit;
     };
-    DeviceFieldForUI.prototype.setNeedFormat = function (needFormat) {
-        this.needFormat = needFormat;
-    };
+    // setNeedFormat(needFormat: boolean) {
+    //     this.needFormat = needFormat
+    // }
+    //private needFormat: boolean =false
     DeviceFieldForUI.prototype.getKey = function () {
         return this.key;
     };
@@ -37,6 +44,9 @@ var DeviceFieldForUI = /** @class */ (function () {
     };
     DeviceFieldForUI.prototype.setValue = function (value) {
         this.value = value;
+        if (this.valueMap) {
+            this.valueString = this.valueMap.getItem(value);
+        }
     };
     DeviceFieldForUI.prototype.getTitle = function () {
         return this.title;
@@ -45,8 +55,9 @@ var DeviceFieldForUI = /** @class */ (function () {
         this.title = title;
     };
     DeviceFieldForUI.prototype.getValueString = function () {
-        if (this.needFormat)
-            return this.valueString.replace("%s", this.value.toString());
+        // if (this.needFormat){
+        //     return this.valueString.replace('%s', this.value.toString())
+        // }
         return this.valueString;
     };
     DeviceFieldForUI.prototype.setValueString = function (valueString) {

@@ -22,6 +22,7 @@
     require('echarts/lib/component/title')
     require("echarts/lib/component/dataZoom");
     require('echarts/lib/component/legend')
+    
     export default {
         name:'exception-run-info',
         data() {

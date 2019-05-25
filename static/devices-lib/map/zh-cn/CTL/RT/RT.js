@@ -20,32 +20,32 @@ var SdcSoftDevice_1 = require("../../../../devices/SdcSoftDevice");
 var FixedValueField_1 = require("../../../../meta/FixedValueField");
 var RT_1 = require("../../../../devices/CTL/RT/RT");
 var CountShowField_1 = require("../../../../meta/CountShowField");
-var CTL_RT = /** @class */ (function (_super) {
-    __extends(CTL_RT, _super);
-    function CTL_RT() {
+var Map_CTL_RT = /** @class */ (function (_super) {
+    __extends(Map_CTL_RT, _super);
+    function Map_CTL_RT() {
         var _this = _super.call(this) || this;
-        // this.warningMsg='长按修改类型';
+        // this.warningMsg='长按修改类型'
         /*计算属性（不显示）*/
-        _this.addPoint(new CountField_1.CountField(RT_1.CTL_RT.KEY_POINT_RAN_SHAO_QI, "燃烧器"));
-        _this.addPoint(new meta_1.BaseInfoField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_LIFE, 53, 2, "累计燃烧时间", "时"));
-        _this.addPoint(new CountShowField_1.CountShowField(CTL_RT.KEY_BASE, SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_DAYS, "运行天数", "天"));
-        _this.addPoint(new CountShowField_1.CountShowField(CTL_RT.KEY_BASE, SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_HOURS, "运行小时数", "时"));
-        _this.addPoint(new FixedValueField_1.FixedValueField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_POWER, "燃料类型", 0, ZH_CN_1.ZH_CN.coms_power));
-        _this.addPoint(new FixedValueField_1.FixedValueField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_MEDIA, "介质类型", 0, ZH_CN_1.ZH_CN.coms_media));
+        _this.addPoint(new CountField_1.CountField(RT_1.CTL_RT.KEY_POINT_RAN_SHAO_QI, '燃烧器'));
+        _this.addPoint(new meta_1.BaseInfoField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_LIFE, 53, 2, '累计燃烧时间', '时'));
+        _this.addPoint(new CountShowField_1.CountShowField(Map_CTL_RT.KEY_BASE, SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_DAYS, '运行天数', '天'));
+        _this.addPoint(new CountShowField_1.CountShowField(Map_CTL_RT.KEY_BASE, SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_HOURS, '运行小时数', '时'));
+        _this.addPoint(new FixedValueField_1.FixedValueField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_POWER, '燃料类型', 0, Map_CTL_RT.coms_power));
+        _this.addPoint(new FixedValueField_1.FixedValueField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_MEDIA, '介质类型', 0, Map_CTL_RT.coms_media));
         return _this;
     }
-    CTL_RT.coms_ranshaoqi_status = {
-        0: "小火",
-        1: "大火"
+    Map_CTL_RT.coms_ranshaoqi_status = {
+        0: '小火',
+        1: '大火'
     };
-    CTL_RT.coms_master = {
-        0: "主",
-        1: "备"
+    Map_CTL_RT.coms_master = {
+        0: '主',
+        1: '备'
     };
-    CTL_RT.coms_auto = {
-        0: "自",
-        1: "手"
+    Map_CTL_RT.coms_auto = {
+        0: '自',
+        1: '手'
     };
-    return CTL_RT;
-}(ZH_CN_1.ZH_CN));
-exports.CTL_RT = CTL_RT;
+    return Map_CTL_RT;
+}(ZH_CN_1.Map_ZH_CN));
+exports.Map_CTL_RT = Map_CTL_RT;

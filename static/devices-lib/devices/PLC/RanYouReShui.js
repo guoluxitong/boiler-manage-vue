@@ -28,10 +28,10 @@ module.exports = /** @class */ (function (_super) {
         list.push(map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_DAYS));
         list.push(map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_HOURS));
         var map2 = this.getMockFields();
-        list.push(map2.getItem("mo_paiyanwendu"));
-        list.push(map2.getItem("mo_chushuiwendu"));
-        list.push(map2.getItem("mo_huishuiwendu"));
-        list.push(map.getItem("ba_shuiweizhuangtai"));
+        list.push(map2.getItem('mo_paiyanwendu'));
+        list.push(map2.getItem('mo_chushuiwendu'));
+        list.push(map2.getItem('mo_huishuiwendu'));
+        list.push(map.getItem('ba_shuiweizhuangtai'));
         return list.toArray();
     };
     return PLC_RanYouReShui;

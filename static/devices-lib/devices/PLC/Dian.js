@@ -20,12 +20,11 @@ var PLC_Dian = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     PLC_Dian.prototype.getPowerInfo = function () {
-        var map = this.getMockFields();
-        if (map.containsKey(PLC_Dian.KEY_POINT_JIA_RE_ZU))
-            return map.getItem(PLC_Dian.KEY_POINT_JIA_RE_ZU).getValue() > 0 ? 1 : 0;
+        // let map = this.getMockFields()
+        // if (map.containsKey(PLC_Dian.KEY_POINT_JIA_RE_ZU))
+        //     return map.getItem(PLC_Dian.KEY_POINT_JIA_RE_ZU).getValue() > 0 ? 1 : 0
         return 0;
     };
-    PLC_Dian.KEY_POINT_JIA_RE_ZU = "mo_qidongjiarezushu";
     return PLC_Dian;
 }(BaseDevice_1.PLC));
 exports.PLC_Dian = PLC_Dian;

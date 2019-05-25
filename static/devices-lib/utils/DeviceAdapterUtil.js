@@ -3,18 +3,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SdcSoftDevice_1 = require("../devices/SdcSoftDevice");
 var DeviceAdapter = /** @class */ (function () {
     function DeviceAdapter(createDeviceFunc, createMapFunc) {
+        this.lang = 'zh-cn';
         this.createDeviceFunc = createDeviceFunc;
         this.createMapFunc = createMapFunc;
     }
     /**
      * 获取子类别设备对象
      */
-    DeviceAdapter.prototype.getSubDevice = function (type, sub, data, lang) {
-        if (lang === void 0) { lang = 'zh-cn'; }
+    DeviceAdapter.prototype.getSubDevice = function (type, sub, data) {
         var t = type + '_' + sub;
         console.log('t:=' + t);
         var device = this.createDeviceFunc(t);
-        var map = this.createMapFunc(t, lang);
+        var map = this.createMapFunc(this.lang, t);
         if (device.validateFalse(data.byteLength)) {
             return null;
         }
@@ -23,31 +23,31 @@ var DeviceAdapter = /** @class */ (function () {
         });
         return device;
     };
-    DeviceAdapter.prototype.getSdcSoftDevice = function (type, data, power, media, lang) {
+    DeviceAdapter.prototype.getSdcSoftDevice = function (lang, type, data, power, media) {
         if (power === void 0) { power = SdcSoftDevice_1.SdcSoftDevice.POWER_MEDIA_VALUE_NULL; }
         if (media === void 0) { media = SdcSoftDevice_1.SdcSoftDevice.POWER_MEDIA_VALUE_NULL; }
-        if (lang === void 0) { lang = 'zh-cn'; }
+        this.lang = lang;
         var device = this.createDeviceFunc(type);
-        var map = this.createMapFunc(type, lang);
+        var map = this.createMapFunc(lang, type);
         if (device.validateFalse(data.byteLength)) {
             return null;
         }
         /*用户确认设备类型时的逻辑
         *设置设备警告信息
-        device.setWarningMsg(map.getwarningMsg());
+        device.setWarningMsg(map.getwarningMsg())
         *设置子类设备信息
-        device.setSubTypes(map.getSubTypes());
+        device.setSubTypes(map.getSubTypes())
          */
         map.getPointMap().each(function (key, value) {
             /*
             if (key == SdcSoftDevice.KEY_POINT_RUN_DAYS) {
-                console.log('hhhhhhh');
+                console.log('hhhhhhh')
             }*/
             device.handleByteField(value, data);
         });
         //自动进行子类型确认
         if (device.getSubDeviceType() != SdcSoftDevice_1.SdcSoftDevice.NO_SUB_DEVICE_TYPE) {
-            var subDevice = this.getSubDevice(type, device.getSubDeviceType(), data, lang);
+            var subDevice = this.getSubDevice(type, device.getSubDeviceType(), data);
             if (null == subDevice)
                 return null;
             device = subDevice;
@@ -78,27 +78,25 @@ var DeviceAdapter = /** @class */ (function () {
     };
     return DeviceAdapter;
 }());
-
-
 /*
 export class Web_DeviceAdapterUtil {
     private static adapter: DeviceAdapter = new DeviceAdapter((type) => {
         let strs = type.split('_')
-        let path = '../devices/' + strs.join('/');
-        let deviceType = require(path);
-        let d = new deviceType();
-        return d;
+        let path = '../devices/' + strs.join('/')
+        let deviceType = require(path)
+        let d = new deviceType()
+        return d
     }, (type, lang) => {
         let strs = type.split('_')
-        let path = '../map/' + lang + '/' + strs.join('/');
-        let mapType = require(path);
-        let d = new mapType();
-        return d;
-    });
+        let path = '../map/' + lang + '/' + strs.join('/')
+        let mapType = require(path)
+        let d = new mapType()
+        return d
+    })
 
 
     static getSdcSoftDevice(type: string, data: Buffer, power: number = SdcSoftDevice.POWER_MEDIA_VALUE_NULL, media: number = SdcSoftDevice.POWER_MEDIA_VALUE_NULL, lang: Language = 'zh-cn'): SdcSoftDevice | null {
-        return this.adapter.getSdcSoftDevice(type, data, power, media, lang);
+        return this.adapter.getSdcSoftDevice(type, data, power, media, lang)
     }
 }
 */
@@ -108,12 +106,11 @@ var Wx_DeviceAdapterUtil = /** @class */ (function () {
     Wx_DeviceAdapterUtil.InjectFunc = function (createDeviceFunc, createMapFunc) {
         this.adapter = new DeviceAdapter(createDeviceFunc, createMapFunc);
     };
-    Wx_DeviceAdapterUtil.getSdcSoftDevice = function (type, data, power, media, lang) {
+    Wx_DeviceAdapterUtil.getSdcSoftDevice = function (lang, type, data, power, media) {
         if (power === void 0) { power = SdcSoftDevice_1.SdcSoftDevice.POWER_MEDIA_VALUE_NULL; }
         if (media === void 0) { media = SdcSoftDevice_1.SdcSoftDevice.POWER_MEDIA_VALUE_NULL; }
-        if (lang === void 0) { lang = 'zh-cn'; }
         if (null != this.adapter) {
-            return this.adapter.getSdcSoftDevice(type, data, power, media, lang);
+            return this.adapter.getSdcSoftDevice(lang, type, data, power, media);
         }
         return null;
     };

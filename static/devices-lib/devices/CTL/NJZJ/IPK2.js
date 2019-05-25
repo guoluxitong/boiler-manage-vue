@@ -12,13 +12,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var CTL_NJZJ_IP_1 = require("./CTL_NJZJ_IP");
+var CTL_NJZJ_IP_Http_1 = require("./CTL_NJZJ_IP_Http");
 module.exports = /** @class */ (function (_super) {
     __extends(CTL_NJZJ_IPK2, _super);
     function CTL_NJZJ_IPK2() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    CTL_NJZJ_IPK2.prototype.handleDeviceNo = function () {
-    };
     return CTL_NJZJ_IPK2;
-}(CTL_NJZJ_IP_1.IP));
+}(CTL_NJZJ_IP_Http_1.IP_Http));

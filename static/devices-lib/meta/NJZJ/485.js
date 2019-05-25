@@ -50,7 +50,7 @@ var DeviceField = /** @class */ (function (_super) {
     __extends(DeviceField, _super);
     function DeviceField(name, startIndex, bytesLength, title, valueMap) {
         var _this = _super.call(this) || this;
-        _this.sb = "";
+        _this.sb = '';
         _this.name = name;
         _this.startIndex = startIndex;
         _this.bytesLength = bytesLength;
@@ -64,8 +64,8 @@ var DeviceField = /** @class */ (function (_super) {
             bytes[_i] = arguments[_i];
         }
         this.value = bytes[1] & 0xFF | (bytes[0] & 0xFF) << 8;
-        //        if("循环泵"== this.getTitle()){
-        //            System.out.println("");
+        //        if('循环泵'== this.getTitle()){
+        //            System.out.println('')
         //        }
         if (0x7FFF == this.value)
             return false;
@@ -122,8 +122,8 @@ var ExceptionField = /** @class */ (function (_super) {
             bytes[_i] = arguments[_i];
         }
         this.value = bytes[1] & 0xFF | (bytes[0] & 0xFF) << 8;
-        //        if(this.getTitle().equals("关键参数异常")){
-        //            System.out.println("");
+        //        if(this.getTitle().equals('关键参数异常')){
+        //            System.out.println('')
         //        }
         if (0x7FFF == this.value)
             return false;
@@ -156,11 +156,14 @@ var MockField = /** @class */ (function (_super) {
         var i = bytes[0] << 8 | bytes[1];
         if (0x7FFF == i)
             return false;
-        //let buf = new ArrayBuffer(4);
-        //let view  = new Uint8Array(buf);
-        // for(let i =0;i< bytes.length;i++){
-        //     view[i]=bytes[i];
+        //let buf = new ArrayBuffer(4)
+        //let view  = new Uint8Array(buf)
+        // for(let i =0i< bytes.lengthi++){
+        //     view[i]=bytes[i]
         // }
+        var dv = new DataView(new ArrayBuffer(2));
+        dv.setInt16(0, i);
+        i = dv.getInt16(0);
         this.value = i;
         if (this.getBaseNumber()) {
             this.value = i / this.getBaseNumber();
@@ -262,11 +265,11 @@ var StartStopField = /** @class */ (function (_super) {
     StartStopField.prototype.getValueString = function () {
         var h = (this.value / 60).toString();
         if (2 > h.length)
-            h = "0" + h;
+            h = '0' + h;
         var m = (this.value % 60).toString();
         if (2 > m.length)
-            m = "0" + m;
-        return h + ":" + m;
+            m = '0' + m;
+        return h + ':' + m;
     };
     StartStopField.prototype.getCommand = function () {
         var cmd = new Command_1.TimeCommand();
@@ -283,7 +286,7 @@ exports.StartStopField = StartStopField;
 var SystemStatusField = /** @class */ (function (_super) {
     __extends(SystemStatusField, _super);
     function SystemStatusField(name, startIndex, bytesLength, title, valueMap, cmdGroupKey, address, minValue, maxValue) {
-        var _this = _super.call(this, name, startIndex, bytesLength, title, "") || this;
+        var _this = _super.call(this, name, startIndex, bytesLength, title, '') || this;
         _this.valueMap = new Collections_1.NumberHashMap(valueMap);
         _this.commandGroupKey = cmdGroupKey;
         _this.address = address;

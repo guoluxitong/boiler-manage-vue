@@ -28,8 +28,8 @@ module.exports = /** @class */ (function (_super) {
         list.push(map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_DAYS));
         list.push(map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_HOURS));
         var map2 = this.getMockFields();
-        list.push(map.getItem("ba_shuiweizhuangtai"));
-        list.push(map2.getItem("mo_zuizhongpaiyanwendu"));
+        list.push(map.getItem('ba_shuiweizhuangtai'));
+        list.push(map2.getItem('mo_zuizhongpaiyanwendu'));
         if (map.containsKey('ba_guoluyalizhuangtai')) {
             list.push(map.getItem('ba_guoluyalizhuangtai'));
         }

@@ -6,8 +6,8 @@ var map = /** @class */ (function () {
         this.pointMap = new Collections_1.StringHashMap();
         this.commandMap = new Collections_1.StringHashMap();
     }
-    //protected subTypes: StringHashMap<string> = new StringHashMap<string>();
-    //protected warningMsg:string = '';
+    //protected subTypes: StringHashMap<string> = new StringHashMap<string>()
+    //protected warningMsg:string = ''
     map.prototype.getPointMap = function () {
         return this.pointMap;
     };
@@ -15,10 +15,10 @@ var map = /** @class */ (function () {
         return this.commandMap;
     };
     // getSubTypes(){
-    //     return this.subTypes;
+    //     return this.subTypes
     // }
     // getwarningMsg(){
-    //     return this.warningMsg;
+    //     return this.warningMsg
     // }
     map.prototype.addCommandGroup = function (groupKey) {
         this.commandMap.addItem(groupKey, null);
@@ -26,24 +26,24 @@ var map = /** @class */ (function () {
     map.prototype.addPoint = function (byteField) {
         this.pointMap.addItem(byteField.getName(), byteField);
     };
-    map.KEY_BASE = "baseInfo";
-    map.KEY_RUN = "runInfo";
-    map.KEY_EXCEPTION = "exceptionInfo";
-    map.KEY_MOCK = "mockInfo";
-    map.KEY_SETTING = "settingInfo";
-    map.KEY_START_STOP = "startStopInfo";
-    map.KEY_DEVICE = "deviceInfo";
-    map.KEY_OPEN_CLOSE = "openclose";
+    map.KEY_BASE = 'baseInfo';
+    map.KEY_RUN = 'runInfo';
+    map.KEY_EXCEPTION = 'exceptionInfo';
+    map.KEY_MOCK = 'mockInfo';
+    map.KEY_SETTING = 'settingInfo';
+    map.KEY_START_STOP = 'startStopInfo';
+    map.KEY_DEVICE = 'deviceInfo';
+    map.KEY_OPEN_CLOSE = 'openclose';
     /**
      * 计算属性的KEY
      */
-    map.KEY_Count_Fields = "countfields";
-    map.KEY_POINT_SYSTEM_STATUS = "o_system_status";
-    map.KEY_POINT_POWER = "o_power";
-    map.KEY_POINT_MEDIA = "o_media";
-    map.KEY_POINT_RUN_LIFE = "ba_yunxingshijian";
-    map.KEY_POINT_RUN_DAYS = "ba_yunxingtianshu";
-    map.KEY_POINT_RUN_HOURS = "ba_yunxingxiaoshishu";
+    map.KEY_Count_Fields = 'countfields';
+    map.KEY_POINT_SYSTEM_STATUS = 'o_system_status';
+    map.KEY_POINT_POWER = 'o_power';
+    map.KEY_POINT_MEDIA = 'o_media';
+    map.KEY_POINT_RUN_LIFE = 'ba_yunxingshijian';
+    map.KEY_POINT_RUN_DAYS = 'ba_yunxingtianshu';
+    map.KEY_POINT_RUN_HOURS = 'ba_yunxingxiaoshishu';
     return map;
 }());
 exports.map = map;

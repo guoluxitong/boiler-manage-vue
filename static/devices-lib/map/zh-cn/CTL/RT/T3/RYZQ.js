@@ -14,9 +14,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var RYZQ_1 = require("./AScript/RYZQ");
 module.exports = /** @class */ (function (_super) {
-    __extends(CTL_RT_T3_RYZQ, _super);
-    function CTL_RT_T3_RYZQ() {
+    __extends(Map_CTL_RT_T3_RYZQ, _super);
+    function Map_CTL_RT_T3_RYZQ() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return CTL_RT_T3_RYZQ;
-}(RYZQ_1.CTL_RT_T3_RYZQ_Ts));
+    return Map_CTL_RT_T3_RYZQ;
+}(RYZQ_1.Map_CTL_RT_T3_RYZQ_Ts));

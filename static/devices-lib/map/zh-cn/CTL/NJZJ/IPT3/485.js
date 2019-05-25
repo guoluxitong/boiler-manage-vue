@@ -15,11 +15,11 @@ var __extends = (this && this.__extends) || (function () {
 var CTL_NJZJ_IP_485_1 = require("../CTL_NJZJ_IP_485");
 var _485_1 = require("../../../../../meta/NJZJ/485");
 module.exports = /** @class */ (function (_super) {
-    __extends(CTL_NJZJ_IPT3_485, _super);
-    function CTL_NJZJ_IPT3_485() {
+    __extends(Map_CTL_NJZJ_IPT3_485, _super);
+    function Map_CTL_NJZJ_IPT3_485() {
         var _this = _super.call(this) || this;
-        _this.addPoint(new _485_1.SettingField("se_jiarezushu", 1114, 2, "加热组数", "组", 0, CTL_NJZJ_IP_485_1.CTL_NJZJ_IP_485.Commands_Key_Parameters_Setting, "0517", 1, 30));
+        _this.addPoint(new _485_1.SettingField("se_jiarezushu", 1114, 2, "加热组数", "组", 0, CTL_NJZJ_IP_485_1.Map_CTL_NJZJ_IP_485.Commands_Key_Parameters_Setting, "0517", 1, 30));
         return _this;
     }
-    return CTL_NJZJ_IPT3_485;
-}(CTL_NJZJ_IP_485_1.CTL_NJZJ_IP_485));
+    return Map_CTL_NJZJ_IPT3_485;
+}(CTL_NJZJ_IP_485_1.Map_CTL_NJZJ_IP_485));

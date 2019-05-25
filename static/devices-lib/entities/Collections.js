@@ -44,22 +44,23 @@ var StringHashMap = /** @class */ (function () {
     };
     Object.defineProperty(StringHashMap.prototype, "count", {
         get: function () {
-            return map_1.map.length;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(StringHashMap.prototype, "Keys", {
-        get: function () {
-            var keys = [];
-            this.each(function (k, v) {
-                keys.push(k);
+            var i = 0;
+            this.each(function () {
+                i++;
             });
-            return keys;
+            return i;
         },
         enumerable: true,
         configurable: true
     });
+    // get Keys(): string[] {
+    //     // let keys: string[] = []
+    //     // this.each((k, v) => {
+    //     //     keys.push(k)
+    //     // })
+    //     //return keys
+    //     return this.map2.keys()
+    // }
     StringHashMap.prototype.each = function (func) {
         for (var key in this.map) {
             func(key, this.map[key]);
@@ -67,6 +68,9 @@ var StringHashMap = /** @class */ (function () {
     };
     StringHashMap.prototype.containsKey = function (key) {
         return this.map[key] ? true : false;
+    };
+    StringHashMap.prototype.remove = function (key) {
+        delete this.map[key];
     };
     StringHashMap.prototype.clear = function () {
         this.map = {};
@@ -82,6 +86,9 @@ var List = /** @class */ (function () {
         if (item) {
             this.list.push(item);
         }
+    };
+    List.prototype.insert = function (index, item) {
+        this.list.splice(index, 0, item);
     };
     List.prototype.each = function (func) {
         for (var i in this.list) {

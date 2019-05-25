@@ -52,11 +52,9 @@
 </template>
 <script>
 import { getControllerByteData, getControllerType } from "@/api/controller";
-import {
-  getDeviceByByteDataAndType,
-  getCmdMapByDevice
-} from "@/deviceAdapter";
+import { getDeviceByByteDataAndType, getCmdMapByDevice } from "@/deviceAdapter";
 import animation from "./components/animation";
+import { constants } from "fs";
 export default {
   name: "controller-run-info",
   components: {
@@ -64,6 +62,7 @@ export default {
   },
   data() {
     return {
+      timer: null,
       //visible: this.show,
       dialogDeviceFormVisible: false,
       runTabHeight: document.body.clientHeight - 125,
@@ -92,6 +91,10 @@ export default {
     address: {
       type: String,
       default: "未出售"
+    },
+    cleartimer: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -100,34 +103,44 @@ export default {
     },
     controllerNo() {
       this.controllerNumber = this.controllerNo;
+    },
+    cleartimer(val, oldval) {
+      console.log("val=" + val+' old='+oldval);
+      if (val && this.timer) {
+        console.log("close..............");
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+      else if(!val){
+        console.log("start..............");
+        this.setTimeInterval();
+        this.showControllerData();
+      }
     }
   },
-  created() {
+
+  mounted(){
     this.setTimeInterval();
     this.showControllerData();
+    console.log('mounted..........')
+  },
+  created() {
+    console.log('created..........')
   },
   methods: {
-    /* controllerRunInfoOpen() {
-      this.initControllerInfo();
-      let self = this;
-      window.onresize = function() {
-        self.runTabHeight = document.body.clientHeight - 160;
-      };
-      this.setTimeInterval();
-      this.showControllerData();
-    }, */
-    /* controllerRunInfoClose () {
-          this.initControllerInfo()
-
-          this.$emit('controllerRunInfoDialogClose', {controllerRunInfoDialogVisible: false})
-        }, */
     setTimeInterval() {
       let timeInterVal = window.localStorage["timeInterVal"];
       if (timeInterVal) this.timeInterVal = timeInterVal;
 
-      var timer = setInterval(() => {
-        this.showControllerData(timer);
+      this.timer = setInterval(() => {
+        console.log("work..............");
+        this.showControllerData();
       }, 1000 * this.timeInterVal);
+
+      // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
+      // this.$once("hook:beforeDestroy", () => {
+      //   clearInterval(timer);
+      // });
     },
     showControllerData() {
       Promise.all([
@@ -139,7 +152,7 @@ export default {
           let controllerByteData = data[0].data;
           let controllerType = data[1].data.deviceType;
           if (controllerByteData.length > 0 && controllerType) {
-            this.getDeviceByByteDataAndType(controllerByteData, controllerType);
+            this.getDevice(controllerByteData, controllerType);
           } else {
             this.initControllerInfo();
           }
@@ -148,30 +161,26 @@ export default {
           console.log(r);
         });
     },
-    getDeviceByByteDataAndType(byteData, deviceType) {
+    getDevice(byteData, deviceType) {
       //console.log(DeviceAdapterUtil.getSdcSoftDevice(deviceType,byteData,0,0))
-      getDeviceByByteDataAndType(
-        new Uint8Array(byteData),
-        deviceType,
-        0,
-        0
-      ).then(data => {
-        this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields().map;
-        this.controllerFormData.bengAnimationList = data.getBeng();
-        this.controllerFormData.fanAnimationList = data.getFan();
-        this.controllerFormData.stoveAnimation = data
-          .getStoveElement()
-          .getElementPrefixAndValuesString();
-        this.controllerFormData.exceptionInfoMap = data.getExceptionFields().map;
-        this.controllerFormData.baseInfoMap = data.getBaseInfoFields().map;
-        this.controllerFormData.mockInfoMap = data.getMockFields().map;
-        this.controllerFormData.settingInfoMap = data.getSettingFields().map;
-        this.controllerFormData.deviceInfoMap = data.getDeviceFields().map;
-        //console.log(this.controllerFormData.baseInfoMap)
-        /* for(let item in this.controllerFormData.baseInfoMap.map){
+      getDeviceByByteDataAndType(new Uint8Array(byteData), deviceType).then(
+        data => {
+          this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields().map;
+          this.controllerFormData.bengAnimationList = data.getBeng();
+          this.controllerFormData.fanAnimationList = data.getFan();
+          this.controllerFormData.stoveAnimation = data
+            .getStoveElement()
+            .getElementPrefixAndValuesString();
+          this.controllerFormData.exceptionInfoMap = data.getExceptionFields().map;
+          this.controllerFormData.baseInfoMap = data.getBaseInfoFields().map;
+          this.controllerFormData.mockInfoMap = data.getMockFields().map;
+          this.controllerFormData.settingInfoMap = data.getSettingFields().map;
+          this.controllerFormData.deviceInfoMap = data.getDeviceFields().map;
+          //console.log(this.controllerFormData.baseInfoMap)
+          /* for(let item in this.controllerFormData.baseInfoMap.map){
               console.log(item.name+"==="+item.title+"==="+item.valueString)
             } */
-        /* getCmdMapByDevice(data).then(cmds => {
+          /* getCmdMapByDevice(data).then(cmds => {
               for (let key in cmds) {
                 if (key == '设置参数') {
                   let cmd = cmds[key]
@@ -187,7 +196,8 @@ export default {
 
               }
             }) */
-      });
+        }
+      );
     },
     initControllerInfo() {
       this.controllerFormData.bengAnimationList = [];

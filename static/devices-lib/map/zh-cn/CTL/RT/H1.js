@@ -14,9 +14,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var H1_1 = require("./AScript/H1");
 module.exports = /** @class */ (function (_super) {
-    __extends(CTL_RT_H1, _super);
-    function CTL_RT_H1() {
+    __extends(Map_CTL_RT_H1, _super);
+    function Map_CTL_RT_H1() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return CTL_RT_H1;
-}(H1_1.CTL_RT_H1_Ts));
+    return Map_CTL_RT_H1;
+}(H1_1.Map_CTL_RT_H1_Ts));

@@ -151,6 +151,9 @@ var MockField = /** @class */ (function (_super) {
         }
         var i = bytes[0] << 8 | bytes[1];
         //console.log(this.title+' basenumber:='+this.getBaseNumber()+' value:='+i.toString() )
+        var dv = new DataView(new ArrayBuffer(2));
+        dv.setInt16(0, i);
+        i = dv.getInt16(0);
         this.value = i;
         if (this.getBaseNumber()) {
             this.value = i / this.getBaseNumber();

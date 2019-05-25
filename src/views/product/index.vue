@@ -211,7 +211,7 @@
     ></product-map-dialog>
     <!--监控-->
     <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%">
-      <controller-run-info-dialog :controllerNo="this.controllerNo" :address="this.address"></controller-run-info-dialog>
+      <controller-run-info-dialog :cleartimer="!controllerRunInfoDialogVisible" :controllerNo="this.controllerNo" :address="this.address"></controller-run-info-dialog>
     </el-dialog>
 
     <!--辅机信息-->
@@ -804,7 +804,7 @@ export default {
       this.getList();
     },
     controllerRunInfoDialogClose(obj) {
-      this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible;
+      this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible;      
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;

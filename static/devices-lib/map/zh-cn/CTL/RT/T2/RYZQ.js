@@ -12,11 +12,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var RYZQ_1 = require("./AScript/RYZQ");
+var RYZQ_Base_1 = require("./RYZQ_Base");
 module.exports = /** @class */ (function (_super) {
-    __extends(CTL_RT_T2_RYZQ, _super);
-    function CTL_RT_T2_RYZQ() {
+    __extends(Map_CTL_RT_T2_RYZQ, _super);
+    function Map_CTL_RT_T2_RYZQ() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return CTL_RT_T2_RYZQ;
-}(RYZQ_1.CTL_RT_T2_RYZQ_Ts));
+    return Map_CTL_RT_T2_RYZQ;
+}(RYZQ_Base_1.Map_CTL_RT_T2_RYZQ_Ts));

@@ -14,9 +14,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var RT_1 = require("./RT");
 module.exports = /** @class */ (function (_super) {
-    __extends(CTL_RT_T3, _super);
-    function CTL_RT_T3() {
+    __extends(Map_CTL_RT_T3, _super);
+    function Map_CTL_RT_T3() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return CTL_RT_T3;
-}(RT_1.CTL_RT));
+    return Map_CTL_RT_T3;
+}(RT_1.Map_CTL_RT));

@@ -12,20 +12,19 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var ZH_CN_1 = require("../../../../ZH_CN");
 var meta_1 = require("../../../../../../meta/RT/meta");
 var RT_1 = require("../../../../../../devices/CTL/RT/RT");
 var RYZQ_1 = require("../AScript/RYZQ");
 module.exports = /** @class */ (function (_super) {
-    __extends(CTL_RT_T3_RYZQ_YLKZQ, _super);
-    function CTL_RT_T3_RYZQ_YLKZQ() {
+    __extends(Map_CTL_RT_T3_RYZQ_YLKZQ, _super);
+    function Map_CTL_RT_T3_RYZQ_YLKZQ() {
         var _this = _super.call(this) || this;
-        // this.warningMsg='';
-        _this.addPoint(new meta_1.OpenCloseField("oc_fuhetiaojie", 5, 2, "负荷调节", 7, ZH_CN_1.ZH_CN.coms_open_close));
-        _this.addPoint(new meta_1.OpenCloseField("oc_qitingkongzhi", 5, 2, "启停控制", 8, ZH_CN_1.ZH_CN.coms_open_close));
-        _this.addPoint(new meta_1.OpenCloseField(RT_1.CTL_RT.KEY_POINT_RAN_SHAO_QI_KONGZHI, 9, 2, "燃烧器启停控制", 0, ZH_CN_1.ZH_CN.coms_open_close));
-        _this.addPoint(new meta_1.OpenCloseField("oc_ranshaoqifuhetiaojie", 9, 2, "燃烧器调节", 1, ZH_CN_1.ZH_CN.coms_open_close));
+        // this.warningMsg=''
+        _this.addPoint(new meta_1.OpenCloseField("oc_fuhetiaojie", 5, 2, "负荷调节", 7, Map_CTL_RT_T3_RYZQ_YLKZQ.coms_open_close));
+        _this.addPoint(new meta_1.OpenCloseField("oc_qitingkongzhi", 5, 2, "启停控制", 8, Map_CTL_RT_T3_RYZQ_YLKZQ.coms_open_close));
+        _this.addPoint(new meta_1.OpenCloseField(RT_1.CTL_RT.KEY_POINT_RAN_SHAO_QI_KONGZHI, 9, 2, "燃烧器启停控制", 0, Map_CTL_RT_T3_RYZQ_YLKZQ.coms_open_close));
+        _this.addPoint(new meta_1.OpenCloseField("oc_ranshaoqifuhetiaojie", 9, 2, "燃烧器调节", 1, Map_CTL_RT_T3_RYZQ_YLKZQ.coms_open_close));
         return _this;
     }
-    return CTL_RT_T3_RYZQ_YLKZQ;
-}(RYZQ_1.CTL_RT_T3_RYZQ_Ts));
+    return Map_CTL_RT_T3_RYZQ_YLKZQ;
+}(RYZQ_1.Map_CTL_RT_T3_RYZQ_Ts));

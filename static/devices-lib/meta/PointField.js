@@ -14,7 +14,7 @@ var PointField = /** @class */ (function () {
         this.name = name;
     };
     PointField.prototype.getUnit = function () {
-        return null == this.unit ? "" : this.unit;
+        return null == this.unit ? '' : this.unit;
     };
     PointField.prototype.setUnit = function (unit) {
         this.unit = unit;

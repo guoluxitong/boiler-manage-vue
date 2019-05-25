@@ -72,7 +72,7 @@ var DeviceField = /** @class */ (function (_super) {
     __extends(DeviceField, _super);
     function DeviceField(name, startIndex, bytesLength, title, valueMap) {
         var _this = _super.call(this) || this;
-        _this.sb = "";
+        _this.sb = '';
         _this.name = name;
         _this.startIndex = startIndex;
         _this.bytesLength = bytesLength;

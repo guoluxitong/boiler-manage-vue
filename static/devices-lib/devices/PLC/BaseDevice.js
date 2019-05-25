@@ -23,7 +23,7 @@ var PLC = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     PLC.prototype.handleByteField = function (field, bytes) {
-        //let view = new DataView(bytes);
+        //let view = new DataView(bytes)
         switch (field.getBytesLength()) {
             case 0:
             case 2:
@@ -41,7 +41,7 @@ var PLC = /** @class */ (function (_super) {
     };
     PLC.prototype.handleDeviceNo = function (bytes) {
         var deviceNo = bytes[5] << 24 + bytes[6] << 16 + bytes[7] << 8 + bytes[8];
-        //let deviceNo = String.format("%1$010d", new BigInteger(new byte[]{bytes[5], bytes[6], bytes[7], bytes[8]}).intValue());
+        //let deviceNo = String.format('%1$010d', new BigInteger(new byte[]{bytes[5], bytes[6], bytes[7], bytes[8]}).intValue())
         var str = NumberUtil_1.NumberUtil.NumberToString(deviceNo, 10, 10);
         this.setDeviceNo(str);
         return str;
@@ -383,34 +383,34 @@ var PLC = /** @class */ (function (_super) {
         }
         return list;
     };
-    PLC.KEY_POINT_Add_SHUI_BENG = "_addshuibeng";
-    PLC.KEY_POINT_Add_SHUI_BENG_1 = "de_1_addshuibeng_start_stop";
-    PLC.KEY_POINT_Add_SHUI_BENG_2 = "de_2_addshuibeng_start_stop";
-    PLC.KEY_POINT_XUN_HUAN_BENG = "_xunhuanbeng";
-    PLC.KEY_POINT_XUN_HUAN_BENG_1 = "de_1_xunhuanbeng_start_stop";
-    PLC.KEY_POINT_XUN_HUAN_BENG_2 = "de_2_xunhuanbeng_start_stop";
-    PLC.KEY_POINT_XUN_HUAN_BENG_3 = "de_3_xunhuanbeng_start_stop";
-    PLC.KEY_POINT_CHU_YANG_BENG = "_chuanyangbeng";
-    PLC.KEY_POINT_CHU_YANG_BENG_1 = "de_1_chuyangbeng_start_stop";
-    PLC.KEY_POINT_CHU_YANG_BENG_2 = "de_2_chuyangbeng_start_stop";
-    PLC.KEY_POINT_ZHU_YOU_BENG = "_zhuyoubeng";
-    PLC.KEY_POINT_ZHU_YOU_BENG_1 = "de_zhuyoubeng_start_stop";
-    PLC.KEY_POINT_ZHEN_KONG_BENG = "_zhenkongbeng";
-    PLC.KEY_POINT_ZHEN_KONG_BENG_1 = "de_zhenkongbeng_start_stop";
-    PLC.KEY_POINT_JIE_NENG_BENG = "_jienengbeng";
-    PLC.KEY_POINT_JIE_NENG_BENG_1 = "de_1_jienengbeng_start_stop";
-    PLC.KEY_POINT_JIE_NENG_BENG_2 = "de_2_jienengbeng_start_stop";
-    PLC.KEY_POINT_ZHAO_QI_FAN = "_zhaoqifan";
-    PLC.KEY_POINT_ZHAO_QI_FAN_1 = "de_1_zhaoqifengji_start_stop";
-    PLC.KEY_POINT_ZHAO_QI_FAN_2 = "de_2_zhaoqifengji_start_stop";
-    PLC.KEY_POINT_GU_FENG_FAN = "_gufengfan";
-    PLC.KEY_POINT_GU_FENG_FAN_1 = "de_1_gufengji_start_stop";
-    PLC.KEY_POINT_YIN_FENG_FAN = "_yinfengfan";
-    PLC.KEY_POINT_YIN_FENG_FAN_1 = "de_1_yinfengji_start_stop";
-    PLC.KEY_POINT_LU_PAI_FAN = "_lupaifan";
-    PLC.KEY_POINT_LU_PAI_FAN_1 = "de_lupai_start_stop";
-    PLC.KEY_POINT_CHU_ZHA_FAN = "_chuzhafan";
-    PLC.KEY_POINT_CHU_ZHA_FAN_1 = "de_chuzha_start_stop";
+    PLC.KEY_POINT_Add_SHUI_BENG = '_addshuibeng';
+    PLC.KEY_POINT_Add_SHUI_BENG_1 = 'de_1_addshuibeng_start_stop';
+    PLC.KEY_POINT_Add_SHUI_BENG_2 = 'de_2_addshuibeng_start_stop';
+    PLC.KEY_POINT_XUN_HUAN_BENG = '_xunhuanbeng';
+    PLC.KEY_POINT_XUN_HUAN_BENG_1 = 'de_1_xunhuanbeng_start_stop';
+    PLC.KEY_POINT_XUN_HUAN_BENG_2 = 'de_2_xunhuanbeng_start_stop';
+    PLC.KEY_POINT_XUN_HUAN_BENG_3 = 'de_3_xunhuanbeng_start_stop';
+    PLC.KEY_POINT_CHU_YANG_BENG = '_chuanyangbeng';
+    PLC.KEY_POINT_CHU_YANG_BENG_1 = 'de_1_chuyangbeng_start_stop';
+    PLC.KEY_POINT_CHU_YANG_BENG_2 = 'de_2_chuyangbeng_start_stop';
+    PLC.KEY_POINT_ZHU_YOU_BENG = '_zhuyoubeng';
+    PLC.KEY_POINT_ZHU_YOU_BENG_1 = 'de_zhuyoubeng_start_stop';
+    PLC.KEY_POINT_ZHEN_KONG_BENG = '_zhenkongbeng';
+    PLC.KEY_POINT_ZHEN_KONG_BENG_1 = 'de_zhenkongbeng_start_stop';
+    PLC.KEY_POINT_JIE_NENG_BENG = '_jienengbeng';
+    PLC.KEY_POINT_JIE_NENG_BENG_1 = 'de_1_jienengbeng_start_stop';
+    PLC.KEY_POINT_JIE_NENG_BENG_2 = 'de_2_jienengbeng_start_stop';
+    PLC.KEY_POINT_ZHAO_QI_FAN = '_zhaoqifan';
+    PLC.KEY_POINT_ZHAO_QI_FAN_1 = 'de_1_zhaoqifengji_start_stop';
+    PLC.KEY_POINT_ZHAO_QI_FAN_2 = 'de_2_zhaoqifengji_start_stop';
+    PLC.KEY_POINT_GU_FENG_FAN = '_gufengfan';
+    PLC.KEY_POINT_GU_FENG_FAN_1 = 'de_1_gufengji_start_stop';
+    PLC.KEY_POINT_YIN_FENG_FAN = '_yinfengfan';
+    PLC.KEY_POINT_YIN_FENG_FAN_1 = 'de_1_yinfengji_start_stop';
+    PLC.KEY_POINT_LU_PAI_FAN = '_lupaifan';
+    PLC.KEY_POINT_LU_PAI_FAN_1 = 'de_lupai_start_stop';
+    PLC.KEY_POINT_CHU_ZHA_FAN = '_chuzhafan';
+    PLC.KEY_POINT_CHU_ZHA_FAN_1 = 'de_chuzha_start_stop';
     return PLC;
 }(SdcSoftDevice_1.SdcSoftDevice));
 exports.PLC = PLC;

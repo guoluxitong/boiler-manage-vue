@@ -27,7 +27,7 @@ module.exports = /** @class */ (function (_super) {
         var list = new Collections_1.List();
         list.push(map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_DAYS));
         list.push(map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_HOURS));
-        list.push(map.getItem("ba_shuiweizhuangtai"));
+        list.push(map.getItem('ba_shuiweizhuangtai'));
         var map2 = this.getMockFields();
         if (map.containsKey('ba_guoluyalizhuangtai')) {
             list.push(map.getItem('ba_guoluyalizhuangtai'));

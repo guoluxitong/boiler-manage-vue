@@ -21,7 +21,7 @@ module.exports = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     CTL_HNWE_485.prototype.handleByteField = function (field, bytes) {
-        //let view = new DataView(bytes);
+        //let view = new DataView(bytes)
         switch (field.getBytesLength()) {
             case 2:
                 if (field.haveValue(bytes[field.getStartIndex()], bytes[field.getStartIndex() + 1])) {
@@ -48,21 +48,21 @@ module.exports = /** @class */ (function (_super) {
         item = map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_HOURS);
         item.setValueString('不支持');
         list.push(item);
-        list.push(map2.getItem("mo_CHgongshuiwendu"));
-        list.push(map2.getItem("mo_CHhuishuiwendu"));
-        list.push(map2.getItem("mo_OTCwendu"));
+        list.push(map2.getItem('mo_CHgongshuiwendu'));
+        list.push(map2.getItem('mo_CHhuishuiwendu'));
+        list.push(map2.getItem('mo_OTCwendu'));
         return list.toArray();
     };
     CTL_HNWE_485.prototype.getMode = function () {
         return 0;
     };
     CTL_HNWE_485.prototype.getPowerInfo = function () {
-        var value = this.getOpenCloseFields().getItem("oc_huoyan");
+        var value = this.getOpenCloseFields().getItem('oc_huoyan');
         return value.getValue();
     };
     CTL_HNWE_485.prototype.getBeng = function () {
         var list = [];
-        var value = this.getOpenCloseFields().getItem("oc_shuibeng");
+        var value = this.getOpenCloseFields().getItem('oc_shuibeng');
         var element = new Element_1.Element();
         element.setTitle(value.getTitle());
         element.setPrefix(Element_1.Element.Prefix_Beng);
@@ -78,7 +78,7 @@ module.exports = /** @class */ (function (_super) {
     };
     CTL_HNWE_485.prototype.getFan = function () {
         var list = [];
-        var value = this.getOpenCloseFields().getItem("oc_fengji");
+        var value = this.getOpenCloseFields().getItem('oc_fengji');
         var element = new Element_1.Element();
         element.setTitle(value.getTitle());
         element.setPrefix(Element_1.Element.Prefix_Fan);

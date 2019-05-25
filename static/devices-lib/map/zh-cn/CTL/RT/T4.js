@@ -14,9 +14,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var T4_1 = require("./AScript/T4");
 module.exports = /** @class */ (function (_super) {
-    __extends(CTL_RT_T4, _super);
-    function CTL_RT_T4() {
+    __extends(Map_CTL_RT_T4, _super);
+    function Map_CTL_RT_T4() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return CTL_RT_T4;
-}(T4_1.CTL_RT_T4_Ts));
+    return Map_CTL_RT_T4;
+}(T4_1.Map_CTL_RT_T4_Ts));

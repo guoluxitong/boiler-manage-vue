@@ -27,9 +27,17 @@ module.exports = /** @class */ (function (_super) {
         var list = new Collections_1.List();
         list.push(map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_DAYS));
         list.push(map.getItem(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_HOURS));
+        var field = map.getItem(PLC_DianZhengQi.KEY_POINT_JIA_RE_ZU);
         var map2 = this.getMockFields();
-        list.push(map2.getItem("mo_qidongjiarezushu"));
-        list.push(map2.getItem("ba_shuiweizhuangtai"));
+        var jiarezu = map2.getItem('mo_qidongjiarezushu');
+        if (jiarezu) {
+            field.setValue(jiarezu.getValue());
+        }
+        else {
+            field.setValue(0);
+        }
+        list.push(field);
+        list.push(map2.getItem('ba_shuiweizhuangtai'));
         if (map.containsKey('ba_guoluyalizhuangtai')) {
             list.push(map.getItem('ba_guoluyalizhuangtai'));
         }

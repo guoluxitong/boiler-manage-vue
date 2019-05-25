@@ -129,20 +129,32 @@ var MockField = /** @class */ (function (_super) {
         }
         /*
         if (this.getTitle() == '软水箱液位') {
-            console.log('软水箱液位');
+            console.log('软水箱液位')
         }
         */
         var i = bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
-        if (0x7FFFFFFF == i)
+        if (0x7FFFFFFF == i) {
             return false;
-        var data = new ArrayBuffer(4);
-        var view = new Uint8Array(data);
-        view[0] = bytes[0];
-        view[1] = bytes[1];
-        view[2] = bytes[2];
-        view[3] = bytes[3];
-        this.value = (new DataView(data)).getFloat32(0);
+        }
+        var dv = new DataView(new ArrayBuffer(4));
+        dv.setInt32(0, i);
+        i = dv.getFloat32(0);
+        this.value = i;
+        if (this.getBaseNumber()) {
+            this.value = parseFloat((i / this.getBaseNumber()).toFixed(2));
+        }
+        else {
+            this.value = parseFloat(i.toFixed(2));
+        }
         return true;
+        // let data = new ArrayBuffer(4)
+        // let view = new Uint8Array(data)
+        // view[0] = bytes[0]
+        // view[1] = bytes[1]
+        // view[2] = bytes[2]
+        // view[3] = bytes[3]
+        // this.value = (new DataView(data)).getFloat32(0)
+        // return true
     };
     return MockField;
 }(MockField_1.MockField));

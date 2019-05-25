@@ -32,14 +32,14 @@ var SdcSoftDevice = /** @class */ (function () {
         this.media = SdcSoftDevice.POWER_MEDIA_VALUE_NULL;
         this.deviceNo = '';
         this.warningMsg = '';
-        this.fieldMap.addItem(map_1.map.KEY_BASE, []);
-        this.fieldMap.addItem(map_1.map.KEY_EXCEPTION, []);
-        this.fieldMap.addItem(map_1.map.KEY_MOCK, []);
-        this.fieldMap.addItem(map_1.map.KEY_SETTING, []);
-        this.fieldMap.addItem(map_1.map.KEY_DEVICE, []);
-        this.fieldMap.addItem(map_1.map.KEY_START_STOP, []);
-        this.fieldMap.addItem(map_1.map.KEY_OPEN_CLOSE, []);
-        this.fieldMap.addItem(map_1.map.KEY_Count_Fields, []);
+        this.fieldMap.addItem(map_1.map.KEY_BASE, new Collections_1.StringHashMap());
+        this.fieldMap.addItem(map_1.map.KEY_EXCEPTION, new Collections_1.StringHashMap());
+        this.fieldMap.addItem(map_1.map.KEY_MOCK, new Collections_1.StringHashMap());
+        this.fieldMap.addItem(map_1.map.KEY_SETTING, new Collections_1.StringHashMap());
+        this.fieldMap.addItem(map_1.map.KEY_DEVICE, new Collections_1.StringHashMap());
+        this.fieldMap.addItem(map_1.map.KEY_START_STOP, new Collections_1.StringHashMap());
+        this.fieldMap.addItem(map_1.map.KEY_OPEN_CLOSE, new Collections_1.StringHashMap());
+        this.fieldMap.addItem(map_1.map.KEY_Count_Fields, new Collections_1.StringHashMap());
     }
     SdcSoftDevice.prototype.initCommandsMapKeys = function (map) {
         this.commandMap = map;
@@ -53,13 +53,8 @@ var SdcSoftDevice = /** @class */ (function () {
     SdcSoftDevice.prototype.setDeviceNo = function (deviceNo) {
         this.deviceNo = deviceNo;
     };
-    SdcSoftDevice.prototype.getFieldsMap = function (fieldsGroupKey) {
-        var map = new Collections_1.StringHashMap();
-        var list = this.fieldMap.getItem(fieldsGroupKey);
-        for (var e in list) {
-            map.addItem(list[e].getName(), list[e]);
-        }
-        return map;
+    SdcSoftDevice.prototype.getFieldsMap = function (groupKey) {
+        return this.fieldMap.getItem(groupKey);
     };
     SdcSoftDevice.prototype.getBaseInfoFields = function () {
         return this.getFieldsMap(map_1.map.KEY_BASE);
@@ -85,9 +80,6 @@ var SdcSoftDevice = /** @class */ (function () {
     SdcSoftDevice.prototype.getCountFields = function () {
         return this.getFieldsMap(map_1.map.KEY_Count_Fields);
     };
-    SdcSoftDevice.prototype.getFieldsByGroupKey = function (key) {
-        return this.fieldMap.getItem(key);
-    };
     SdcSoftDevice.prototype.getExceptionCount = function () {
         return this.getExceptionFields().count;
     };
@@ -106,8 +98,10 @@ var SdcSoftDevice = /** @class */ (function () {
     SdcSoftDevice.prototype.addUIField = function (field) {
         if (null == field)
             return;
-        if (this.fieldMap.containsKey(field.getKey()))
-            this.fieldMap.getItem(field.getKey()).push(field);
+        var key = field.getKey();
+        if (this.fieldMap.containsKey(key)) {
+            this.fieldMap.getItem(key).addItem(field.getName(), field);
+        }
     };
     SdcSoftDevice.prototype.addField = function (field) {
         if (field instanceof ByteField_1.ByteField) {
@@ -134,6 +128,9 @@ var SdcSoftDevice = /** @class */ (function () {
             this.addUIField(field);
         }
     };
+    SdcSoftDevice.prototype.removeField = function (groupKey, fieldName) {
+        this.fieldMap.getItem(groupKey).remove(fieldName);
+    };
     /**
      * 获取炉子元素信息
      * @returns AElement
@@ -141,8 +138,8 @@ var SdcSoftDevice = /** @class */ (function () {
     SdcSoftDevice.prototype.getStoveElement = function () {
         var element = new Element_1.Element();
         element.setPrefix(Element_1.Element.Prefix_Stove);
-        element.setTitle("锅炉");
-        element.SetValues(Element_1.Element.Index_A_Power, this.power, this.media, SdcSoftDevice.Style_Horizontal, this.getPowerInfo());
+        element.setTitle('锅炉');
+        element.SetValues(Element_1.Element.Index_A_Power, this.power, this.media, this.getPowerInfo(), SdcSoftDevice.Style_Horizontal);
         return element;
     };
     SdcSoftDevice.prototype.validateFalse = function (bytesLength) {
@@ -164,27 +161,28 @@ var SdcSoftDevice = /** @class */ (function () {
         return SdcSoftDevice.NO_SUB_DEVICE_TYPE;
     };
     SdcSoftDevice.POWER_MEDIA_VALUE_NULL = -1;
-    SdcSoftDevice.KEY_POINT_SYSTEM_STATUS = "o_system_status";
-    SdcSoftDevice.KEY_POINT_POWER = "o_power";
-    SdcSoftDevice.KEY_POINT_MEDIA = "o_media";
-    SdcSoftDevice.KEY_POINT_RUN_LIFE = "ba_yunxingshijian";
-    SdcSoftDevice.KEY_POINT_RUN_DAYS = "ba_yunxingtianshu";
-    SdcSoftDevice.KEY_POINT_RUN_HOURS = "ba_yunxingxiaoshishu";
+    SdcSoftDevice.KEY_POINT_SYSTEM_STATUS = 'o_system_status';
+    SdcSoftDevice.KEY_POINT_POWER = 'o_power';
+    SdcSoftDevice.KEY_POINT_MEDIA = 'o_media';
+    SdcSoftDevice.KEY_POINT_RUN_LIFE = 'ba_yunxingshijian';
+    SdcSoftDevice.KEY_POINT_RUN_DAYS = 'ba_yunxingtianshu';
+    SdcSoftDevice.KEY_POINT_RUN_HOURS = 'ba_yunxingxiaoshishu';
+    SdcSoftDevice.KEY_POINT_JIA_RE_ZU = 'jia_re_zu_count';
     SdcSoftDevice.Style_Horizontal = 0;
     SdcSoftDevice.Style_Vertical = 1;
     /*
     设备类型由用户确认时执行的逻辑
      子类型映射map
   
-    private subTypes = new StringHashMap<string>();
+    private subTypes = new StringHashMap<string>()
 
 
     getDeviceType(): string {
-        return '';
+        return ''
     }
  
     setSubTypes(map:StringHashMap<string>):void{
-        this.subTypes = map;
+        this.subTypes = map
     }
     
     /
@@ -192,25 +190,25 @@ var SdcSoftDevice = /** @class */ (function () {
      * @param key 子类型展示名称
      
     getSubDeviceType(key: string): string {
-        return this.subTypes.getItem(key);
+        return this.subTypes.getItem(key)
     }
     
      * 获取子类型展示名称列表
      
     getSubTypesNameArray() {
-        return this.subTypes.Keys;
+        return this.subTypes.Keys
     }
     
      * 获取设备的警告信息
      
     getWarningMsg(){
-        return this.warningMsg;
+        return this.warningMsg
     }
     
      * 设置设备的警告信息
      
     setWarningMsg(msg:string){
-        this.warningMsg = msg;
+        this.warningMsg = msg
     }
     */
     /**

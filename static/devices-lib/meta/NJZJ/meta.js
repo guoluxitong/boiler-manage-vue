@@ -50,7 +50,7 @@ var DeviceField = /** @class */ (function (_super) {
     __extends(DeviceField, _super);
     function DeviceField(name, startIndex, bytesLength, title, valueMap) {
         var _this = _super.call(this) || this;
-        _this.sb = "";
+        _this.sb = '';
         _this.name = name;
         _this.startIndex = startIndex;
         _this.bytesLength = bytesLength;
@@ -119,7 +119,7 @@ var ExceptionField = /** @class */ (function (_super) {
             bytes[_i] = arguments[_i];
         }
         this.value = bytes[1];
-        return this.value > 0;
+        return this.value == 0xff ? false : (this.value > 0);
     };
     return ExceptionField;
 }(ExceptionField_1.ExceptionField));
@@ -148,6 +148,9 @@ var MockField = /** @class */ (function (_super) {
         var i = bytes[0] << 8 | bytes[1];
         if (0x7FFF == i)
             return false;
+        var dv = new DataView(new ArrayBuffer(2));
+        dv.setInt16(0, i);
+        i = dv.getInt16(0);
         this.value = i;
         if (this.getBaseNumber()) {
             this.value = i / this.getBaseNumber();
@@ -250,11 +253,11 @@ var StartStopField = /** @class */ (function (_super) {
     StartStopField.prototype.getValueString = function () {
         var h = (this.value / 60).toString();
         if (2 > h.length)
-            h = "0" + h;
+            h = '0' + h;
         var m = (this.value % 60).toString();
         if (2 > m.length)
-            m = "0" + m;
-        return h + ":" + m;
+            m = '0' + m;
+        return h + ':' + m;
     };
     StartStopField.prototype.getCommand = function () {
         var cmd = new Command_1.TimeCommand();

@@ -14,37 +14,37 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ZH_CN_1 = require("../ZH_CN");
-var PLC = /** @class */ (function (_super) {
-    __extends(PLC, _super);
-    function PLC() {
+var Map_PLC = /** @class */ (function (_super) {
+    __extends(Map_PLC, _super);
+    function Map_PLC() {
         var _this = _super.call(this) || this;
-        _this.addCommandGroup(PLC.Commands_Key_Parameters_Setting);
-        _this.addCommandGroup(PLC.Commands_Key_System_Ctl);
+        _this.addCommandGroup(Map_PLC.Commands_Key_Parameters_Setting);
+        _this.addCommandGroup(Map_PLC.Commands_Key_System_Ctl);
         return _this;
         /*
-                this.addPoint(new BaseInfoField(SdcSoftDevice.KEY_POINT_RUN_HOURS, 9, 2, "运行小时数", "时"));
-                this.addPoint(new BaseInfoField(SdcSoftDevice.KEY_POINT_RUN_DAYS, 11, 2, "运行天数", "天"));
-                this.addPoint(new BaseInfoField(SdcSoftDevice.KEY_POINT_SYSTEM_STATUS, 13, 2, "系统状态", '', PLC.coms_status));
-                this.addPoint(new BaseInfoField("ba_shuiweizhuangtai", 19, 2, "水位状态", '', ParentClass.coms_level));
-                this.addPoint(new BaseInfoField("ba_ranshaoqizhuangtai", 21, 2, "燃烧器状态", '', PLC.coms_ranshaoqi_status));
+                this.addPoint(new BaseInfoField(SdcSoftDevice.KEY_POINT_RUN_HOURS, 9, 2, '运行小时数', '时'))
+                this.addPoint(new BaseInfoField(SdcSoftDevice.KEY_POINT_RUN_DAYS, 11, 2, '运行天数', '天'))
+                this.addPoint(new BaseInfoField(SdcSoftDevice.KEY_POINT_SYSTEM_STATUS, 13, 2, '系统状态', '', PLC.coms_status))
+                this.addPoint(new BaseInfoField('ba_shuiweizhuangtai', 19, 2, '水位状态', '', ParentClass.coms_level))
+                this.addPoint(new BaseInfoField('ba_ranshaoqizhuangtai', 21, 2, '燃烧器状态', '', PLC.coms_ranshaoqi_status))
             */
     }
-    PLC.Commands_Key_Parameters_Setting = "参数设置";
-    PLC.Commands_Key_System_Ctl = "系统控制";
-    PLC.coms_status = {
-        0: "待命",
-        1: "运行",
-        2: "报警",
+    Map_PLC.Commands_Key_Parameters_Setting = '参数设置';
+    Map_PLC.Commands_Key_System_Ctl = '系统控制';
+    Map_PLC.coms_status = {
+        0: '待命',
+        1: '运行',
+        2: '报警',
     };
-    PLC.coms_atuo = {
-        0: "自",
-        1: "手",
+    Map_PLC.coms_atuo = {
+        0: '自',
+        1: '手',
     };
-    PLC.coms_ranshaoqi_status = {
-        0: "停",
-        1: "运行",
-        2: "大火"
+    Map_PLC.coms_ranshaoqi_status = {
+        0: '停',
+        1: '运行',
+        2: '大火'
     };
-    return PLC;
-}(ZH_CN_1.ZH_CN));
-exports.PLC = PLC;
+    return Map_PLC;
+}(ZH_CN_1.Map_ZH_CN));
+exports.Map_PLC = Map_PLC;

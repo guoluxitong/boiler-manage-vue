@@ -14,37 +14,37 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ZH_CN_1 = require("../../ZH_CN");
-var CTL_NJZJ = /** @class */ (function (_super) {
-    __extends(CTL_NJZJ, _super);
-    function CTL_NJZJ() {
+var Map_CTL_NJZJ = /** @class */ (function (_super) {
+    __extends(Map_CTL_NJZJ, _super);
+    function Map_CTL_NJZJ() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    CTL_NJZJ.coms_status = {
-        0: "关机",
-        1: "待机",
-        2: "运行",
-        3: "报警",
+    Map_CTL_NJZJ.coms_status = {
+        0: '关机',
+        1: '待机',
+        2: '运行',
+        3: '报警',
     };
-    CTL_NJZJ.coms_ranshaoqi_status = {
-        0: "停",
-        1: "小火",
-        2: "大火",
+    Map_CTL_NJZJ.coms_ranshaoqi_status = {
+        0: '停',
+        1: '小火',
+        2: '大火',
     };
-    CTL_NJZJ.coms_yalistatus = {
-        0: "常压",
-        1: "低压",
-        2: "中压",
-        3: "高压",
-        4: "超压",
+    Map_CTL_NJZJ.coms_yalistatus = {
+        0: '常压',
+        1: '低压',
+        2: '中压',
+        3: '高压',
+        4: '超压',
     };
-    CTL_NJZJ.coms_device = {
-        0xC0: "手",
-        0x3F: "自",
-        0x30: "备",
-        0xCF: "主",
-        0x0F: "启",
-        0xF0: "停",
+    Map_CTL_NJZJ.coms_device = {
+        0xC0: '手',
+        0x3F: '自',
+        0x30: '备',
+        0xCF: '主',
+        0x0F: '启',
+        0xF0: '停',
     };
-    return CTL_NJZJ;
-}(ZH_CN_1.ZH_CN));
-exports.CTL_NJZJ = CTL_NJZJ;
+    return Map_CTL_NJZJ;
+}(ZH_CN_1.Map_ZH_CN));
+exports.Map_CTL_NJZJ = Map_CTL_NJZJ;

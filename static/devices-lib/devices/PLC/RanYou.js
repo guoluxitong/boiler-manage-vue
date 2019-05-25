@@ -22,7 +22,7 @@ var PLC_RanYou = /** @class */ (function (_super) {
     PLC_RanYou.prototype.getPowerInfo = function () {
         return this.getBaseInfoFields().getItem(PLC_RanYou.KEY_POINT_RAN_SHAO_QI_STATUS).getValue();
     };
-    PLC_RanYou.KEY_POINT_RAN_SHAO_QI_STATUS = "ba_ranshaoqizhuangtai";
+    PLC_RanYou.KEY_POINT_RAN_SHAO_QI_STATUS = 'ba_ranshaoqizhuangtai';
     return PLC_RanYou;
 }(BaseDevice_1.PLC));
 exports.PLC_RanYou = PLC_RanYou;

@@ -5,7 +5,7 @@
         <device-map :map-height="mapHeight" v-on:listenToDeviceMap="receiveToDeviceMap"></device-map>
       </div>
       <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%">
-        <controller-run-info-dialog :controllerNo="this.controllerNo" :address="this.address"></controller-run-info-dialog>
+        <controller-run-info-dialog :cleartimer="!controllerRunInfoDialogVisible" :controllerNo="this.controllerNo" :address="this.address"></controller-run-info-dialog>
       </el-dialog>
     </div>
   </div>

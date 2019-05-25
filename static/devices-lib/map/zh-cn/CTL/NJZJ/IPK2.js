@@ -14,9 +14,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var CTL_NJZJ_IP_Http_1 = require("./CTL_NJZJ_IP_Http");
 module.exports = /** @class */ (function (_super) {
-    __extends(CTL_NJZJ_IPK2, _super);
-    function CTL_NJZJ_IPK2() {
+    __extends(Map_CTL_NJZJ_IPK2, _super);
+    function Map_CTL_NJZJ_IPK2() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return CTL_NJZJ_IPK2;
-}(CTL_NJZJ_IP_Http_1.CTL_NJZJ_IP_Http));
+    return Map_CTL_NJZJ_IPK2;
+}(CTL_NJZJ_IP_Http_1.Map_CTL_NJZJ_IP_Http));

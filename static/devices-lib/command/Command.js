@@ -25,7 +25,7 @@ var Command = /** @class */ (function () {
         this.modbusNo = 1;
         this.unit = '';
         this.title = '';
-        this.action = "06";
+        this.action = '06';
         this.valueType = Command.INT_VALUE;
         this.valueIsSet = false;
         this.maxValue = 100;
@@ -39,10 +39,10 @@ var Command = /** @class */ (function () {
         if (this.valueIsSet) {
             this.valueIsSet = false;
             var str = this.convertToString();
-            this.valueString = "";
+            this.valueString = '';
             return str.toUpperCase();
         }
-        return "";
+        return '';
     };
     Command.prototype.setModbusNo = function (modbusNo) {
         this.modbusNo = modbusNo;
@@ -115,10 +115,10 @@ var Command = /** @class */ (function () {
         if (this.valueIsSet) {
             this.valueIsSet = false;
             var str = this.convertToString();
-            this.value = "";
+            this.value = '';
             return str.toUpperCase();
         }
-        return "";
+        return '';
     };
     Command.hexStringToBytes = function (str) {
         if (null != str && str.length != 0) {
@@ -137,7 +137,7 @@ var Command = /** @class */ (function () {
         if (null != str && str.length != 0) {
             var len = str.length / 2;
             for (var i = 0; i < len; i++) {
-                //console.log(str.substr(i * 2, 2));
+                //console.log(str.substr(i * 2, 2))
                 numbers.push(parseInt(str.substr(i * 2, 2), 16));
             }
         }
@@ -145,11 +145,11 @@ var Command = /** @class */ (function () {
     };
     /**
     static intToHexString(x: number, hexLength: number = 4): string {
-        let str = x.toString(16);
-        for (let i = str.length; i < hexLength; i++) {
-            str += ("0" + str);
+        let str = x.toString(16)
+        for (let i = str.length i < hexLength i++) {
+            str += ('0' + str)
         }
-        return str;
+        return str
     }
 */
     Command.intToBytes4 = function (n) {
@@ -187,13 +187,13 @@ var IntCommand = /** @class */ (function (_super) {
     }
     IntCommand.prototype.handleValue = function (values) {
         this.valueString = values[0].toString();
-        this.value = NumberUtil_1.NumberUtil.NumberToString(values[0], 16, 4); // Command.intToHexString(values[0]);
+        this.value = NumberUtil_1.NumberUtil.NumberToString(values[0], 16, 4); // Command.intToHexString(values[0])
     };
     IntCommand.prototype.convertToString = function () {
-        var no = NumberUtil_1.NumberUtil.NumberToString(this.getModbusNo(), 16, 2); //Command.intToHexString(this.getModbusNo());
+        var no = NumberUtil_1.NumberUtil.NumberToString(this.getModbusNo(), 16, 2); //Command.intToHexString(this.getModbusNo())
         var baseStr = no + this.action + this.address + this.value;
         var data = Command.toNumbers(baseStr);
-        return baseStr + CRC16Util_1.CRC16Util.getCrc(CRC16Util_1.CRC16Util.calcCrc16(data, 0, data.length)) + "0000000000";
+        return baseStr + CRC16Util_1.CRC16Util.getCrc(CRC16Util_1.CRC16Util.calcCrc16(data, 0, data.length)) + '0000000000';
     };
     return IntCommand;
 }(Command));
@@ -203,19 +203,18 @@ var TimeCommand = /** @class */ (function (_super) {
     function TimeCommand() {
         var _this = _super.call(this) || this;
         _this.valueType = Command.TIME_VALUE;
-        _this.script = "";
+        _this.script = '';
         return _this;
     }
     TimeCommand.prototype.handleValue = function (values) {
         var hstr = (values[0] / 60).toString();
         var mstr = (values[1] % 60).toString();
         if (2 > hstr.length)
-            hstr = "0" + hstr;
+            hstr = '0' + hstr;
         if (2 > mstr.length)
-            mstr = "0" + mstr;
-        this.valueString = hstr + ":" + mstr;
-        ;
-        this.value = NumberUtil_1.NumberUtil.NumberToString(values[0] * 60 + values[1], 16, 4); //Command.intToHexString(values[0] * 60 + values[1]);
+            mstr = '0' + mstr;
+        this.valueString = hstr + ':' + mstr;
+        this.value = NumberUtil_1.NumberUtil.NumberToString(values[0] * 60 + values[1], 16, 4); //Command.intToHexString(values[0] * 60 + values[1])
     };
     return TimeCommand;
 }(IntCommand));
@@ -235,7 +234,7 @@ var FloatCommand = /** @class */ (function (_super) {
     __extends(FloatCommand, _super);
     function FloatCommand() {
         var _this = _super.call(this) || this;
-        _this.action = "10";
+        _this.action = '10';
         _this.valueType = Command.FLOAT_VALUE;
         return _this;
     }

@@ -13,21 +13,26 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var CTL_NJZJ_IP_1 = require("./CTL_NJZJ_IP");
+var CTL_NJZJ_1 = require("./CTL_NJZJ");
 var IP_485 = /** @class */ (function (_super) {
     __extends(IP_485, _super);
+    /**
+     * 485数据读取指令
+     */
     function IP_485() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super.call(this) || this;
+        _this.BYTE_ARRAY_LENGTH = 1749;
+        return _this;
     }
     IP_485.prototype.handleDeviceNo = function (bytes) {
         return '';
     };
     IP_485.prototype.handleByteField = function (field, bytes) {
-        //let view = new DataView(bytes);
+        //let view = new DataView(bytes)
         if (field.haveValue(bytes[field.getStartIndex()], bytes[field.getStartIndex() + 1])) {
             /*
             if(field.getName()=='se_baojingwendu'){
-                console.log('aaaaaaaa');
+                console.log('aaaaaaaa')
             }*/
             this.addField(field);
         }
@@ -40,5 +45,5 @@ var IP_485 = /** @class */ (function (_super) {
         return list;
     };
     return IP_485;
-}(CTL_NJZJ_IP_1.IP));
+}(CTL_NJZJ_1.IP));
 exports.IP_485 = IP_485;

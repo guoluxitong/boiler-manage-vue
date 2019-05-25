@@ -8,7 +8,7 @@ var NumberUtil = /** @class */ (function () {
         if (length === void 0) { length = 10; }
         var str = x.toString(stringType);
         for (var i = str.length; i < length; i++) {
-            str = ("0" + str);
+            str = ('0' + str);
         }
         return str;
     };

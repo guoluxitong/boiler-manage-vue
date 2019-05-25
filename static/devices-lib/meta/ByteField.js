@@ -26,8 +26,9 @@ var ByteField = /** @class */ (function (_super) {
         _this.baseNumber = 0;
         _this.bit = 0;
         _this.needFormat = false;
-        _this.valueMap = null;
         _this.value = 0;
+        //传递valueMap到UI
+        _this.tranValueMapToUi = false;
         /**
          * 485内存地址
          */
@@ -36,6 +37,9 @@ var ByteField = /** @class */ (function (_super) {
         _this.minValue = 0;
         return _this;
     }
+    ByteField.prototype.getTranValueMapFlag = function () {
+        return this.tranValueMapToUi;
+    };
     ByteField.prototype.getValue = function () {
         return this.value;
     };
@@ -78,20 +82,25 @@ var ByteField = /** @class */ (function (_super) {
         return this.getValue().toString(10);
     };
     ByteField.prototype.getValueString = function () {
-        if (this.bytesLength > 0) { //bytesLength>0表示点位在数据中真实存储
-            return this.getValueBitString() + this.getUnit();
-        }
-        //点位并不真实存在，而又其他点位计算而来。如NJRT_T2的运行天数和小时数 由运行总时间计算得出
-        this.needFormat = true;
-        return this.getUnit();
+        // if (this.bytesLength > 0) {//bytesLength>0表示点位在数据中真实存储
+        //     return this.getValueBitString() + this.getUnit()
+        // }
+        // return this.getUnit()
+        return this.value + this.getUnit();
     };
     ByteField.prototype.getDeviceFieldForUI = function (value) {
-        var fieldForUI = new DeviceFieldForUI_1.DeviceFieldForUI();
+        var fieldForUI;
+        if (this.tranValueMapToUi) {
+            fieldForUI = new DeviceFieldForUI_1.DeviceFieldForUI(this.valueMap);
+        }
+        else {
+            fieldForUI = new DeviceFieldForUI_1.DeviceFieldForUI();
+        }
         this.setDeviceFieldForUIKey(fieldForUI);
         fieldForUI.setName(this.getName());
         fieldForUI.setTitle(this.getTitle());
         fieldForUI.setValueString(this.getValueString());
-        fieldForUI.setNeedFormat(this.needFormat);
+        //fieldForUI.setNeedFormat(this.needFormat)
         fieldForUI.setUnit(this.getUnit());
         if (value) {
             fieldForUI.setValue(value);
