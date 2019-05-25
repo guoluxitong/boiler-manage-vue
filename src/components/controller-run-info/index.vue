@@ -105,13 +105,12 @@ export default {
       this.controllerNumber = this.controllerNo;
     },
     cleartimer(val, oldval) {
-      console.log("val=" + val+' old='+oldval);
+      console.log("val=" + val + " old=" + oldval);
       if (val && this.timer) {
         console.log("close..............");
         clearInterval(this.timer);
         this.timer = null;
-      }
-      else if(!val){
+      } else if (!val) {
         console.log("start..............");
         this.setTimeInterval();
         this.showControllerData();
@@ -119,13 +118,18 @@ export default {
     }
   },
 
-  mounted(){
+  mounted() {
     this.setTimeInterval();
     this.showControllerData();
-    console.log('mounted..........')
+    console.log("mounted..........");
   },
   created() {
-    console.log('created..........')
+    console.log("created..........");
+  },
+  beforeDestroy() {
+    console.log("beforeDestroy");
+    clearInterval(this.timer);
+    this.timer = null;
   },
   methods: {
     setTimeInterval() {
