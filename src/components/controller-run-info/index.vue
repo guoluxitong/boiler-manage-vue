@@ -121,13 +121,8 @@ export default {
   mounted() {
     this.setTimeInterval();
     this.showControllerData();
-    console.log("mounted..........");
-  },
-  created() {
-    console.log("created..........");
   },
   beforeDestroy() {
-    console.log("beforeDestroy");
     clearInterval(this.timer);
     this.timer = null;
   },

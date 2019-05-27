@@ -1,5 +1,5 @@
 <template>
-  <div v-title data-title="地图分布">
+  <div>
     <div class="map-container">
       <div>
         <device-map :map-height="mapHeight" v-on:listenToDeviceMap="receiveToDeviceMap"></device-map>
