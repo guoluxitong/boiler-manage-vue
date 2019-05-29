@@ -33,6 +33,7 @@
   </div>
 </template>
 <script>
+import request from "@/utils/request";
 export default {
   name: "login",
   data() {
@@ -57,6 +58,12 @@ export default {
   },
   created() {
     this.initCopyrightInfoAndLogoUrl();
+    request({
+      url: "/data/index",
+      method: "post"
+    }).then(function(res) {
+      console.log(res.data.msg);
+    });
   },
   methods: {
     handleLogin() {
