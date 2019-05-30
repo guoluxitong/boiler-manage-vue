@@ -20,6 +20,7 @@ function loadDeviceModel(type) {
   })
 }
 export function getDeviceByByteDataAndType(dataArray, type, power = SdcSoftDevice.POWER_MEDIA_VALUE_NULL, media = SdcSoftDevice.POWER_MEDIA_VALUE_NULL) {
+  //console.log(type)
   return new Promise((resolve, reject) => {
     Promise.all([loadDevicePointMap(type), loadDeviceModel(type)]).then((data) => {
       let map = data[0]
@@ -31,14 +32,26 @@ export function getDeviceByByteDataAndType(dataArray, type, power = SdcSoftDevic
         device.handleByteField(value, dataArray);
       });
       if (device.getSubDeviceType() != SdcSoftDevice.NO_SUB_DEVICE_TYPE) {
-        let subDevice = getSubDevice(type, device.getSubDeviceType(), dataArray)
-        if (null == subDevice)
-          return null;
-        device = subDevice;
+        getSubDevice(type, device.getSubDeviceType(), dataArray).then(data => {
+          // console.log('sub:')
+          // console.log(data)
+          if (data) {
+            device = data
+            device.power = device.getBaseInfoFields().getItem(SdcSoftDevice.KEY_POINT_POWER).value
+            device.media = device.getBaseInfoFields().getItem(SdcSoftDevice.KEY_POINT_MEDIA).value
+         
+            resolve(device)
+          }
+          else {
+            reject(null)
+          }
+        })
+      } else {
+        device.power = device.getBaseInfoFields().getItem(SdcSoftDevice.KEY_POINT_POWER).value
+        device.media = device.getBaseInfoFields().getItem(SdcSoftDevice.KEY_POINT_MEDIA).value
+       
+        resolve(device)
       }
-      device.power = device.getBaseInfoFields().getItem(SdcSoftDevice.KEY_POINT_POWER).value
-      device.media = device.getBaseInfoFields().getItem(SdcSoftDevice.KEY_POINT_MEDIA).value
-      resolve(device)
     }).catch(function (r) {
       console.log(r);
     })
@@ -57,19 +70,23 @@ export function getCmdMapByDevice(device) {
 
 
 function getSubDevice(type, sub, dataArray) {
-  let t = type + '_' + sub;
-  Promise.all([loadDevicePointMap(type), loadDeviceModel(type)]).then((data) => {
-    let map = data[0]
-    let device = data[1]
-    if (device.validateFalse(dataArray.byteLength)) {
-      return null;
-    }
+  return new Promise((resolve, reject) => {
+    let t = type + '_' + sub;
+    Promise.all([loadDevicePointMap(t), loadDeviceModel(t)]).then((data) => {
+      let map = data[0]
+      let device = data[1]
+      // console.log(map)
+      // console.log(device)
+      if (device.validateFalse(dataArray.byteLength)) {
+        return null;
+      }
 
-    map.getPointMap().each((key, value) => {
-      device.handleByteField(value, dataArray);
-    });
-    resolve(device)
-  }).catch(function (r) {
-    console.log(r);
+      map.getPointMap().each((key, value) => {
+        device.handleByteField(value, dataArray);
+      });
+      resolve(device)
+    }).catch(function (r) {
+      console.log(r);
+    })
   })
 }

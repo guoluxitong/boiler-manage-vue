@@ -31,6 +31,10 @@ var CTL_RT = /** @class */ (function (_super) {
         //let view = new DataView(bytes)
         switch (field.getBytesLength()) {
             case 0:
+                if (field.haveValue()) {
+                    this.addField(field);
+                }
+                break;
             case 2:
                 if (field.haveValue(bytes[field.getStartIndex()], bytes[field.getStartIndex() + 1])) {
                     this.addField(field);

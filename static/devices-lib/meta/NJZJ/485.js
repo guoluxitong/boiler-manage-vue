@@ -108,8 +108,10 @@ exports.DeviceField = DeviceField;
 var ExceptionField_1 = require("../ExceptionField");
 var ExceptionField = /** @class */ (function (_super) {
     __extends(ExceptionField, _super);
-    function ExceptionField(name, startIndex, bytesLength, title) {
+    function ExceptionField(name, startIndex, bytesLength, title, level) {
+        if (level === void 0) { level = ExceptionField.Exception_Waring; }
         var _this = _super.call(this) || this;
+        _this.level = level;
         _this.name = name;
         _this.startIndex = startIndex;
         _this.bytesLength = bytesLength;
@@ -154,6 +156,9 @@ var MockField = /** @class */ (function (_super) {
             bytes[_i] = arguments[_i];
         }
         var i = bytes[0] << 8 | bytes[1];
+        // if(this.title == '后延时'){
+        //     console.log(i)
+        // }
         if (0x7FFF == i)
             return false;
         //let buf = new ArrayBuffer(4)
@@ -246,12 +251,24 @@ var StartStopField_1 = require("../StartStopField");
 var Command_1 = require("../../command/Command");
 var StartStopField = /** @class */ (function (_super) {
     __extends(StartStopField, _super);
-    function StartStopField(name, startIndex, bytesLength, title) {
+    function StartStopField(name, startIndex, bytesLength, title, cmdGroupKey, address, minValue, maxValue) {
         var _this = _super.call(this) || this;
         _this.name = name;
         _this.startIndex = startIndex;
         _this.bytesLength = bytesLength;
         _this.title = title;
+        if (cmdGroupKey) {
+            _this.commandGroupKey = cmdGroupKey;
+            if (address) {
+                _this.address = address;
+            }
+            if (minValue) {
+                _this.minValue = minValue;
+            }
+            if (maxValue) {
+                _this.maxValue = maxValue;
+            }
+        }
         return _this;
     }
     StartStopField.prototype.haveValue = function () {
@@ -272,13 +289,16 @@ var StartStopField = /** @class */ (function (_super) {
         return h + ':' + m;
     };
     StartStopField.prototype.getCommand = function () {
-        var cmd = new Command_1.TimeCommand();
-        cmd.setAddress(this.address);
-        cmd.setMaxValue(this.maxValue);
-        cmd.setMinValue(this.minValue);
-        cmd.initValue(this.value / 60, this.value % 60);
-        cmd.setTitle(this.getTitle());
-        return cmd;
+        if (this.address) {
+            var cmd = new Command_1.TimeCommand(this.title, this.address);
+            cmd.setAddress(this.address);
+            cmd.setMaxValue(this.maxValue);
+            cmd.setMinValue(this.minValue);
+            cmd.initValue(this.value / 60, this.value % 60);
+            cmd.setTitle(this.getTitle());
+            return cmd;
+        }
+        return null;
     };
     return StartStopField;
 }(StartStopField_1.StartStopField));
@@ -295,10 +315,7 @@ var SystemStatusField = /** @class */ (function (_super) {
         return _this;
     }
     SystemStatusField.prototype.getCommand = function () {
-        var cmd = new Command_1.SystemCommand();
-        cmd.setAddress(this.address);
-        cmd.setMaxValue(this.maxValue);
-        cmd.setMinValue(this.minValue);
+        var cmd = new Command_1.SystemCommand(this.title, this.address, this.maxValue, this.minValue);
         cmd.initValue(this.value);
         cmd.setTitle(this.getTitle());
         return cmd;

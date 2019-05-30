@@ -45,6 +45,7 @@ var DeviceAdapter = /** @class */ (function () {
             }*/
             device.handleByteField(value, data);
         });
+        device.handleCommandFields(map.getCommandsMap());
         //自动进行子类型确认
         if (device.getSubDeviceType() != SdcSoftDevice_1.SdcSoftDevice.NO_SUB_DEVICE_TYPE) {
             var subDevice = this.getSubDevice(type, device.getSubDeviceType(), data);

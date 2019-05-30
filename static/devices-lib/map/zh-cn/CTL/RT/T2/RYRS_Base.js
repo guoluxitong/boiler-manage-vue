@@ -20,6 +20,7 @@ var CountShowField_1 = require("../../../../../meta/CountShowField");
 var FixedValueField_1 = require("../../../../../meta/FixedValueField");
 var RT_1 = require("../../../../../devices/CTL/RT/RT");
 var T2_1 = require("../AScript/T2");
+var Command_1 = require("../../../../../command/Command");
 var Map_CTL_RT_T2_RYRS_Ts = /** @class */ (function (_super) {
     __extends(Map_CTL_RT_T2_RYRS_Ts, _super);
     function Map_CTL_RT_T2_RYRS_Ts() {
@@ -84,6 +85,7 @@ var Map_CTL_RT_T2_RYRS_Ts = /** @class */ (function (_super) {
         _this.addPoint(new meta_1.BaseInfoField("o_ranshaoqigongzuofangshi", 89, 2, "燃烧器工作方式", '', Map_CTL_RT_T2_RYRS_Ts.coms_ranshaoqi));
         _this.addPoint(new meta_1.BaseInfoField("o_bushuibengkongzhifangshi", 91, 2, "补水泵控制方式", '', Map_CTL_RT_T2_RYRS_Ts.coms_bushuibeng));
         _this.addPoint(new meta_1.BaseInfoField("o_xunhuanbengkongzhifangshi", 93, 2, "循环泵控制方式", '', Map_CTL_RT_T2_RYRS_Ts.coms_xunhuanbeng));
+        _this.addCommand('设备控制', new Command_1.OpenCloseCommand('控制器 运行|待命', '00a0', 1, 2));
         return _this;
     }
     Map_CTL_RT_T2_RYRS_Ts.coms_guolu = {

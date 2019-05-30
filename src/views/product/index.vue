@@ -117,33 +117,30 @@
         </template>
       </el-table-column>
     </el-table>
-    <!--右键菜单-->
     <menu-context ref="menuContext">
-      <menu-context-item
-        @click="handleUpdate"
-        v-permission="['3','5']"
-        :width="100"
-        :fontSize="18"
-      >编辑</menu-context-item>
-      <menu-context-item @click="handleCopy" v-permission="['3','5']" :width="100" :fontSize="18">复制</menu-context-item>
-      <menu-context-item @click="sellProduct" :width="100" :fontSize="18">售出</menu-context-item>
-      <menu-context-item @click="handleDownload" :width="100" :fontSize="18">导出</menu-context-item>
-      <menu-context-item @click="showControllerData" :width="100" :fontSize="18">监控</menu-context-item>
-      <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="18">辅机信息</menu-context-item>
+      <menu-context-item @click="handleUpdate" v-permission="['3','5']" :width="100" :fontSize="14">编辑</menu-context-item>
+      <menu-context-item @click="handleCopy" v-permission="['3','5']" :width="100" :fontSize="14">复制</menu-context-item>
+      <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
+      <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>
+      <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item>
+      <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="14">辅机信息</menu-context-item>
       <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
       <menu-context-item
         @click="handleChoiceUser"
         v-permission="['3']"
         :width="100"
-        :fontSize="18"
+        :fontSize="14"
       >分配</menu-context-item>
       <menu-context-item
         @click="handleDelete"
         v-permission="['3','6']"
         :width="100"
-        :fontSize="18"
+        :fontSize="14"
       >删除</menu-context-item>
     </menu-context>
+    <!--右键菜单-->
+    <!--<contextmenu :visible="showcontextmenu" ref="cmenu"></contextmenu>-->
+
     <!--分页-->
     <div class="pagination-container">
       <el-pagination
@@ -211,7 +208,11 @@
     ></product-map-dialog>
     <!--监控-->
     <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%">
-      <controller-run-info-dialog :cleartimer="!controllerRunInfoDialogVisible" :controllerNo="this.controllerNo" :address="this.address"></controller-run-info-dialog>
+      <controller-run-info-dialog
+        :cleartimer="!controllerRunInfoDialogVisible"
+        :controllerNo="this.controllerNo"
+        :address="this.address"
+      ></controller-run-info-dialog>
     </el-dialog>
 
     <!--辅机信息-->
@@ -232,6 +233,7 @@ import checkPermission from "@/utils/permission";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getBoilerModelListByCondition } from "@/api/boilerModel";
 import { getUserListByCondition } from "@/api/user";
+import contextmenu from "@/components/ContextMenu";
 import {
   getProductListByCondition,
   deleteProductById,
@@ -265,7 +267,8 @@ export default {
     productFormDialog,
     productMapDialog,
     auxiliaryMachineDialog,
-    controllerRunInfoDialog
+    controllerRunInfoDialog,
+    contextmenu
   },
   directives: { permission },
   data() {
@@ -291,6 +294,7 @@ export default {
       }
     };
     return {
+      showcontextmenu: false,
       boilerModelNumberArray: [],
       mediumArray: [],
       fuelArray: [],
@@ -416,6 +420,7 @@ export default {
         window.event.clientX,
         window.event.clientY
       );
+      //this.$refs.cmenu.show()
     },
     handleFilter() {
       this.listQuery.pageNum = 1;
@@ -470,7 +475,7 @@ export default {
     showControllerData(row) {
       this.controllerRunInfoDialogVisible = true;
       this.controllerNo = row.controllerNo;
-      console.log(row);
+      //console.log(row);
       row.province
         ? (this.address = row.province + row.city + row.district + row.street)
         : (this.address = "");
@@ -804,7 +809,7 @@ export default {
       this.getList();
     },
     controllerRunInfoDialogClose(obj) {
-      this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible;      
+      this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible;
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;

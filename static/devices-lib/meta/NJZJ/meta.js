@@ -105,8 +105,10 @@ exports.DeviceField = DeviceField;
 var ExceptionField_1 = require("../ExceptionField");
 var ExceptionField = /** @class */ (function (_super) {
     __extends(ExceptionField, _super);
-    function ExceptionField(name, startIndex, bytesLength, title) {
+    function ExceptionField(name, startIndex, bytesLength, title, level) {
+        if (level === void 0) { level = ExceptionField.Exception_Waring; }
         var _this = _super.call(this) || this;
+        _this.level = level;
         _this.name = name;
         _this.startIndex = startIndex;
         _this.bytesLength = bytesLength;
@@ -260,8 +262,7 @@ var StartStopField = /** @class */ (function (_super) {
         return h + ':' + m;
     };
     StartStopField.prototype.getCommand = function () {
-        var cmd = new Command_1.TimeCommand();
-        cmd.setAddress(this.address);
+        var cmd = new Command_1.TimeCommand(this.title, this.address);
         cmd.setMaxValue(this.maxValue);
         cmd.setMinValue(this.minValue);
         cmd.initValue(this.value / 60, this.value % 60);

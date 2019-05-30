@@ -20,8 +20,8 @@ var Map_CTL_NJZJ_IP_485 = /** @class */ (function (_super) {
     __extends(Map_CTL_NJZJ_IP_485, _super);
     function Map_CTL_NJZJ_IP_485() {
         var _this = _super.call(this) || this;
-        _this.addCommandGroup(Map_CTL_NJZJ_IP_485.Commands_Key_Parameters_Setting);
-        _this.addCommandGroup(Map_CTL_NJZJ_IP_485.Commands_Key_System_Ctl);
+        // this.addCommandGroup(Map_CTL_NJZJ_IP_485.Commands_Key_Parameters_Setting)
+        // this.addCommandGroup(Map_CTL_NJZJ_IP_485.Commands_Key_System_Ctl)
         _this.addPoint(new _485_1.SystemStatusField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_SYSTEM_STATUS, 7, 2, '系统状态', CTL_NJZJ_1.Map_CTL_NJZJ.coms_status, Map_CTL_NJZJ_IP_485.Commands_Key_System_Ctl, '0602', 1, 2));
         _this.addPoint(new _485_1.BaseInfoField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_DAYS, 51, 2, '工作天数', '天'));
         _this.addPoint(new _485_1.BaseInfoField(SdcSoftDevice_1.SdcSoftDevice.KEY_POINT_RUN_HOURS, 53, 2, '工作小时数', '时'));

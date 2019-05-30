@@ -4,6 +4,7 @@ var Collections_1 = require("../entities/Collections");
 var map = /** @class */ (function () {
     function map() {
         this.pointMap = new Collections_1.StringHashMap();
+        //protected commandMap: StringHashMap<Command[] | null> = new StringHashMap<Command[] | null>()
         this.commandMap = new Collections_1.StringHashMap();
     }
     //protected subTypes: StringHashMap<string> = new StringHashMap<string>()
@@ -20,11 +21,21 @@ var map = /** @class */ (function () {
     // getwarningMsg(){
     //     return this.warningMsg
     // }
-    map.prototype.addCommandGroup = function (groupKey) {
-        this.commandMap.addItem(groupKey, null);
-    };
+    // protected addCommandGroup(groupKey: string) {
+    //     this.commandMap.addItem(groupKey, null)
+    // }
     map.prototype.addPoint = function (byteField) {
         this.pointMap.addItem(byteField.getName(), byteField);
+    };
+    map.prototype.addCommand = function (groupKey, cmd) {
+        if (this.commandMap.containsKey(groupKey)) {
+            var cmds = this.commandMap.getItem(groupKey);
+            cmds.push(cmd);
+        }
+        else {
+            var cmds = [cmd];
+            this.commandMap.addItem(groupKey, cmds);
+        }
     };
     map.KEY_BASE = 'baseInfo';
     map.KEY_RUN = 'runInfo';

@@ -63,7 +63,8 @@ export default {
   data() {
     return {
       timer: null,
-      //visible: this.show,
+      deviceType: null,
+      subType: "",
       dialogDeviceFormVisible: false,
       runTabHeight: document.body.clientHeight - 125,
       timeInterVal: 3,
@@ -105,19 +106,22 @@ export default {
       this.controllerNumber = this.controllerNo;
     },
     cleartimer(val, oldval) {
-      console.log("val=" + val + " old=" + oldval);
+      //console.log("val=" + val + " old=" + oldval);
       if (val && this.timer) {
         console.log("close..............");
+        this.deviceType = null
+        this.subType = ''
         clearInterval(this.timer);
         this.timer = null;
       } else if (!val) {
         console.log("start..............");
+        this.deviceType = null
+        this.subType = ''
         this.setTimeInterval();
         this.showControllerData();
       }
     }
   },
-
   mounted() {
     this.setTimeInterval();
     this.showControllerData();
@@ -141,29 +145,32 @@ export default {
       //   clearInterval(timer);
       // });
     },
-    showControllerData() {
-      Promise.all([
-        getControllerByteData(this.controllerNo),
-        getControllerType(this.controllerNo)
-      ])
-        .then(data => {
-          this.initControllerInfo();
-          let controllerByteData = data[0].data;
-          let controllerType = data[1].data.deviceType;
-          if (controllerByteData.length > 0 && controllerType) {
-            this.getDevice(controllerByteData, controllerType);
-          } else {
-            this.initControllerInfo();
-          }
-        })
-        .catch(function(r) {
-          console.log(r);
-        });
+    getDeviceByByteArray() {
+      getControllerByteData(this.controllerNo).then(data => {
+        this.initControllerInfo();
+        let controllerByteData = data.data;
+        if (controllerByteData.length > 0 && this.deviceType) {
+          this.getDevice(controllerByteData);
+        }
+      });
     },
-    getDevice(byteData, deviceType) {
-      //console.log(DeviceAdapterUtil.getSdcSoftDevice(deviceType,byteData,0,0))
-      getDeviceByByteDataAndType(new Uint8Array(byteData), deviceType).then(
+    showControllerData() {
+      if (!this.deviceType) {
+        getControllerType(this.controllerNo).then(data => {
+          this.deviceType = data.data.deviceType;
+          this.getDeviceByByteArray();
+        });
+      } else {
+        this.getDeviceByByteArray();
+      }
+    },
+    getDevice(byteData) {
+      //console.log(this.deviceType + this.subType)
+      getDeviceByByteDataAndType(byteData, this.deviceType).then(
         data => {
+          if (data.getSubDeviceType() != "-1") {
+            this.subType = "_" + data.getSubDeviceType();
+          }
           this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields().map;
           this.controllerFormData.bengAnimationList = data.getBeng();
           this.controllerFormData.fanAnimationList = data.getFan();
@@ -172,7 +179,9 @@ export default {
             .getElementPrefixAndValuesString();
           this.controllerFormData.exceptionInfoMap = data.getExceptionFields().map;
           this.controllerFormData.baseInfoMap = data.getBaseInfoFields().map;
+
           this.controllerFormData.mockInfoMap = data.getMockFields().map;
+
           this.controllerFormData.settingInfoMap = data.getSettingFields().map;
           this.controllerFormData.deviceInfoMap = data.getDeviceFields().map;
           //console.log(this.controllerFormData.baseInfoMap)

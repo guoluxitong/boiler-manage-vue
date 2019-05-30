@@ -17,8 +17,8 @@ var CRC16Util_1 = require("../utils/CRC16Util");
 var NumberUtil_1 = require("../utils/NumberUtil");
 //namespace DevicesLib.cmd {
 var Command = /** @class */ (function () {
-    function Command() {
-        this.name = '';
+    function Command(title, address, maxValue, minValue) {
+        //protected name: string = ''
         this.address = '';
         this.valueString = '';
         this.value = '';
@@ -31,6 +31,10 @@ var Command = /** @class */ (function () {
         this.maxValue = 100;
         this.minValue = 0;
         this.script = '';
+        this.title = title;
+        this.title = address;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
     }
     Command.prototype.getValueString = function () {
         return this.valueString;
@@ -77,12 +81,16 @@ var Command = /** @class */ (function () {
     Command.prototype.getMinValue = function () {
         return this.minValue;
     };
-    Command.prototype.getName = function () {
-        return this.name;
-    };
-    Command.prototype.setName = function (name) {
-        this.name = name;
-    };
+    // public getName() {
+    //     return this.name
+    // }
+    // setName(name: string) {
+    //     this.name = name
+    // }
+    /**
+     * 用于呈现数据的初始化，数据初始化不影响命令设置状态
+     * @param values
+     */
     Command.prototype.initValue = function () {
         var values = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -90,6 +98,10 @@ var Command = /** @class */ (function () {
         }
         this.handleValue(values);
     };
+    /**
+     * 用户设置命令值，影响命令设置状态
+     * @param values
+     */
     Command.prototype.setValue = function () {
         var values = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -160,8 +172,8 @@ var Command = /** @class */ (function () {
         }
         return b;
     };
-    Command.prototype.initCommand = function (name, address, maxValue, minValue, value) {
-        this.setName(name);
+    Command.prototype.initCommand = function (title, address, maxValue, minValue, value) {
+        this.setTitle(title);
         this.setAddress(address);
         this.setMinValue(minValue);
         this.setMaxValue(maxValue);
@@ -180,8 +192,8 @@ var Command = /** @class */ (function () {
 exports.Command = Command;
 var IntCommand = /** @class */ (function (_super) {
     __extends(IntCommand, _super);
-    function IntCommand() {
-        var _this = _super.call(this) || this;
+    function IntCommand(title, address, maxValue, minValue) {
+        var _this = _super.call(this, title, address, minValue, maxValue) || this;
         _this.valueType = Command.INT_VALUE;
         return _this;
     }
@@ -200,8 +212,8 @@ var IntCommand = /** @class */ (function (_super) {
 exports.IntCommand = IntCommand;
 var TimeCommand = /** @class */ (function (_super) {
     __extends(TimeCommand, _super);
-    function TimeCommand() {
-        var _this = _super.call(this) || this;
+    function TimeCommand(title, address) {
+        var _this = _super.call(this, title, address, 0, 0) || this;
         _this.valueType = Command.TIME_VALUE;
         _this.script = '';
         return _this;
@@ -221,8 +233,8 @@ var TimeCommand = /** @class */ (function (_super) {
 exports.TimeCommand = TimeCommand;
 var SystemCommand = /** @class */ (function (_super) {
     __extends(SystemCommand, _super);
-    function SystemCommand() {
-        var _this = _super.call(this) || this;
+    function SystemCommand(title, address, maxValue, minValue) {
+        var _this = _super.call(this, title, address, minValue, maxValue) || this;
         _this.valueType = Command.SYSTEM_VALUE;
         _this.valueIsSet = false;
         return _this;
@@ -232,8 +244,8 @@ var SystemCommand = /** @class */ (function (_super) {
 exports.SystemCommand = SystemCommand;
 var FloatCommand = /** @class */ (function (_super) {
     __extends(FloatCommand, _super);
-    function FloatCommand() {
-        var _this = _super.call(this) || this;
+    function FloatCommand(title, address, maxValue, minValue) {
+        var _this = _super.call(this, title, address, minValue, maxValue) || this;
         _this.action = '10';
         _this.valueType = Command.FLOAT_VALUE;
         return _this;
@@ -255,4 +267,14 @@ var FloatCommand = /** @class */ (function (_super) {
     return FloatCommand;
 }(Command));
 exports.FloatCommand = FloatCommand;
+var OpenCloseCommand = /** @class */ (function (_super) {
+    __extends(OpenCloseCommand, _super);
+    function OpenCloseCommand(title, address, maxValue, minValue) {
+        var _this = _super.call(this, title, address, minValue, maxValue) || this;
+        _this.valueType = Command.OPEN_CLOSE_VALUE;
+        return _this;
+    }
+    return OpenCloseCommand;
+}(IntCommand));
+exports.OpenCloseCommand = OpenCloseCommand;
 //}

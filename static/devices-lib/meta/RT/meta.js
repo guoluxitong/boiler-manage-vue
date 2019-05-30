@@ -14,6 +14,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var BaseInfoField_1 = require("../BaseInfoField");
+var ExceptionField_1 = require("../ExceptionField");
 var Collections_1 = require("../../entities/Collections");
 var map_1 = require("../../map/map");
 var BaseInfoField = /** @class */ (function (_super) {
@@ -97,10 +98,44 @@ var DeviceField = /** @class */ (function (_super) {
     return DeviceField;
 }(OpenCloseField));
 exports.DeviceField = DeviceField;
+/*
+export class ExceptionField extends OpenCloseField {
+    constructor(name: string, startIndex: number, bytesLength: number, title: string,bit:number) {
+        super(name,startIndex,bytesLength,title,bit,null)
+    }
+    haveValue(...bytes: number[]): boolean {
+        this.value = bytes[0]<<8|bytes[1]
+        let i = 1 << this.bit
+        //console.log(this.title+' i:='+i.toString()+' value:='+this.value.toString() )
+        if ((i & this.value) == i) {
+            this.value = 1
+            return true
+        } else {
+            this.value = 0
+            return false
+        }
+        
+    }
+    setDeviceFieldForUIKey(fieldForUI:DeviceFieldForUI) {
+        fieldForUI.setKey(map.KEY_EXCEPTION)
+    }
+    getValueString(): string {
+        return ''
+    }
+}
+*/
 var ExceptionField = /** @class */ (function (_super) {
     __extends(ExceptionField, _super);
-    function ExceptionField(name, startIndex, bytesLength, title, bit) {
-        return _super.call(this, name, startIndex, bytesLength, title, bit, null) || this;
+    function ExceptionField(name, startIndex, bytesLength, title, bit, level) {
+        if (level === void 0) { level = ExceptionField.Exception_Waring; }
+        var _this = _super.call(this) || this;
+        _this.level = level;
+        _this.name = name;
+        _this.startIndex = startIndex;
+        _this.bytesLength = bytesLength;
+        _this.title = title;
+        _this.bit = bit;
+        return _this;
     }
     ExceptionField.prototype.haveValue = function () {
         var bytes = [];
@@ -119,14 +154,8 @@ var ExceptionField = /** @class */ (function (_super) {
             return false;
         }
     };
-    ExceptionField.prototype.setDeviceFieldForUIKey = function (fieldForUI) {
-        fieldForUI.setKey(map_1.map.KEY_EXCEPTION);
-    };
-    ExceptionField.prototype.getValueString = function () {
-        return '';
-    };
     return ExceptionField;
-}(OpenCloseField));
+}(ExceptionField_1.ExceptionField));
 exports.ExceptionField = ExceptionField;
 var MockField_1 = require("../MockField");
 var MockField = /** @class */ (function (_super) {

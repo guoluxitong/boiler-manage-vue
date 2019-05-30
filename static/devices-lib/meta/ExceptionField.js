@@ -19,11 +19,21 @@ var map_1 = require("../map/map");
 var ExceptionField = /** @class */ (function (_super) {
     __extends(ExceptionField, _super);
     function ExceptionField() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /**
+         * 异常等级
+         */
+        _this.level = 0;
+        return _this;
     }
     ExceptionField.prototype.setDeviceFieldForUIKey = function (fieldForUI) {
         fieldForUI.setKey(map_1.map.KEY_EXCEPTION);
     };
+    ExceptionField.prototype.getExceptionLevel = function () {
+        return this.level;
+    };
+    ExceptionField.Exception_Waring = 0;
+    ExceptionField.Exception_Error = 1;
     return ExceptionField;
 }(ByteField_1.ByteField));
 exports.ExceptionField = ExceptionField;

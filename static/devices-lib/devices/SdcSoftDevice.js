@@ -5,7 +5,6 @@ var DeviceFieldForUI_1 = require("../meta/DeviceFieldForUI");
 var Element_1 = require("../entities/Element");
 var map_1 = require("../map/map");
 var ByteField_1 = require("../meta/ByteField");
-var CommandField_1 = require("../meta/CommandField");
 var Media;
 (function (Media) {
     Media[Media["ReShui"] = 0] = "ReShui";
@@ -117,13 +116,6 @@ var SdcSoftDevice = /** @class */ (function () {
             }
             return;
         }
-        if (field instanceof CommandField_1.CommandField) {
-            var cmd = field.getCommand();
-            if (cmd) {
-                this.addCommand(field.getCommandGroupKey(), cmd);
-            }
-            return;
-        }
         if (field instanceof DeviceFieldForUI_1.DeviceFieldForUI) {
             this.addUIField(field);
         }
@@ -159,6 +151,15 @@ var SdcSoftDevice = /** @class */ (function () {
      */
     SdcSoftDevice.prototype.getSubDeviceType = function () {
         return SdcSoftDevice.NO_SUB_DEVICE_TYPE;
+    };
+    SdcSoftDevice.prototype.handleCommandFields = function (commandsGroup) {
+        var _this = this;
+        commandsGroup.each(function (key, values) {
+            values.forEach(function (v) {
+                _this.addCommand(key, v);
+            });
+        });
+        commandsGroup.clear();
     };
     SdcSoftDevice.POWER_MEDIA_VALUE_NULL = -1;
     SdcSoftDevice.KEY_POINT_SYSTEM_STATUS = 'o_system_status';

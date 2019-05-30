@@ -179,6 +179,9 @@ var IP = /** @class */ (function (_super) {
         else if (this.power == SdcSoftDevice_1.Power.Mei) {
             return this.getDeviceFields().getItem(IP.KEY_POINT_YIN_FENG_JI).getValue() > 0x7F ? 1 : 0;
         }
+        else if (this.power == SdcSoftDevice_1.Power.ShengWuZhi) {
+            return this.getDeviceFields().getItem(IP.KEY_POINT_YIN_FENG_JI).getValue() > 0x7F ? 1 : 0;
+        }
         return this.getDeviceFields().getItem(IP.KEY_POINT_RAN_SHAO_QI).getValue() > 0x7F ? 1 : 0;
     };
     IP.prototype.getBeng = function () {

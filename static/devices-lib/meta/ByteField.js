@@ -74,7 +74,7 @@ var ByteField = /** @class */ (function (_super) {
         this.valueMap = valueMap;
     };
     ByteField.prototype.createCommandAndInitValue = function () {
-        var cmd = new Command_1.IntCommand();
+        var cmd = new Command_1.IntCommand(this.title, this.address, this.maxValue, this.minValue);
         cmd.initValue(this.getValue());
         return cmd;
     };
