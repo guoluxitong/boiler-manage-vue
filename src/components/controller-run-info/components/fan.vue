@@ -1,7 +1,7 @@
 <template>
     <div :style="styleObject" class="fan-item">
         <div class="fan-item-img">
-            <img class="user-avatar" v-if="src"  :src="'static/animation/fan/'+src+'.gif'" :width="width">
+            <img class="user-avatar" v-if="src"  :src="'http://www.sdcsoft.com.cn/app/gl/animation/animation/fan/'+src+'.gif'" :width="width">
         </div>
         <div class="fan-item-name">{{title}}</div>
     </div>

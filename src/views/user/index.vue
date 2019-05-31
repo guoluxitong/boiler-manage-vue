@@ -4,7 +4,7 @@
       <el-input clearable v-model="listQuery.realName" placeholder="用户姓名" style="width: 150px;"></el-input>
       <el-input clearable v-model="listQuery.mobile" placeholder="电话" style="width: 150px;"></el-input>
       <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-      <el-button
+      <el-button  v-permission="['6']"
         style="margin-left: 10px;"
         @click="handleCreate"
         type="primary"
@@ -215,9 +215,9 @@ export default {
   },
   directives: { permission },
   data() {
-    const validateCustomerFun = (rule, value, callback) => {
+    const validateOrgIdFun = (rule, value, callback) => {
       if (!value) {
-        callback(new Error("客户不能为空"));
+        callback(new Error("组织机构不能为空"));
       } else {
         callback();
       }
@@ -278,7 +278,7 @@ export default {
         realName: "",
         mobile: null,
         orgType: this.$store.state.user.orgType,
-        orgId: null
+        orgId: this.$store.state.user.orgId
       },
       customerOption: [],
       textMap: {
@@ -306,7 +306,7 @@ export default {
         mark: ""
       },
       rules: {
-        orgId: [{ required: true, validator: validateCustomerFun }],
+        orgId: [{ required: true, validator: validateOrgIdFun }],
         realName: [
           { trigger: "blur", required: true, validator: validateRealNameFun }
         ],

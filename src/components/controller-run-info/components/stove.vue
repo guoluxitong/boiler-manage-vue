@@ -1,5 +1,5 @@
 <template>
-    <img class="user-avatar" :style="styleObject"  v-if="src" :src="'static/animation/stove/'+src+'.gif'" :width="width">
+    <img class="user-avatar" :style="styleObject"  v-if="src" :src="'http://www.sdcsoft.com.cn/app/gl/animation/animation/stove/'+src+'.gif'" :width="width">
 </template>
 <script>
     export default {

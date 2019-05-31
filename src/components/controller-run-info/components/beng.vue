@@ -1,7 +1,7 @@
 <template>
     <div :style="styleObject" class="beng-item">
         <div class="beng-item-img">
-            <img class="user-avatar" v-if="src"  :src="'static/animation/beng/'+src+'.gif'" :width="width">
+            <img class="user-avatar" v-if="src"  :src="'http://www.sdcsoft.com.cn/app/gl/animation/animation/beng/'+src+'.gif'" :width="width">
         </div>
         <div class="beng-item-name">{{title}}</div>
     </div>

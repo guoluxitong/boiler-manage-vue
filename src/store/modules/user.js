@@ -84,8 +84,10 @@ const user = {
             return new Promise((resolve, reject) => {
                 loginByUsername(userName, userInfo.passWord).then(response => {
                     const data = response.data
+                    console.log(data)
                     if (data.code != 0) {
-                        this.dispatch('initWebSock', data.data.id)
+                        //this.dispatch('initWebSock', data.data.id)
+                        this.dispatch('GetUserInfo',data)
                         resolve(userName)
                     } else {
                         reject(data.msg)
@@ -95,11 +97,26 @@ const user = {
                 })
             })
         },
+        SetUserInfo({ commit, state }, data) {
+            //this.dispatch('initWebSock', data.id)
+            commit('SET_USERID', data.id)
+            commit('SET_PASSWORD', data.password)
+            commit('SET_ORGID', data.orgId)
+            commit('SET_ORGTYPE', data.orgType)
+            commit('SET_MOBILE', data.mobile)
+            commit('SET_EMAIL', data.email)
+            commit('SET_WEIXIN', data.weiXin)
+            commit('SET_QQ', data.qQ)
+            commit('SET_REALNAME', data.realName)
+            commit('SET_ORGANIZATIONNAME', data.organizationName)
+            commit('SET_ROLEIDARRAY', getRoleIdArray(data.roleList))
+            commit('SET_ROLELIST', data.roleList)
+        },
         GetUserInfo({ commit, state }) {
             return new Promise((resolve, reject) => {
                 getLoginUserInfo(state.token).then(response => {
                     const data = response.data.data;
-                    this.dispatch('initWebSock', data.id)
+                    //this.dispatch('initWebSock', data.id)
                     commit('SET_USERID', data.id)
                     commit('SET_PASSWORD', data.password)
                     commit('SET_ORGID', data.orgId)

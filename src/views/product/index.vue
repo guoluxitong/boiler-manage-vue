@@ -118,7 +118,12 @@
       </el-table-column>
     </el-table>
     <menu-context ref="menuContext">
-      <menu-context-item @click="handleUpdate" v-permission="['3','5']" :width="100" :fontSize="14">编辑</menu-context-item>
+      <menu-context-item
+        @click="handleUpdate"
+        v-permission="['3','5']"
+        :width="100"
+        :fontSize="14"
+      >编辑</menu-context-item>
       <menu-context-item @click="handleCopy" v-permission="['3','5']" :width="100" :fontSize="14">复制</menu-context-item>
       <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
       <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>
@@ -177,6 +182,7 @@
             multiple
             style="width: 100%"
             placeholder="请选择"
+            @change="change"
           >
             <el-option
               v-for="item in choiceUserFormData.userOptions"
@@ -224,6 +230,9 @@
       @confirmAuxiliaryMachineDialog="confirmAuxiliaryMachineDialog"
     ></auxiliary-machine-dialog>
     <!--运行信息-->
+    <el-dialog title="运行信息报表" :visible.sync="showEchartDialog" height="100%" width="100%">
+      <device-chart></device-chart>
+    </el-dialog>
   </div>
 </template>
 
@@ -234,6 +243,7 @@ import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getBoilerModelListByCondition } from "@/api/boilerModel";
 import { getUserListByCondition } from "@/api/user";
 import contextmenu from "@/components/ContextMenu";
+import deviceChart from "@/components/deviceChart";
 import {
   getProductListByCondition,
   deleteProductById,
@@ -268,7 +278,8 @@ export default {
     productMapDialog,
     auxiliaryMachineDialog,
     controllerRunInfoDialog,
-    contextmenu
+    contextmenu,
+    deviceChart
   },
   directives: { permission },
   data() {
@@ -294,6 +305,7 @@ export default {
       }
     };
     return {
+      showEchartDialog: false,
       showcontextmenu: false,
       boilerModelNumberArray: [],
       mediumArray: [],
@@ -322,7 +334,7 @@ export default {
       choiceUserFormData: {
         userOptions: [],
         userArray: [],
-        deleteUserIdArray: [],
+        productUserArray: [], //设备原始分布用户Id列表
         selectUserIdArray: [],
         productId: 0
       },
@@ -371,6 +383,12 @@ export default {
     });
   },
   methods: {
+    // remove(tag) {
+    //   console.log("remove-" + tag);
+    // },
+    change(tag) {
+      this.choiceUserFormData.selectUserIdArray = tag;
+    },
     initSelect() {
       getBoilerModelListByCondition({
         orgId: this.$store.state.user.orgId,
@@ -528,14 +546,19 @@ export default {
             });
         });
       });
+
       getProductUserListByProductCondition({ productId: row.id }).then(data => {
-        let userIdArray = [];
+        this.choiceUserFormData.productUserArray = [];
+            this.choiceUserFormData.selectUserIdArray = []
+        //let userIdArray = [];
         data.data.data.forEach(item => {
-          if (item.userId != this.$store.state.user.userId)
-            userIdArray.push(item.userId);
+          if (item.userId != this.$store.state.user.userId){
+            this.choiceUserFormData.productUserArray.push(item.userId);
+            this.choiceUserFormData.selectUserIdArray.push(item.userId)
+          }
         });
-        this.choiceUserFormData.deleteUserIdArray = userIdArray;
-        this.choiceUserFormData.selectUserIdArray = userIdArray;
+        //this.choiceUserFormData.deleteUserIdArray = userIdArray;
+        //this.choiceUserFormData.selectUserIdArray = userIdArray;
       });
       this.dialogStatus = "update";
       this.dialogChoiceUserFormVisible = true;
@@ -543,31 +566,74 @@ export default {
         this.$refs["choiceUserForm"].clearValidate();
       });
     },
+    checkArrayContains(v, dataArray) {
+      let flag = false;
+      for (let i = 0; i < dataArray.length; i++) {
+        if (v == dataArray[i]) {
+          flag = true;
+          break;
+        }
+      }
+      return flag;
+    },
     confirmSubmitChoiceUser() {
       let deleteProductUserList = [];
-      this.choiceUserFormData.deleteUserIdArray.forEach(userId => {
-        deleteProductUserList.push({
-          userId: userId,
-          productId: this.choiceUserFormData.productId
-        });
-      });
-      let selectProductUserList = [];
-      this.choiceUserFormData.selectUserIdArray.forEach(userId => {
-        selectProductUserList.push({
-          userId: userId,
-          productId: this.choiceUserFormData.productId
-        });
-      });
+      for (
+        let i = 0;
+        i < this.choiceUserFormData.productUserArray.length;
+        i++
+      ) {
+        if (
+          !this.checkArrayContains(
+            this.choiceUserFormData.productUserArray[i],
+            this.choiceUserFormData.selectUserIdArray
+          )
+        ) {
+          deleteProductUserList.push({
+            userId: this.choiceUserFormData.productUserArray[i],
+            productId: this.choiceUserFormData.productId
+          });
+        }
+      }
+      let insertProductUserList = [];
+      for (
+        let i = 0;
+        i < this.choiceUserFormData.selectUserIdArray.length;
+        i++
+      ) {
+        if (
+          !this.checkArrayContains(
+            this.choiceUserFormData.selectUserIdArray[i],
+            this.choiceUserFormData.productUserArray
+          )
+        ) {
+          insertProductUserList.push({
+            userId: this.choiceUserFormData.selectUserIdArray[i],
+            productId: this.choiceUserFormData.productId
+          });
+        }
+      }
+
+      // this.choiceUserFormData.deleteUserIdArray.forEach(userId => {
+      //   deleteProductUserList.push({
+      //     userId: userId,
+      //     productId: this.choiceUserFormData.productId
+      //   });
+      // });
+      // console.log('------------------delete-------------');
+      // console.log(deleteProductUserList);
+      // console.log('------------------insert-------------');
+      // console.log(insertProductUserList);
       insertManyProductUser({
         deleteProductUserList: deleteProductUserList,
-        selectProductUserList: selectProductUserList
+        selectProductUserList: insertProductUserList
       }).then(data => {
         this.dialogChoiceUserFormVisible = false;
         this.$message({
           message: "分配成功",
           type: "success"
         });
-        this.getList();
+        //this.getList();
       });
     },
     handleDelete(row) {
