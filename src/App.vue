@@ -6,6 +6,11 @@
 
 <script>
 export default {
-  name: 'boiler-manage-vue'
+  name: 'boiler-manage-vue',
+  created () {
+    document.oncontextmenu = function(){
+      return false;
+    }
+  }
 }
 </script>

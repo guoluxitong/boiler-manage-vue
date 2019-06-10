@@ -1,6 +1,6 @@
 <template>
 
-  <iframe :src="homeUrl" v-loading.fullscreen.lock="fullscreenLoading" id="foo" scrolling="no" frameborder="0" :width="width" :height="height"></iframe>
+  <iframe :src="homeUrl" v-loading.fullscreen.lock="fullscreenLoading" id="foo" scrolling="yes" frameborder="0" :width="width" :height="height"></iframe>
 </template>
 
 <script>
