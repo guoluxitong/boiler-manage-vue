@@ -13,7 +13,7 @@ export function loginByCAS () {
     })
 }
 export function logoutByCAS () {
-    window.location.href="http://localhost:8091/logout/out"
+    window.location.href="http://127.0.0.1:8091/logout/out"
     /*return request({
         url:'/logout/out',
         method:'get',

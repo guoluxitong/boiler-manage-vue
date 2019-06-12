@@ -18,6 +18,8 @@
     "element-ui": "2.7.0",
     "file-saver": "^2.0.1",
     "js-xlsx": "^0.8.22",
+    "moment": "^2.24.0",
+    "moment-jdateformatparser": "^1.2.1",
     "node-sass": "^4.11.0",
     "normalize.css": "^8.0.1",
     "sass-loader": "^7.1.0",

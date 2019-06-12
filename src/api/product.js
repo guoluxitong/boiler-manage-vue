@@ -15,7 +15,13 @@ export function getProductUserListByProductCondition(query) {
     params: query
   })
 }
-
+export function getProductByboilerNo(query) {
+  return request({
+    url: '/product/productbyboilerno',
+    method: 'get',
+    params: query
+  })
+}
 export function productDataOnMap(query) {
   return request({
     url: '/product/productdataonmap',
@@ -60,5 +66,5 @@ export function productTypeAmountByCondition(userId) {
     method:'get',
     params:{userId:userId}
   })
-  
+
 }

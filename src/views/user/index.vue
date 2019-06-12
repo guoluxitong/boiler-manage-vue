@@ -19,7 +19,7 @@
       border
       fit
       highlight-current-row
-      style="width: 120%"
+      style="width: 120% ;height: 100%"
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" :show-overflow-tooltip="true" label="真实姓名">
@@ -191,6 +191,9 @@
 
 <script>
 import permission from "@/directive/permission/index.js";
+import { getBoilerModelListByCondition } from "@/api/boilerModel";
+import {getProductByboilerNo
+} from '@/api/product';
 import checkPermission from "@/utils/permission";
 import {
   validateRealName,
@@ -271,6 +274,25 @@ export default {
     return {
       userId: null,
       list: null,
+      loadAllList: [],
+      devEuiArr: [],
+      restaurants: [],
+      repairList: [
+      ],
+      repairuserid:"",
+      nameList:{},
+      deleteId:-1,
+      choiceRepairFormData: {
+        insertRepairArray: [],
+        deleteRepairArray: [],
+      },
+      insertRepairList:[],
+      tempList: [],
+      currentPage1:1,
+      pageNum1: 1,
+      pageSize1: 5,
+      productRepairDialogVisible: false,
+      newRepairDialogFlag: false,
       listQuery: {
         total: 50,
         pageNum: 1,
@@ -280,6 +302,7 @@ export default {
         orgType: this.$store.state.user.orgType,
         orgId: this.$store.state.user.orgId
       },
+      repairUserFormData: {},
       customerOption: [],
       textMap: {
         update: "编辑",
@@ -336,6 +359,7 @@ export default {
       deleteValidateFormDialogVisible: false
     };
   },
+
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -355,6 +379,11 @@ export default {
     this.initCustomerList();
   },
   methods: {
+    dateForma: function (row,column){
+      var date = row[column.property];
+      if (date == undefined){return ''};
+      return  moment (date).format("YYYY-MM-DD HH:mm:ss")
+    },
     openTableMenu(row, event) {
       this.$refs.menuContext.openTableMenu(
         row,
