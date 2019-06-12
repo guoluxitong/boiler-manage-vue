@@ -1,8 +1,10 @@
 <template>
   <div>
-  <el-tabs  v-model="activeName" @tab-click="handleClick">
+  <div>
+  <el-tabs  v-model="activeName" @tab-click="handleClick"
+            v-if="!productRepairDialogVisibleuser">
     <el-tab-pane label="设备维保信息" name="repairdevice">
-      <div  v-if="!productRepairDialogVisible">
+      <div>
       <el-table
         :data="productList"
         element-loading-text="给我一点时间"
@@ -50,109 +52,9 @@
         ></el-pagination>
       </div>
       </div>
-      <div v-if="productRepairDialogVisible">
-          <el-form>
-            <div style="width:100%">
-              <el-col :span="6">
-                <el-date-picker   type="datetime" placeholder="选择查询起始日期" v-model="starttime" style="width: 100%;"></el-date-picker>
-              </el-col>
-              <el-col style="margin-left:20px" :span="6">
-                <el-date-picker   type="datetime" placeholder="选择查询结束日期" v-model="endtime" style="width: 100%;"></el-date-picker>
-              </el-col>
-              <el-button style="margin-left:20px" type="primary"  @click="queryByTime"  >查询</el-button>
-              <el-button style="margin-left:31%" type="primary"   @click="repairAdd">添加</el-button>
-            </div>
-            <el-row>
-              <el-table
-                modal-append-to-body=“false”
-                :data="repairList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
-                align='center' style="width: 100%" max-height="600"  @selection-change="getDetails">
-                <el-table-column  align='center' label="序号" width="150" v-if="false">
-                  <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.repairId }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="日期" width="170">
-                  <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ dateFormat(scope.row.repairDate) }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="维保人员" width="130">
-                  <template slot-scope="scope">
-                    <span size="medium">{{ scope.row.repairName }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="录入人" width="130">
-                  <template slot-scope="scope">
-                    <span size="medium">{{ scope.row.inputName }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="录入时间" width="170">
-                  <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ dateFormat(scope.row.inputDate) }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="维保内容" width="450">
-                  <template slot-scope="scope">
-                    <span size="medium">{{ scope.row.repairContent }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="操作">
-                  <template slot-scope="scope">
-                    <el-button size="mini" type="danger" @click="repairdelete(scope.$index, scope.row)">删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-row>
-            <div class="pagination-container">
-              <el-pagination
-                background
-                @size-change="handleSizeChange1"
-                @current-change="handleCurrentChange1" :current-page="currentPage1"
-                :page-sizes="[5]"
-                :page-size="pageSize1"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="repairList.length"
-              ></el-pagination>
-              <el-button type="primary" style="margin-left: 90%" @click="cancel">取消</el-button>
-            </div>
-            <el-dialog :append-to-body="true" :title="titleName" :visible.sync="newRepairDialogFlag">
-              <el-form ref="repairform" v-model="repairform" label-width="80px">
-                <el-form-item label="序号" v-show="false">
-                  <el-input v-model="repairform.repairId"></el-input>
-                </el-form-item>
-                <el-form-item label="维保人员">
-                  <el-autocomplete
-                    v-model="repairform.realName"
-                    :fetch-suggestions="querySearchAsync"
-                    placeholder="请输入内容"
-                    @select="((item)=>{handleSelect1(item)})"
-                  ></el-autocomplete>
-                </el-form-item>
-                <el-form-item label="录入时间">
-                  <el-col :span="24">
-                    <el-date-picker  value-format="yyyy-MM-dd hh:mm:ss" type="datetime" placeholder="选择日期" v-model="repairform.inputDate" style="width: 100%;"></el-date-picker>
-                  </el-col>
-                </el-form-item>
-                <el-form-item label="维保时间">
-                  <el-col :span="24">
-                    <el-date-picker  value-format="yyyy-MM-dd hh:mm:ss" type="datetime" placeholder="选择日期" v-model="repairform.repairDate" style="width: 100%;"></el-date-picker>
-                  </el-col>
-                </el-form-item>
-                <el-form-item label="维保内容">
-                  <el-input type="textarea" v-model="repairform.repairContent"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="submitRepair">立即添加</el-button>
-                  <el-button @click="cancelbu">取消</el-button>
-                </el-form-item>
-              </el-form>
-            </el-dialog>
-          </el-form>
-      </div>
     </el-tab-pane>
     <el-tab-pane label="用户维保信息" name="repairuser">
-      <div v-if="!productRepairDialogVisibleuser">
+      <div >
       <el-table
         :data="userlist"
         element-loading-text="给我一点时间"
@@ -205,123 +107,132 @@
           ></el-pagination>
         </div>
       </div>
-      <div v-if="productRepairDialogVisibleuser">
-          <el-form>
-            <div style="width:100%">
-              <el-col :span="6">
-                <el-date-picker   type="datetime" placeholder="选择查询起始日期" v-model="starttime" style="width: 100%;"></el-date-picker>
-              </el-col>
-              <el-col style="margin-left:20px" :span="6">
-                <el-date-picker   type="datetime" placeholder="选择查询结束日期" v-model="endtime" style="width: 100%;"></el-date-picker>
-              </el-col>
-              <el-button style="margin-left:20px" type="primary"  @click="queryByTimeuser"  >查询</el-button>
-              <el-button style="margin-left:34%" type="primary"   @click="repairAdduser">添加</el-button>
-            </div>
-            <el-row>
-              <el-table
-                :data="repairuserList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
-                align='center' style="width: 100%" max-height="600"  @selection-change="getDetails">
-                <el-table-column  align='center' label="序号" width="150" v-if="false">
-                  <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.repairId }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="设备编号" width="130">
-                  <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.row.boilerNo }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="日期" width="170">
-                  <template   slot-scope="scope">
-                    <span style="margin-left: 10px">{{ dateFormat(scope.row.repairDate) }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="录入人" width="130">
-                  <template slot-scope="scope">
-                    <span size="medium">{{ scope.row.inputName }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="维保人员" width="130">
-                  <template slot-scope="scope">
-                    <span size="medium">{{ scope.row.repairName }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="录入时间" width="170">
-                  <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ dateFormat(scope.row.inputDate) }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="维保内容" width="450">
-                  <template slot-scope="scope">
-                    <span size="medium">{{ scope.row.repairContent }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column  align='center' label="操作">
-                  <template slot-scope="scope">
-                    <el-button size="mini" type="danger" @click="repairdeleteuser(scope.$index, scope.row)">删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-row>
-            <div class="pagination-container">
-              <el-pagination
-                background
-                @size-change="handleSizeChange1"
-                @current-change="handleCurrentChange1" :current-page="currentPage1"
-                :page-sizes="[5]"
-                :page-size="pageSize1"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="repairuserList.length"
-              ></el-pagination>
-              <el-button type="primary" style="margin-left: 90%" @click="canceluser">取消</el-button>
-            </div>
-            <el-dialog :append-to-body="true" :title="titleName" :visible.sync="newRepairDialogFlaguser">
-              <el-form ref="repairform" v-model="repairform" label-width="80px">
-                <el-form-item label="序号" v-show="false">
-                  <el-input v-model="repairform.repairId"></el-input>
-                </el-form-item>
-                <el-form-item label="产品编号">
-                  <el-autocomplete
-                    v-model="repairform.boilerNo"
-                    :fetch-suggestions="querySearchAsyncuser"
-                    placeholder="请输入内容"
-                    @select="((item)=>{handleSelectuser(item)})"
-                  ></el-autocomplete>
-                </el-form-item>
-                <el-form-item label="录入时间">
-                  <el-col :span="24">
-                    <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.inputDate" style="width: 100%;"></el-date-picker>
-                  </el-col>
-                </el-form-item>
-                <el-form-item label="维保时间">
-                  <el-col :span="24">
-                    <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.repairDate" style="width: 100%;"></el-date-picker>
-                  </el-col>
-                </el-form-item>
-                <el-form-item label="维保内容">
-                  <el-input type="textarea" v-model="repairform.repairContent"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="submitRepairuser">立即添加</el-button>
-                  <el-button @click="cancelbuuser">取消</el-button>
-                </el-form-item>
-              </el-form>
-            </el-dialog>
-          </el-form>
-      </div>
     </el-tab-pane>
   </el-tabs>
   </div>
+  <div v-if="productRepairDialogVisibleuser">
+    <el-form>
+      <div style="width:100%">
+        <el-col :span="6">
+          <el-date-picker   type="datetime" placeholder="选择查询起始日期" v-model="starttime" style="width: 100%;"></el-date-picker>
+        </el-col>
+        <el-col style="margin-left:20px" :span="6">
+          <el-date-picker   type="datetime" placeholder="选择查询结束日期" v-model="endtime" style="width: 100%;"></el-date-picker>
+        </el-col>
+        <el-button style="margin-left:20px" type="warning"  @click="queryByTimeuser"  >查询</el-button>
+        <el-button style="margin-left:25%" type="primary"   @click="repairAdduser">添加</el-button>
+        <el-button type="danger" style="margin-left: 20px" @click="canceluser">取消</el-button>
+      </div>
+      <el-row>
+        <el-table
+          :data="repairuserList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+          align='center' style="width: 100%" max-height="600"  @selection-change="getDetails">
+          <el-table-column  align='center' label="序号" width="150" v-if="false">
+            <template slot-scope="scope">
+              <span style="margin-left: 10px">{{ scope.row.id }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column  align='center' label="设备编号" width="130">
+            <template slot-scope="scope">
+              <span style="margin-left: 10px">{{ scope.row.boilerNo }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column  align='center' label="日期" width="170">
+            <template   slot-scope="scope">
+              <span style="margin-left: 10px">{{ dateFormat(scope.row.repairDatetime) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column  align='center' label="录入人" width="130">
+            <template slot-scope="scope">
+              <span size="medium">{{ scope.row.inputName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column  align='center' label="维保人员" width="130">
+            <template slot-scope="scope">
+              <span size="medium">{{ scope.row.repairUserName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column  align='center' label="录入时间" width="170">
+            <template slot-scope="scope">
+              <span style="margin-left: 10px">{{ dateFormat(scope.row.inputDatetime) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column  align='center' label="维保内容" width="450">
+            <template slot-scope="scope">
+              <span size="medium">{{ scope.row.repairContent }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column  align='center' label="操作">
+            <template slot-scope="scope">
+              <el-button size="mini" type="danger" @click="repairdeleteuser(scope.$index, scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <div class="pagination-container">
+        <el-pagination
+          background
+          @size-change="handleSizeChange1"
+          @current-change="handleCurrentChange1" :current-page="currentPage1"
+          :page-sizes="[5]"
+          :page-size="pageSize1"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="repairuserList.length"
+        ></el-pagination>
+      </div>
+      <el-dialog :append-to-body="true" :title="titleName" :visible.sync="newRepairDialogFlaguser">
+        <el-form ref="repairform" v-model="repairform" label-width="80px">
+          <el-form-item label="序号" v-show="false">
+            <el-input v-model="repairform.repairId"></el-input>
+          </el-form-item>
+          <el-form-item  v-if="inputno" label="产品编号">
+            <el-autocomplete
+              v-model="repairform.boilerNo"
+              :fetch-suggestions="querySearchAsyncuser"
+              placeholder="请输入内容"
+              @select="((item)=>{handleSelectuser(item)})"
+            ></el-autocomplete>
+          </el-form-item>
+          <el-form-item    v-if="inputname" label="维保人员">
+            <el-autocomplete
+              v-model="repairform.realName"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="请输入内容"
+              @select="((item)=>{handleSelect1(item)})"
+            ></el-autocomplete>
+          </el-form-item>
+          <el-form-item label="录入时间">
+            <el-col :span="24">
+              <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.inputDate" style="width: 100%;"></el-date-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="维保时间">
+            <el-col :span="24">
+              <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.repairDate" style="width: 100%;"></el-date-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="维保内容">
+            <el-input type="textarea" v-model="repairform.repairContent"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitRepairuser">立即添加</el-button>
+            <el-button @click="cancelbuuser">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
+    </el-form>
+  </div>
+  </div>
 </template>
 <script>
-  import {getProductByboilerNo,getProductListByCondition} from '@/api/product';
+  import {getProductListByCondition} from '@/api/product';
   import {getRepairInfoListByDate,
     insertRepairInfo,
     getRepairInfoListByProductId,
     getRepairInfoListBydate,
     getRepairInfoListByUserId,
     deleteRepairInfoByProductId} from '@/api/RepairInfo';
-  import {getUserInfo,getUserListByConditionAndPage} from "@/api/user";
+  import {getUserListByConditionAndPage} from "@/api/user";
   export default {
     name: 'repair',
     data() {
@@ -334,18 +245,22 @@
         newRepairDialogFlag: false,
         newRepairDialogFlaguser: false,
         repairform: [{
-          repairId: "",
-          repairName: "",
-          repairDate: "",
+          repairUserName: "",
+          repairDatetime: "",
           repairContent: "",
           realName: "",
-          inputDate: '',
+          inputDatetime: '',
           inputName: '',
           userId: '',
           id: '',
           boilerNo: "",
           userList: [],
         }],
+        repairUserName:'',
+        productId:'',
+        repairUserId:'',
+        inputname: true,
+        inputno: false,
         userFormData: '',
         userlist: [],
         selectlistRow: [],
@@ -367,6 +282,24 @@
           total: 50,
           pageNum: 1,
           pageSize: 5,
+          realName: "",
+          mobile: null,
+          orgType: this.$store.state.user.orgType,
+          orgId: this.$store.state.user.orgId
+        },
+        listQuery2: {
+          total: 500,
+          pageNum: 1,
+          pageSize: 50,
+          realName: "",
+          mobile: null,
+          orgType: this.$store.state.user.orgType,
+          orgId: this.$store.state.user.orgId
+        },
+        userlistQuery2: {
+          total: 500,
+          pageNum: 1,
+          pageSize: 50,
           realName: "",
           mobile: null,
           orgType: this.$store.state.user.orgType,
@@ -401,35 +334,39 @@
         this.getWaterDetails(0);
     },
     methods: {
-      dateFormat:function(time) {
-        var date=new Date(time);
-        var year=date.getFullYear();
+      dateFormat: function (time) {
+        var date = new Date(time);
+        var year = date.getFullYear();
         /* 在日期格式中，月份是从0开始的，因此要加0
          * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
          * */
-        var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
-        var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
-        var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
-        var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
-        var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+        var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+        var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
         // 拼接
-        return year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+        return year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
       },
       handleClick(tab, event) {
-        this.tabType = tab.index ;
-        var val = tab.index ;//
+        this.tabType = tab.index;
+        var val = tab.index;//
         this.getWaterDetails(val);
       },
-      repairinfo(index,row) {
-        this.productRepairDialogVisible = true;
+      repairinfo(index, row) {
+        this.productRepairDialogVisibleuser = true;
         this.productFormData = row;
         this.titleName = "维保信息";
+        this.inputname = true;
+        this.inputno = false;
         this.getrepairList();
       },
-      repairinfouser(index,row) {
+      repairinfouser(index, row) {
         this.productRepairDialogVisibleuser = true;
         this.userFormData = row;
         this.titleName = "维保信息";
+        this.inputname = false;
+        this.inputno = true;
         this.getrepairListuser();
       },
       cancelbu() {
@@ -440,11 +377,11 @@
         this.productRepairDialogVisible = false;
         this.titleName = "维保信息";
       },
-      cancelbuuser(){
-      this.newRepairDialogFlaguser = false;
-     this.titleName = "维保信息";
+      cancelbuuser() {
+        this.newRepairDialogFlaguser = false;
+        this.titleName = "维保信息";
       },
-      canceluser(){
+      canceluser() {
         this.productRepairDialogVisibleuser = false;
         this.titleName = "维保信息";
       },
@@ -452,12 +389,13 @@
         this.newRepairDialogFlag = true;
         this.titleName = "添加维保信息";
       },
-          repairAdduser() {
-       this.newRepairDialogFlaguser = true;
+      repairAdduser() {
+        this.newRepairDialogFlaguser = true;
         this.titleName = "添加维保信息";
       },
-      repairdelete(index,row){
-        var id = row.repairId;
+      repairdelete(index, row) {
+        var id = row.id;
+        alert(id);
         this.$confirm("确认删除?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -465,17 +403,15 @@
         })
           .then(() => {
             deleteRepairInfoByProductId(id).then(response => {
-              if(response.data.code==200){
-                this.repairList.splice(index,1)
+              if (response.data.code == 200) {
+                this.repairList.splice(index, 1)
                 this.$message({
                   message: "删除成功",
                   type: "success"
                 });
               }
               this.getrepairList();
-
             });
-
           })
           .catch(() => {
             this.$message({
@@ -484,8 +420,8 @@
             });
           });
       },
-      repairdeleteuser(index,row){
-        var id = row.repairId;
+      repairdeleteuser(index, row) {
+        var id = row.id;
         this.$confirm("确认删除?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -493,8 +429,8 @@
         })
           .then(() => {
             deleteRepairInfoByProductId(id).then(response => {
-              if(response.data.code==200){
-                this.repairList.splice(index,1)
+              if (response.data.code == 200) {
+                this.repairList.splice(index, 1)
                 this.$message({
                   message: "删除成功",
                   type: "success"
@@ -530,7 +466,7 @@
           productId: this.productFormData.id
         }).then(response => {
           let repairInfoList = response.data.data;
-          this.repairList = repairInfoList;
+          this.repairuserList = repairInfoList;
         });
       },
       repairOpenuser() {
@@ -545,13 +481,13 @@
         });
       },
       querySearchAsync(queryString, callback) {
-        getUserInfo().then(response => {
+        getUserListByConditionAndPage(this.userlistQuery2).then(response => {
           this.repairform.userList = [];
           var results = [];
-          for (let i = 0, len = response.data.data.length; i < len; i++) {
-            response.data.data[i].value = response.data.data[i].realName;
+          for (let i = 0, len = response.data.data.list.length; i < len; i++) {
+            response.data.data.list[i].value = response.data.data.list[i].realName;
           }
-          this.repairform.userList=response.data.data;
+          this.repairform.userList = response.data.data.list;
           results = queryString ? this.repairform.userList.filter(this.createFilter(queryString)) : this.repairform.userList;
           callback(results);
         });
@@ -561,74 +497,75 @@
           return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
         };
       },
-      handleSelect1(item){
-        this.repairform.userId=item;
+      handleSelect1(item) {
+        this.repairform.userId = item;
       },
       querySearchAsyncuser(queryString, callback) {
-        getProductByboilerNo().then(response => {
+        getProductListByCondition(this.listQuery2).then(response => {
           this.repairform.boilerNoList = [];
           var results = [];
-          for (let i = 0, len = response.data.data.length; i < len; i++) {
-            response.data.data[i].value = response.data.data[i].boilerNo;
+          for (let i = 0, len = response.data.data.list.length; i < len; i++) {
+            response.data.data.list[i].value = response.data.data.list[i].boilerNo;
           }
-          this.repairform.boilerNoList=response.data.data;
+          this.repairform.boilerNoList = response.data.data.list;
           results = queryString ? this.repairform.boilerNoList.filter(this.createFilteruser(queryString)) : this.repairform.boilerNoList;
           callback(results);
         });
       },
+      
       createFilteruser(queryString, queryArr) {
         return (queryArr) => {
           return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
         };
       },
-      handleSelectuser(item){
-        this.repairform.productId=item;
+      handleSelectuser(item) {
+        this.repairform.productId = item;
       },
-      submitRepair() {
-        insertRepairInfo({
-          repairName: this.repairform.realName,
-          repairDate: this.repairform.repairDate,
-          inputDate: this.repairform.inputDate,
-          inputName: this.$store.getters.realName,
-          repairContent: this.repairform.repairContent,
-          productId: this.productFormData.id,
-          userId: this.repairform.userId.id
-        }).then(data => {
-          this.newRepairDialogFlag = false;
-          this.titleName = "维保信息";
-          this.$message({
-            message: "添加成功",
-            type: "success"
+      submitRepairuser() {
+        if (this.inputname) {
+          insertRepairInfo({
+            repairUserName: this.repairform.realName,
+            repairDatetime: this.repairform.repairDate,
+            inputDatetime: this.repairform.inputDate,
+            inputName: this.$store.getters.realName,
+            repairContent: this.repairform.repairContent,
+            productId: this.productFormData.id,
+            repairUserId: this.repairform.userId.id
+          }).then(data => {
+            this.newRepairDialogFlaguser = false;
+            this.titleName = "维保信息";
+            this.$message({
+              message: "添加成功",
+              type: "success"
+            });
+            this.getrepairList();
           });
-          this.getrepairList();
-        });
-      },
-      submitRepairuser(){
-
-        insertRepairInfo({
-          repairName: this.userFormData.realName,
-          repairDate: this.repairform.repairDate,
-          inputDate: this.repairform.inputDate,
-          inputName: this.$store.getters.realName,
-          repairContent: this.repairform.repairContent,
-          productId: this.repairform.productId.id,
-          userId: this.userFormData.id
-        }).then(data => {
-          this.newRepairDialogFlaguser = false;
-          this.titleName = "维保信息";
-          this.$message({
-            message: "添加成功",
-            type: "success"
+        } else {
+          insertRepairInfo({
+            repairUserName: this.userFormData.realName,
+            repairDatetime: this.repairform.repairDate,
+            inputDatetime: this.repairform.inputDate,
+            inputName: this.$store.getters.realName,
+            repairContent: this.repairform.repairContent,
+            productId: this.repairform.productId.id,
+            repairUserId: this.userFormData.id
+          }).then(data => {
+            this.newRepairDialogFlaguser = false;
+            this.titleName = "维保信息";
+            this.$message({
+              message: "添加成功",
+              type: "success"
+            });
+            this.getrepairListuser();
           });
-          this.getrepairListuser();
-        });
+        }
       },
       //分页
-      handleSizeChange1: function(pageSize) { // 每页条数切换
+      handleSizeChange1: function (pageSize) {
         this.pageSize1 = pageSize;
         this.handleCurrentChange1(this.currentPage);
       },
-      handleCurrentChange1: function(currentPage) {//页码切换
+      handleCurrentChange1: function (currentPage) {//页码切换
         this.currentPage1 = currentPage;
       },
       getrepairListBydate() {
@@ -641,12 +578,13 @@
           this.repairList = repairInfoList;
         });
       },
-      queryByTime(){
-        if (this.starttime.getTime() > this.endtime.getTime()){
+      queryByTime() {
+        if (this.starttime.getTime() > this.endtime.getTime()) {
           alert('起始时间必须小于结束时间');
         } else {
-              this.getrepairListBydate();
-            };
+          this.getrepairListBydate();
+        }
+        ;
       },
       getrepairListBydateuser() {
         getRepairInfoListBydate({
@@ -658,16 +596,17 @@
           this.repairuserList = repairInfoList;
         });
       },
-      queryByTimeuser(){
-        if (this.starttime.getTime() > this.endtime.getTime()){
+      queryByTimeuser() {
+        if (this.starttime.getTime() > this.endtime.getTime()) {
           alert('起始时间必须小于结束时间');
         } else {
-              this.getrepairListBydateuser();
-        };
+          this.getrepairListBydateuser();
+        }
+        ;
       },
-       getDetails(row) {
-        this.deleteId=row.repairId;
-           },
+      getDetails(row) {
+        this.deleteId = row.id;
+      },
       handleSizeChange(val) {
         this.userlistQuery.pageSize = val;
         getUserListByConditionAndPage(this.userlistQuery).then(response => {
@@ -700,7 +639,7 @@
       },
       handleCurrentChange2(val) {
         this.listQuery.pageNum = val;
-       getProductListByCondition(this.listQuery).then(response => {
+        getProductListByCondition(this.listQuery).then(response => {
           let productInfoList = response.data.data;
           this.productList = productInfoList.list;
           this.listQuery.total = productInfoList.total;
@@ -708,26 +647,27 @@
           this.listQuery.pageSize = productInfoList.pageSize;
         })
       },
-      getWaterDetails(val){
-        if(val == 0){
+      getWaterDetails(val) {
+        if (val == 0) {
           getProductListByCondition(this.listQuery).then(response => {
-              let productInfoList = response.data.data;
-              this.productList = productInfoList.list;
+            let productInfoList = response.data.data;
+            this.productList = productInfoList.list;
             this.listQuery.total = productInfoList.total;
             this.listQuery.pageNum = productInfoList.pageNum;
             this.listQuery.pageSize = productInfoList.pageSize;
-            })
-        };
-        if(val==1){
+          })
+        }
+        ;
+        if (val == 1) {
           getUserListByConditionAndPage(this.userlistQuery).then(response => {
             let userInfoList = response.data.data;
             this.userlist = userInfoList.list;
-           this.userlistQuery.total = userInfoList.total;
+            this.userlistQuery.total = userInfoList.total;
             this.userlistQuery.pageNum = userInfoList.pageNum;
             this.userlistQuery.pageSize = userInfoList.pageSize;
           });
-          }
-        },
+        }
+      },
     }
   };
 </script>
