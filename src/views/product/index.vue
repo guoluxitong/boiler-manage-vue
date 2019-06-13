@@ -231,7 +231,7 @@ import permission from "@/directive/permission/index.js";
 import checkPermission from "@/utils/permission";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getBoilerModelListByCondition } from "@/api/boilerModel";
-import { getUserListByCondition,getUserInfo} from "@/api/user";
+ import { getUserListByCondition} from "@/api/user";
 import {
   getProductListByCondition,
   deleteProductById,
@@ -291,19 +291,6 @@ export default {
       }
     };
     return {
-      repairform: [{
-        repairId: "",
-        repairName: "",
-        repairDate: "",
-        repairContent: "",
-        realName: "",
-        inputDate: '',
-        inputName: '',
-        userId: '',
-        id: '',
-        boilerNo: "",
-        userList: [],
-      }],
       selectlistRow: [],
       starttime:'',
       endtime:'',
@@ -474,20 +461,6 @@ export default {
       this.productFromDialogVisible = true;
       this.titleName = "新增";
     },
-    //维保信息
-    repairInfo(row) {
-      this.productRepairDialogVisible = true;
-      this.productFormData = row;
-      this.titleName = "维保信息";
-    },
-    cancelbu() {
-      this.newRepairDialogFlag = false;
-      this.titleName = "维保信息";
-    },
-    repairAdd() {
-      this.newRepairDialogFlag = true;
-      this.titleName = "添加维保信息";
-    },
     //产品编辑
     handleUpdate(row) {
       this.productFromDialogVisible = true;
@@ -522,134 +495,6 @@ export default {
         ? (this.address = row.province + row.city + row.district + row.street)
         : (this.address = "");
     },
-    //维保信息删除
-    getDetails(row) {
-     this.deleteId=row.repairId;
-    },
-    repairdelete(index,row){
-      var id = row.repairId;
-      this.$confirm("确认删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          deleteRepairInfoByProductId(id).then(response => {
-            if(response.data.code==200){
-              this.repairList.splice(index,1)
-              this.$message({
-                message: "删除成功",
-                type: "success"
-              });
-            }
-            this.getrepairList();
-
-          });
-
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
-      },
-
-    confirmDeleteRepair(obj){
-
-    },
-    repairOpen() {
-          this.getrepairList();
-    },
-    getrepairList() {
-      getRepairInfoListByProductId({
-        productId: this.productFormData.id
-      }).then(response => {
-        let repairInfoList = response.data.data;
-        this.repairList = repairInfoList;
-      });
-    },
-    querySearchAsync(queryString, callback) {
-      getUserInfo().then(response => {
-        this.repairform.userList = [];
-        var results = [];
-        for (let i = 0, len = response.data.data.length; i < len; i++) {
-          response.data.data[i].value = response.data.data[i].realName;
-        }
-        this.repairform.userList=response.data.data;
-        results = queryString ? this.repairform.userList.filter(this.createFilter(queryString)) : this.repairform.userList;
-        callback(results);
-      });
-    },
-    createFilter(queryString, queryArr) {
-      return (queryArr) => {
-        return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-      };
-    },
-    handleSelect1(item){
-      this.repairform.userId=item;
-    },
-    submitRepair() {
-      insertRepairInfo({
-        repairName: this.repairform.repairName,
-        repairDate: this.repairform.repairDate,
-        inputDate: this.repairform.inputDate,
-        inputName: this.repairform.inputName,
-        repairContent: this.repairform.repairContent,
-        productId: this.productFormData.id,
-        userId: this.repairform.userId.id
-      }).then(data => {
-        this.newRepairDialogFlag = false;
-        this.titleName = "维保信息";
-        this.$message({
-          message: "添加成功",
-          type: "success"
-        });
-        this.getrepairList();
-      });
-    },
-    //分页
-    handleSizeChange1: function(pageSize) { // 每页条数切换
-      this.pageSize1 = pageSize;
-      this.handleCurrentChange1(this.currentPage);
-    },
-    handleCurrentChange1: function(currentPage) {//页码切换
-      this.currentPage1 = currentPage;
-    },
-    getrepairListBydate() {
-      getRepairInfoListByDate({
-        productId: this.productFormData.id,
-        startTime: this.starttime,
-        endTime: this.endtime
-      }).then(response => {
-        let repairInfoList = response.data.data;
-        this.repairList = repairInfoList;
-      });
-    },
-    queryByTime(){
-      if (this.starttime.getTime() > this.endtime.getTime()){
-        alert('起始时间必须小于结束时间');
-      } else {
-        Promise.all([this.initSelect()])
-          .then(() => {
-            this.getrepairListBydate();
-          });
-      };
-    },
-    /*querySearch(queryString, callback) {
-      getRepairInfoListByName({
-      }).then(response => {
-        this.nameList=response.data.data;
-      })
-      for(let i of this.nameList){
-        i.value = i.goodsCode;  //将想要展示的数据作为value
-      }
-      callback(this.nameList);
-      alert(this.nameList.size())
-    },
-    handleSelect(item,index) {
-      this.dataForm.items[index] = item;
-    },*/
     // 辅机信息
     auxiliaryMachineInfo(row) {
       /*let width= Math.round(document.body.clientWidth/2)

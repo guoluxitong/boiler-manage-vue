@@ -393,33 +393,6 @@
         this.newRepairDialogFlaguser = true;
         this.titleName = "添加维保信息";
       },
-      repairdelete(index, row) {
-        var id = row.id;
-        alert(id);
-        this.$confirm("确认删除?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-            deleteRepairInfoByProductId(id).then(response => {
-              if (response.data.code == 200) {
-                this.repairList.splice(index, 1)
-                this.$message({
-                  message: "删除成功",
-                  type: "success"
-                });
-              }
-              this.getrepairList();
-            });
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消删除"
-            });
-          });
-      },
       repairdeleteuser(index, row) {
         var id = row.id;
         this.$confirm("确认删除?", "提示", {
@@ -436,7 +409,12 @@
                   type: "success"
                 });
               }
-              this.getrepairListuser();
+              if (this.inputname) {
+                this.getrepairList();
+              } else {
+                this.getrepairListuser();
+              }
+
             });
           })
           .catch(() => {
@@ -512,7 +490,7 @@
           callback(results);
         });
       },
-      
+
       createFilteruser(queryString, queryArr) {
         return (queryArr) => {
           return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
@@ -575,16 +553,8 @@
           endTime: this.endtime
         }).then(response => {
           let repairInfoList = response.data.data;
-          this.repairList = repairInfoList;
+          this.repairuserList = repairInfoList;
         });
-      },
-      queryByTime() {
-        if (this.starttime.getTime() > this.endtime.getTime()) {
-          alert('起始时间必须小于结束时间');
-        } else {
-          this.getrepairListBydate();
-        }
-        ;
       },
       getrepairListBydateuser() {
         getRepairInfoListBydate({
@@ -600,7 +570,12 @@
         if (this.starttime.getTime() > this.endtime.getTime()) {
           alert('起始时间必须小于结束时间');
         } else {
-          this.getrepairListBydateuser();
+          if (this.inputname) {
+            this.getrepairListBydate();
+          } else {
+            this.getrepairListBydateuser();
+          }
+
         }
         ;
       },
