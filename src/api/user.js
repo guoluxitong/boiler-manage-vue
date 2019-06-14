@@ -15,14 +15,6 @@ export function getUserListByConditionAndPage(query) {
     params: query
   })
 }
-export function getUserInfo(query) {
-  return request({
-    url: '/user/userinfolist',
-    method: 'get',
-    params: query
-  })
-}
-
 export function getUserListByCondition(query) {
   return request({
     url: '/user/userlistbycondition',
