@@ -20,6 +20,10 @@
                 type:Number,
                 default:-1
             },
+            controllerNo:{
+                type:String,
+                default: null
+            },
             deleteValidateFormDialogVisible:{
                 type:Boolean,
                 default:false
@@ -65,7 +69,7 @@
             confirmSubmit(){
                 this.$refs['deleteValidateForm'].validate((valid) => {
                     if (valid) {
-                        this.$emit('confirmDeleteValidate', {deleteValidateFormDialogVisible:false,flag:true,id:this.id})
+                        this.$emit('confirmDeleteValidate', {deleteValidateFormDialogVisible:false,flag:true,id:this.id,controllerNo:this.controllerNo})
                     } else {
                         this.$emit('confirmDeleteValidate', {deleteValidateFormDialogVisible:true,flag:false})
                     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="chartSytle" id="lineChart" :style="{height:chartHeight+'px',width:chartWidth+'px'}"></div>
+  <div class="chartSytle" ref="lineChart" :style="{height:chartHeight+'px',width:chartWidth+'px'}"></div>
 </template>
 
 <script>
@@ -11,6 +11,9 @@ export default {
     };
   },
   props: {
+    title: {
+      type: String
+    },
     chartHeight: {
       type: Number,
       default: document.documentElement.clientHeight - 30
@@ -20,10 +23,30 @@ export default {
       default: document.documentElement.clientWidth
     },
     /**
-     * chartData数据格式：{title:'标题',value:'值',unit:'单位'}
+     * x轴信息
+     * 格式：{ name:'x轴名称', type:'x轴类型',data:[]//x轴数据数组}
      */
-    chartData: {
+    xAxis: {
       type: Object,
+      required: true
+    },
+    /**
+     * Y轴信息
+     * 格式：{ name:'y轴名称', type:'y轴类型'}
+     */
+    yAxis: {
+      type: Object,
+      required: true
+    },
+    /**
+     * 数据格式：
+     * [{ name:'数据系列名称',
+     *    type:'line类型',
+     *    data:[]数据数组
+     * },....]
+     */
+    series: {
+      type: Array,
       required: true
     }
   },
@@ -36,110 +59,77 @@ export default {
     this.drawLine();
   },
   methods: {
+    draw() {},
     drawLine() {
+      let legend = [];
+      this.series.forEach(item => {
+        console.log(item.name);
+        legend.push(item.name);
+      });
+      var myChart = this.$echarts.init(this.$refs.lineChart);
+      let option = {
+        tooltip: { trigger: "axis" },
+        xAxis: this.xAxis,
+        yAxis: this.yAxis,
+        series: this.series,
+        legend: { icon: "rect", data: legend }
+      };
+      console.log("--------------------");
+      console.log(option);
+      console.log("--------------------");
+      if (option && typeof option === "object") {
+        myChart.clear();
+        myChart.setOption(option, true);
+      }
+    },
+    drawLine2() {
       //绘制报表
       let that = this;
-      var dom = document.getElementById("lineChart");
-      var myChart = this.$echarts.init(dom);
+      var myChart = that.$echarts.init(that.$refs.lineChart);
       let optionLine = null;
-
-      function randomData() {
-        now = new Date();
-        //value = Math.round(Math.random() * 20 + 120 + 1);
-        value = that.lineChartData.value;
-
-        return {
-          name: now.toString(),
-          //name: that.chartData.time.toString(),
-          value: [
-            [now.getTime()],
-            //[that.chartData.time.getTime()],
-            //Math.round(value)
-            that.lineChartData.value
-          ]
-        };
-      }
-
-      var data = [];
-      var now = null;
-      now = new Date(new Date().getTime() - 2 * 60 * 1000);
-      var oneDay = 1 * 1000;
-      var value = "";
-      for (var i = 0; i < 100; i++) {
-        data.push(randomData());
-      }
       optionLine = {
         title: {
-          text: that.lineChartData.title
+          text: "测试" //that.lineChartData.title
         },
         tooltip: {
           trigger: "axis",
-          formatter: function(params) {
-            params = params[0];
-            var date = new Date(params.name);
-            return (
-              date.getHours() +
-              ":" +
-              (date.getMinutes() > 9
-                ? date.getMinutes()
-                : "0" + date.getMinutes()) +
-              "=>" +
-              (that.lineChartData.value
-                ? that.lineChartData.value.toFixed(2) + that.lineChartData.unit
-                : "无数据")
-            );
-          },
           axisPointer: {
             animation: false
           }
         },
         xAxis: {
-          type: "time",
-          splitLine: {
-            show: false
-          }
+          type: "category",
+          data: ["19/01", "19/02", "19/03"],
+          name: "日期"
         },
         yAxis: {
           type: "value",
-          boundaryGap: [0, "100%"],
-          splitLine: {
-            show: false
-          }
-        },
-        grid: {
-          y: "15%",
-          x2: "10%",
-          y2: "15%",
-          x: "10%"
+          name: "数量"
         },
         series: [
           {
-            name: "模拟数据",
+            name: "模拟数据1",
             type: "line",
             showSymbol: false,
             hoverAnimation: false,
-            data: data
+            data: [120, 70, 210]
+          },
+          {
+            name: "模拟数据2",
+            type: "line",
+            showSymbol: false,
+            hoverAnimation: false,
+            data: [11, 220, 100]
+          },
+          {
+            name: "模拟数据3",
+            type: "line",
+            showSymbol: false,
+            hoverAnimation: false,
+            data: [180, 0, 10]
           }
         ]
       };
-
-      setInterval(function() {
-        for (var i = 0; i < 10; i++) {
-          data.shift();
-          data.push(randomData());
-        }
-
-        myChart.setOption({
-          title: {
-            text: that.lineChartData.title
-          },
-          series: [
-            {
-              data: data
-            }
-          ]
-        });
-      }, 10000);
 
       if (optionLine && typeof optionLine === "object") {
         myChart.clear();

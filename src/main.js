@@ -25,7 +25,7 @@ Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.prototype.$echarts = echarts
 
-//require('./mock.js')
+
 
 /* eslint-disable no-new */
 new Vue({

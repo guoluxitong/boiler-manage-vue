@@ -1,5 +1,7 @@
 <template>
   <div class="app-container product-container">
+    产品搜索中，增加按用户名进行搜索
+    地图中增加产品筛选项
     <!--查询-->
     <el-row class="app-query">
       <el-input v-model="listQuery.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
@@ -204,6 +206,7 @@
       @confirmCancelValidate="confirmCancelValidate"
       :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
       :id="delId"
+      :controllerNo="delCtlNo"
     ></boiler-common-delete-validate-dialog>
     <!--售出-->
     <product-map-dialog
@@ -359,6 +362,7 @@ export default {
       smallClassOptions: [],
       listLoading: true,
       delId: -1,
+      delCtlNo:null,
       updateId: -1,
       deleteValidateFormDialogVisible: false,
       productFromDialogVisible: false,
@@ -613,17 +617,6 @@ export default {
           });
         }
       }
-
-      // this.choiceUserFormData.deleteUserIdArray.forEach(userId => {
-      //   deleteProductUserList.push({
-      //     userId: userId,
-      //     productId: this.choiceUserFormData.productId
-      //   });
-      // });
-      // console.log('------------------delete-------------');
-      // console.log(deleteProductUserList);
-      // console.log('------------------insert-------------');
-      // console.log(insertProductUserList);
       insertManyProductUser({
         deleteProductUserList: deleteProductUserList,
         selectProductUserList: insertProductUserList
@@ -645,6 +638,7 @@ export default {
         .then(() => {
           this.deleteValidateFormDialogVisible = true;
           this.delId = row.id;
+          this.delCtlNo = row.controllerNo
         })
         .catch(() => {
           this.$message({
@@ -657,7 +651,7 @@ export default {
       if (obj.flag) {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
-        deleteProductById(obj.id).then(response => {
+        deleteProductById(obj.id,obj.controllerNo).then(response => {
           this.$message({
             message: "删除成功",
             type: "success"

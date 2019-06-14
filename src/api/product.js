@@ -47,11 +47,11 @@ export function insertManyProductUser(data) {
     data:data
   })
 }
-export function deleteProductById(id) {
+export function deleteProductById(id,controllerNo) {
   return request({
     url: '/product/deleteproductbyid',
     method: 'post',
-    params:{id}
+    params:{'id':id,'controllerNo':controllerNo}
   })
 }
 export function productTypeAmountByCondition(userId) {

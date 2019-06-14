@@ -57,7 +57,6 @@
 <script>
 import deviceMap from "@/components/deviceMap/index";
 import {
-  getDeviceMapListByCondition,
   getCityCodeByLatAndLng,
   getWeatherByAdCode,
   ConvertPinyin
@@ -74,7 +73,7 @@ import {
   insertManyProductUser,
   productTypeAmountByCondition
 } from "@/api/product";
-import lineChartA from "@/components/reportForms/lineChart";
+import lineChartA from "@/components/reportForms/runChart";
 import pieChartA from "@/components/reportForms/pieChart";
 export default {
   name: "device-run-info",

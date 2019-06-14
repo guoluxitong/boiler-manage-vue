@@ -39,6 +39,14 @@
         :chartWidth="mapWidth/3"
         :chartData="barChartData"
       ></bar-chart>
+      <line-chart
+        class="chartSytle"
+        style="flot:'left'"
+        title="测试001"
+        :xAxis="xAxis"
+        :yAxis="yAxis"
+        :series="series"
+      ></line-chart>
     </div>
     <el-dialog :visible.sync="msgDialogFlag" width="50%" title="系统消息">
       <el-collapse v-model="activeName" accordion>
@@ -70,12 +78,17 @@
 </template>
 
 <script>
+const Mock = require("mockjs");
 import barChart from "@/components/reportForms/barChart";
 import pieChart from "@/components/reportForms/pieChart";
+import lineChart from "@/components/reportForms/lineChart";
 import repairForm from "./repairForm";
+
+let map = ["超温", "超压", "AAA"];
+
 export default {
   name: "boiler-fault-alarm",
-  components: { barChart, pieChart, repairForm },
+  components: { lineChart, barChart, pieChart, repairForm },
   data() {
     return {
       mapHeight: document.documentElement.clientHeight - 30,
@@ -142,24 +155,61 @@ export default {
           address: "上海市普陀区金沙江路 1518 弄",
           zip: 200333
         }
-      ]
+      ],
+      xAxis: {
+        name: "日期",
+        type: "category",
+        data: [
+          "19/06/01",
+          "19/06/02",
+          "19/06/03",
+          "19/06/04",
+          "19/06/05",
+          "19/06/06",
+          "19/06/07"
+        ]
+      },
+      yAxis: {
+        name: "数量",
+        type: "value"
+      },
+      series: []
     };
   },
   created() {
     this.initBarTestData();
     this.initPieTestData();
+    this.initBarTestDataSeries()
   },
-  mounted() {},
   methods: {
+    //
+    initBarTestDataSeries() {
+      let data = Mock.mock({
+        "data|8": [
+          {
+            'name|+1': ['测试1','测试2','测试3','测试4','测试5','测试6','测试7','测试8'],
+            'type': 'line',
+            'data': function(){
+              let d=[]
+              for(let i =0;i <7;i++){
+                d.push(Mock.Random.integer(-40,300))
+              }
+              return d;
+            }
+          }
+        ]
+      })
+      this.series = data.data;
+    },
     //生成测试数据
     initBarTestData() {
       //柱状图模拟数据
       let title1 = "柱状图测试报表";
       let value1 = [];
-      let x = ["山东", "简洁", "软件"];
+      let x = ["19/02", "19/03", "19/04"];
       let obj = {};
       for (let i = 0; i < 3; i++) {
-        obj.legend = i;
+        obj.legend = map[i];
         obj.data = [i, i + 1, i + 2];
         value1.push(obj);
         obj = {};
