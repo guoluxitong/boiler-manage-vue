@@ -1,5 +1,7 @@
 <template>
   <div class="app-container product-container">
+    产品搜索中，增加按用户名进行搜索
+    地图中增加产品筛选项
     <!--查询-->
     <el-row class="app-query">
       <el-input v-model="listQuery.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
@@ -58,7 +60,7 @@
       border
       fit
       highlight-current-row
-      style="width: 120% ;height: 100%"
+      style="width: 120%"
       @row-contextmenu="openTableMenu"
     >
       <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉编号">
@@ -117,34 +119,35 @@
         </template>
       </el-table-column>
     </el-table>
-    <!--右键菜单-->
     <menu-context ref="menuContext">
       <menu-context-item
         @click="handleUpdate"
         v-permission="['3','5']"
         :width="100"
-        :fontSize="18"
+        :fontSize="14"
       >编辑</menu-context-item>
-      <menu-context-item @click="handleCopy" v-permission="['3','5']" :width="100" :fontSize="18">复制</menu-context-item>
-      <menu-context-item @click="sellProduct" :width="100" :fontSize="18">售出</menu-context-item>
-      <menu-context-item @click="handleDownload" :width="100" :fontSize="18">导出</menu-context-item>
-      <menu-context-item @click="showControllerData" :width="100" :fontSize="18">监控</menu-context-item>
-      <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="18">辅机信息</menu-context-item>
-
+      <menu-context-item @click="handleCopy" v-permission="['3','5']" :width="100" :fontSize="14">复制</menu-context-item>
+      <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
+      <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>
+      <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item>
+      <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="14">辅机信息</menu-context-item>
       <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
       <menu-context-item
         @click="handleChoiceUser"
         v-permission="['3']"
         :width="100"
-        :fontSize="18"
+        :fontSize="14"
       >分配</menu-context-item>
       <menu-context-item
         @click="handleDelete"
         v-permission="['3','6']"
         :width="100"
-        :fontSize="18"
+        :fontSize="14"
       >删除</menu-context-item>
     </menu-context>
+    <!--右键菜单-->
+    <!--<contextmenu :visible="showcontextmenu" ref="cmenu"></contextmenu>-->
+
     <!--分页-->
     <div class="pagination-container">
       <el-pagination
@@ -181,6 +184,7 @@
             multiple
             style="width: 100%"
             placeholder="请选择"
+            @change="change"
           >
             <el-option
               v-for="item in choiceUserFormData.userOptions"
@@ -202,6 +206,7 @@
       @confirmCancelValidate="confirmCancelValidate"
       :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
       :id="delId"
+      :controllerNo="delCtlNo"
     ></boiler-common-delete-validate-dialog>
     <!--售出-->
     <product-map-dialog
@@ -211,9 +216,14 @@
       @confirmSellDialog="confirmSellDialog"
     ></product-map-dialog>
     <!--监控-->
-   <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%">
-      <controller-run-info-dialog :cleartimer="!controllerRunInfoDialogVisible" :controllerNo="this.controllerNo" :address="this.address"></controller-run-info-dialog>
+    <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%">
+      <controller-run-info-dialog
+        :cleartimer="!controllerRunInfoDialogVisible"
+        :controllerNo="this.controllerNo"
+        :address="this.address"
+      ></controller-run-info-dialog>
     </el-dialog>
+
     <!--辅机信息-->
     <auxiliary-machine-dialog
       :show.sync="auxiliaryMachineDialogVisible"
@@ -223,6 +233,9 @@
       @confirmAuxiliaryMachineDialog="confirmAuxiliaryMachineDialog"
     ></auxiliary-machine-dialog>
     <!--运行信息-->
+    <el-dialog title="运行信息报表" :visible.sync="showEchartDialog" height="100%" width="100%">
+      <device-chart></device-chart>
+    </el-dialog>
   </div>
 </template>
 
@@ -231,7 +244,9 @@ import permission from "@/directive/permission/index.js";
 import checkPermission from "@/utils/permission";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getBoilerModelListByCondition } from "@/api/boilerModel";
- import { getUserListByCondition} from "@/api/user";
+import { getUserListByCondition } from "@/api/user";
+import contextmenu from "@/components/ContextMenu";
+import deviceChart from "@/components/deviceChart";
 import {
   getProductListByCondition,
   deleteProductById,
@@ -266,6 +281,8 @@ export default {
     productMapDialog,
     auxiliaryMachineDialog,
     controllerRunInfoDialog,
+    contextmenu,
+    deviceChart
   },
   directives: { permission },
   data() {
@@ -291,18 +308,8 @@ export default {
       }
     };
     return {
-      selectlistRow: [],
-      starttime:'',
-      endtime:'',
-      deindex:'',
-      restaurants: [],
-      repairList: [
-      ],
-      choiceRepairFormData: {
-        insertRepairArray: [],
-        deleteRepairArray: [],
-      },
-      insertRepairList: [],
+      showEchartDialog: false,
+      showcontextmenu: false,
       boilerModelNumberArray: [],
       mediumArray: [],
       fuelArray: [],
@@ -311,12 +318,7 @@ export default {
       smallClassArray: [],
       productAuxiliaryMachineInfoList: [],
       list: null,
-      tempList: [],
-      currentPage1:1,
-      pageNum1: 1,
-      pageSize1: 5,
       listQuery: {
-        currentPage:1,
         total: 50,
         pageNum: 1,
         pageSize: 5,
@@ -331,12 +333,11 @@ export default {
         fuel: null,
         userId: null
       },
-      deleteId: -1,
       dialogChoiceUserFormVisible: false,
       choiceUserFormData: {
         userOptions: [],
         userArray: [],
-        deleteUserIdArray: [],
+        productUserArray: [], //设备原始分布用户Id列表
         selectUserIdArray: [],
         productId: 0
       },
@@ -361,6 +362,7 @@ export default {
       smallClassOptions: [],
       listLoading: true,
       delId: -1,
+      delCtlNo:null,
       updateId: -1,
       deleteValidateFormDialogVisible: false,
       productFromDialogVisible: false,
@@ -368,8 +370,6 @@ export default {
       auxiliaryMachineDialogVisible: false,
       controllerRunInfoDialogVisible: false,
       mapCompleteDialogVisible: false,
-      productRepairDialogVisible: false,
-      newRepairDialogFlag: false,
       titleName: "",
       address: ""
     };
@@ -387,6 +387,12 @@ export default {
     });
   },
   methods: {
+    // remove(tag) {
+    //   console.log("remove-" + tag);
+    // },
+    change(tag) {
+      this.choiceUserFormData.selectUserIdArray = tag;
+    },
     initSelect() {
       getBoilerModelListByCondition({
         orgId: this.$store.state.user.orgId,
@@ -436,6 +442,7 @@ export default {
         window.event.clientX,
         window.event.clientY
       );
+      //this.$refs.cmenu.show()
     },
     handleFilter() {
       this.listQuery.pageNum = 1;
@@ -490,7 +497,7 @@ export default {
     showControllerData(row) {
       this.controllerRunInfoDialogVisible = true;
       this.controllerNo = row.controllerNo;
-      console.log(row);
+      //console.log(row);
       row.province
         ? (this.address = row.province + row.city + row.district + row.street)
         : (this.address = "");
@@ -543,14 +550,19 @@ export default {
             });
         });
       });
+
       getProductUserListByProductCondition({ productId: row.id }).then(data => {
-        let userIdArray = [];
+        this.choiceUserFormData.productUserArray = [];
+            this.choiceUserFormData.selectUserIdArray = []
+        //let userIdArray = [];
         data.data.data.forEach(item => {
-          if (item.userId != this.$store.state.user.userId)
-            userIdArray.push(item.userId);
+          if (item.userId != this.$store.state.user.userId){
+            this.choiceUserFormData.productUserArray.push(item.userId);
+            this.choiceUserFormData.selectUserIdArray.push(item.userId)
+          }
         });
-        this.choiceUserFormData.deleteUserIdArray = userIdArray;
-        this.choiceUserFormData.selectUserIdArray = userIdArray;
+        //this.choiceUserFormData.deleteUserIdArray = userIdArray;
+        //this.choiceUserFormData.selectUserIdArray = userIdArray;
       });
       this.dialogStatus = "update";
       this.dialogChoiceUserFormVisible = true;
@@ -558,31 +570,63 @@ export default {
         this.$refs["choiceUserForm"].clearValidate();
       });
     },
+    checkArrayContains(v, dataArray) {
+      let flag = false;
+      for (let i = 0; i < dataArray.length; i++) {
+        if (v == dataArray[i]) {
+          flag = true;
+          break;
+        }
+      }
+      return flag;
+    },
     confirmSubmitChoiceUser() {
       let deleteProductUserList = [];
-      this.choiceUserFormData.deleteUserIdArray.forEach(userId => {
-        deleteProductUserList.push({
-          userId: userId,
-          productId: this.choiceUserFormData.productId
-        });
-      });
-      let selectProductUserList = [];
-      this.choiceUserFormData.selectUserIdArray.forEach(userId => {
-        selectProductUserList.push({
-          userId: userId,
-          productId: this.choiceUserFormData.productId
-        });
-      });
+      for (
+        let i = 0;
+        i < this.choiceUserFormData.productUserArray.length;
+        i++
+      ) {
+        if (
+          !this.checkArrayContains(
+            this.choiceUserFormData.productUserArray[i],
+            this.choiceUserFormData.selectUserIdArray
+          )
+        ) {
+          deleteProductUserList.push({
+            userId: this.choiceUserFormData.productUserArray[i],
+            productId: this.choiceUserFormData.productId
+          });
+        }
+      }
+      let insertProductUserList = [];
+      for (
+        let i = 0;
+        i < this.choiceUserFormData.selectUserIdArray.length;
+        i++
+      ) {
+        if (
+          !this.checkArrayContains(
+            this.choiceUserFormData.selectUserIdArray[i],
+            this.choiceUserFormData.productUserArray
+          )
+        ) {
+          insertProductUserList.push({
+            userId: this.choiceUserFormData.selectUserIdArray[i],
+            productId: this.choiceUserFormData.productId
+          });
+        }
+      }
       insertManyProductUser({
         deleteProductUserList: deleteProductUserList,
-        selectProductUserList: selectProductUserList
+        selectProductUserList: insertProductUserList
       }).then(data => {
         this.dialogChoiceUserFormVisible = false;
         this.$message({
           message: "分配成功",
           type: "success"
         });
-        this.getList();
+        //this.getList();
       });
     },
     handleDelete(row) {
@@ -594,6 +638,7 @@ export default {
         .then(() => {
           this.deleteValidateFormDialogVisible = true;
           this.delId = row.id;
+          this.delCtlNo = row.controllerNo
         })
         .catch(() => {
           this.$message({
@@ -606,7 +651,7 @@ export default {
       if (obj.flag) {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
-        deleteProductById(obj.id).then(response => {
+        deleteProductById(obj.id,obj.controllerNo).then(response => {
           this.$message({
             message: "删除成功",
             type: "success"
@@ -815,10 +860,6 @@ export default {
       this.productFromDialogVisible = obj.productFromDialogVisible;
       this.getList();
     },
-    productRepairDialogClose() {
-      this.productRepairDialogVisible = false;
-      this.getList();
-    },
     productMapDialogClose(obj) {
       this.productMapDialogVisible = obj.productMapDialogVisible;
       this.getList();
@@ -838,6 +879,6 @@ export default {
       this.listQuery.pageNum = val;
       this.getList();
     }
-  },
+  }
 };
 </script>

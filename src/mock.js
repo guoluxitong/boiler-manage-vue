@@ -1,4 +1,4 @@
-// const Mock = require('mockjs');
+//const Mock = require('mockjs');
 // import { config } from '@/config/index'
 
 // const Random = Mock.Random;

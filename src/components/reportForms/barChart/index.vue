@@ -1,5 +1,5 @@
 <template>
-  <div class="chartSytle" id="barChart" :style="{height:chartHeight+'px',width:chartWidth+'px'}"></div>
+  <div class="chartSytle" id="barChart" ref="barChart" :style="{height:chartHeight+'px',width:chartWidth+'px'}"></div>
 </template>
 <script>
 export default {
@@ -38,7 +38,7 @@ export default {
     drawLine() {
       let that = this;
       var dom = document.getElementById("barChart");
-      var myChart = this.$echarts.init(dom);
+      var myChart = that.$echarts.init(that.$refs.barChart);
       let optionBar = null;
       let legendArray = [];
       let seriesArray = [];
@@ -53,12 +53,12 @@ export default {
           seriesObj = {};
         }
       }
-
+      console.log(this.barChartData);
       optionBar = {
         title: {
           text: that.barChartData.title
         },
-        tooltip: {},
+        tooltip: { formatter: '{a}:{c}'},
         legend: {
           data: legendArray
         },
