@@ -38,7 +38,6 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
 .breadcrumb {
   width: 100%;
-  border-bottom: solid 1px #e6e6e6;
   height: 30px;
   .app-breadcrumb.el-breadcrumb {
     display: inline-block;

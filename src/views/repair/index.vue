@@ -35,7 +35,7 @@
         </el-table-column>
         <el-table-column  align='center' label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" type="danger" @click="repairinfo(scope.$index, scope.row)">查看维保信息</el-button>
+            <el-button size="mini" type="success" @click="repairinfo(scope.$index, scope.row)">查看维保信息</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -90,7 +90,7 @@
         </el-table-column>
         <el-table-column  align='center' label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" type="danger" @click="repairinfouser(scope.$index, scope.row)">查看维保信息</el-button>
+            <el-button size="mini" type="success" @click="repairinfouser(scope.$index, scope.row)">查看维保信息</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -114,14 +114,14 @@
     <el-form>
       <div style="width:100%">
         <el-col :span="6">
-          <el-date-picker   type="datetime" placeholder="选择查询起始日期" v-model="starttime" style="width: 100%;"></el-date-picker>
+          <el-date-picker   type="date" placeholder="选择查询起始日期" v-model="starttime" style="width: 100%;"></el-date-picker>
         </el-col>
         <el-col style="margin-left:20px" :span="6">
-          <el-date-picker   type="datetime" placeholder="选择查询结束日期" v-model="endtime" style="width: 100%;"></el-date-picker>
+          <el-date-picker   type="date" placeholder="选择查询结束日期" v-model="endtime" style="width: 100%;"></el-date-picker>
         </el-col>
-        <el-button style="margin-left:20px" type="warning"  @click="queryByTimeuser"  >查询</el-button>
+        <el-button style="margin-left:20px" type="success"  @click="queryByTimeuser"  >查询</el-button>
         <el-button style="margin-left:25%" type="primary"   @click="repairAdduser">添加</el-button>
-        <el-button type="danger" style="margin-left: 20px" @click="canceluser">取消</el-button>
+        <el-button type="warning" style="margin-left: 20px" @click="canceluser">取消</el-button>
       </div>
       <el-row>
         <el-table
@@ -216,7 +216,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitRepairuser">立即添加</el-button>
-            <el-button @click="cancelbuuser">取消</el-button>
+            <el-button type="warning" @click="cancelbuuser">取消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
