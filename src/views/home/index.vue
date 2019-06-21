@@ -16,6 +16,7 @@ export default {
     };
   },
   created(){
+    console.log('home')
     this.initHomeIndex()
   },
   methods: {

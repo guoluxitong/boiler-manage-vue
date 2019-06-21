@@ -58,25 +58,31 @@ export default {
   },
   created() {
     this.initCopyrightInfoAndLogoUrl();
-    request({
-      url: "/data/index",
-      method: "post"
-    }).then(function(res) {
-      console.log(res.data.msg);
-    });
+    // request({
+    //   url: "/data/index",
+    //   method: "post"
+    // }).then(function(res) {
+    //   console.log(res.data.msg);
+    // });
   },
   methods: {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
-          console.log(this.$store);
           this.$store
-            .dispatch("LoginByUsername", this.loginForm)
+            .dispatch("LoginByUsername", {"userInfo":this.loginForm,"router":this.$router})
             .then(data => {
               this.loading = false;
-              this.$store.dispatch("setUserToken", data);
-              this.$router.push({ path: this.redirect || "/home/index" });
+              if(data>0)//检测返回的角色长度值是否 >0
+              {
+                this.$router.push({ path: this.redirect || "/home/index" });
+              }
+              else
+              {
+                this.$message.error('您尚未被允许进入平台，请联系锅炉厂管理人员进行授权!')
+              }
+              
             })
             .catch(msg => {
               this.$message.error(msg);

@@ -75,20 +75,32 @@ const user = {
                 : "ws://" + config.product_base_ip + ":" + config.product_base_port + "/websocket/" + userId
             commit('INIT_WEBSOCK', new WebSocket(wsuri))
         },
-        setUserToken({ commit }, userName) {
-            commit('SET_TOKEN', userName)
-            setToken(userName)
-        },
-        LoginByUsername({ commit }, userInfo) {
+        LoginByUsername(store, {userInfo,router}) {
+            const { commit, dispatch, rootState } = store
             const userName = userInfo.account.trim()
             return new Promise((resolve, reject) => {
                 loginByUsername(userName, userInfo.passWord).then(response => {
                     const data = response.data
-                    console.log(data)
+                    //console.log(data)
                     if (data.code != 0) {
-                        //this.dispatch('initWebSock', data.data.id)
-                        this.dispatch('GetUserInfo',data)
-                        resolve(userName)
+                        commit('SET_USERID', data.data.id)
+                        commit('SET_PASSWORD', data.data.password)
+                        commit('SET_ORGID', data.data.orgId)
+                        commit('SET_ORGTYPE', data.data.orgType)
+                        commit('SET_MOBILE', data.data.mobile)
+                        commit('SET_EMAIL', data.data.email)
+                        commit('SET_WEIXIN', data.data.weiXin)
+                        commit('SET_QQ', data.data.qQ)
+                        commit('SET_REALNAME', data.data.realName)
+                        commit('SET_ORGANIZATIONNAME', data.data.organizationName)
+                        commit('SET_ROLEIDARRAY', getRoleIdArray(data.data.roleList))
+                        commit('SET_ROLELIST', data.data.roleList)
+                        commit('SET_TOKEN', userName)
+                        setToken(userName)
+                        dispatch('permission/GenerateRoutes', {"data":data.data.listResource},{root:true}).then(() => {
+                            router.addRoutes(rootState.permission.addRouters)
+                        })
+                        resolve(data.data.roleList.length)//返回角色的长度值
                     } else {
                         reject(data.msg)
                     }
@@ -96,46 +108,7 @@ const user = {
                     reject(error)
                 })
             })
-        },
-        SetUserInfo({ commit, state }, data) {
-            //this.dispatch('initWebSock', data.id)
-            commit('SET_USERID', data.id)
-            commit('SET_PASSWORD', data.password)
-            commit('SET_ORGID', data.orgId)
-            commit('SET_ORGTYPE', data.orgType)
-            commit('SET_MOBILE', data.mobile)
-            commit('SET_EMAIL', data.email)
-            commit('SET_WEIXIN', data.weiXin)
-            commit('SET_QQ', data.qQ)
-            commit('SET_REALNAME', data.realName)
-            commit('SET_ORGANIZATIONNAME', data.organizationName)
-            commit('SET_ROLEIDARRAY', getRoleIdArray(data.roleList))
-            commit('SET_ROLELIST', data.roleList)
-        },
-        GetUserInfo({ commit, state }) {
-            return new Promise((resolve, reject) => {
-                getLoginUserInfo(state.token).then(response => {
-                    const data = response.data.data;
-                    //this.dispatch('initWebSock', data.id)
-                    commit('SET_USERID', data.id)
-                    commit('SET_PASSWORD', data.password)
-                    commit('SET_ORGID', data.orgId)
-                    commit('SET_ORGTYPE', data.orgType)
-                    commit('SET_MOBILE', data.mobile)
-                    commit('SET_EMAIL', data.email)
-                    commit('SET_WEIXIN', data.weiXin)
-                    commit('SET_QQ', data.qQ)
-                    commit('SET_REALNAME', data.realName)
-                    commit('SET_ORGANIZATIONNAME', data.organizationName)
-                    commit('SET_ROLEIDARRAY', getRoleIdArray(data.roleList))
-                    commit('SET_ROLELIST', data.roleList)
-                    resolve(data.listResource)
-                }).catch(error => {
-                    reject(error)
-                })
-            })
         }
-
     },
 }
 function getRoleIdArray(roles = []) {
