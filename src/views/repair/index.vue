@@ -134,7 +134,7 @@
           </el-table-column>
           <el-table-column  align='center' label="设备编号" width="130">
             <template slot-scope="scope">
-              <span style="margin-left: 10px">{{ scope.row.boilerNo }}</span>
+              <span style="margin-left: 10px">{{ scope.row.controllerNo }}</span>
             </template>
           </el-table-column>
           <el-table-column  align='center' label="日期" width="170">
@@ -252,6 +252,7 @@
           inputDatetime: '',
           inputName: '',
           userId: '',
+          controllerNo: '',
           id: '',
           boilerNo: "",
           userList: [],

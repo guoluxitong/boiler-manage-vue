@@ -22,7 +22,7 @@ export default {
   props: {
     mapHeight: {
       type: Number,
-      default: document.documentElement.clientHeight - 100
+      default: document.documentElement.clientHeight-140
     }
   },
   data() {
