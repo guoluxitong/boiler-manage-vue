@@ -33,6 +33,8 @@
         </el-row>
       </el-form>
       <el-row style=" overflow-x: hidden;">
+        <input v-model="address"/>
+        <button @click="productMapOpen">搜索</button>
         <div id="product_map" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="product_map"></div>
       </el-row>
     </el-dialog>
@@ -57,6 +59,7 @@
         mapWidth:document.body.clientWidth/2-30,
         mapHeight:document.body.clientHeight-88,
         boilerCustomerArray:[],
+        address: '',
         formData:{
           id:'',
           controllerNo:'',
@@ -116,7 +119,9 @@
               anchor: BMAP_ANCHOR_TOP_LEFT,
               offset: size,
             }));
-
+            if(this.address != ""){
+              map.centerAndZoom(this.address,11);
+            }
             this.loadMap(map)
             this.selectPoint(map)
           })

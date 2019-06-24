@@ -2,6 +2,7 @@
   <div class="app-container product-container">
     <!--查询-->
     <el-row class="app-query">
+      <el-input v-model="listQuery.boilerCustomerName" placeholder="客户名称" style="width: 150px;"></el-input>
       <el-input v-model="listQuery.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
       <el-select
         clearable
@@ -325,6 +326,7 @@ export default {
         boilerNo: "",
         saleDate: null,
         controllerNo: "",
+        boilerCustomerName: null,
         boilerModelNumber: null,
         tonnageNum: null,
         medium: null,

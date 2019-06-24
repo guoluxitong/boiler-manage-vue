@@ -109,7 +109,7 @@
             :on-success="handleLogoSuccess"
             :on-remove="handleLogoRemove"
           >
-            <i class="el-icon-plus"></i>
+            <i class="el-icon-plus" style="font-size: 15px">上传图片必须是JPG/PNG/ 格式，上传图片大小不能超过 2MB!</i>
           </el-upload>
         </el-form-item>
         <el-form-item label="登陆背景" prop>
@@ -126,7 +126,7 @@
             :on-success="handleBgSuccess"
             :on-remove="handleBgRemove"
           >
-            <i class="el-icon-plus"></i>
+            <i class="el-icon-plus" style="font-size: 15px">上传图片必须是JPG/PNG/ 格式，上传图片大小不能超过 2MB!</i>
           </el-upload>
         </el-form-item>
         <el-form-item>
