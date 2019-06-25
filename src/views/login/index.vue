@@ -81,7 +81,7 @@ export default {
               }
               else
               {
-                 this.$message.error('您尚未被允许进入平台，请联系锅炉厂管理人员进行授权!')
+                this.$message.error('您尚未被允许进入平台，请联系锅炉厂管理人员进行授权!')
               }
 
             })
