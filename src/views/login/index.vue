@@ -75,14 +75,14 @@ export default {
             .then(data => {
               this.loading = false;
 
-              //if(data>0)//检测返回的角色长度值是否 >0
+              if(data>0)//检测返回的角色长度值是否 >0
               {
                 this.$router.push({ path: this.redirect || "/home/index" });
               }
-              // else
-              // {
-              //   this.$message.error('您尚未被允许进入平台，请联系锅炉厂管理人员进行授权!')
-              // }
+              else
+              {
+                 this.$message.error('您尚未被允许进入平台，请联系锅炉厂管理人员进行授权!')
+              }
 
             })
             .catch(msg => {
