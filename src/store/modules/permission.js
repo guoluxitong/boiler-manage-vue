@@ -20,12 +20,12 @@ const permission = {
   actions: {
     GenerateRoutes({ commit }, data) {
       return new Promise(resolve => {
-                
+
         const allMenus = data.data;
         const routers=[]
-        if(allMenus.length>0){
+        if(allMenus && allMenus.length>0){
             const firstLevelMenus=filterFirstLevelMenus(allMenus, 0);
-            
+
             firstLevelMenus.forEach(item=>{
                 const routerItem=generateRoute(item)
                 routerItem.children=generateRoutesFromMenu(item.resId,allMenus)

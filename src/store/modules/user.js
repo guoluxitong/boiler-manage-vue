@@ -92,15 +92,21 @@ const user = {
                         commit('SET_WEIXIN', data.data.weiXin)
                         commit('SET_QQ', data.data.qQ)
                         commit('SET_REALNAME', data.data.realName)
+
                         commit('SET_ORGANIZATIONNAME', data.data.organizationName)
+
                         commit('SET_ROLEIDARRAY', getRoleIdArray(data.data.roleList))
+
                         commit('SET_ROLELIST', data.data.roleList)
                         commit('SET_TOKEN', userName)
+
                         setToken(userName)
+
                         dispatch('permission/GenerateRoutes', {"data":data.data.listResource},{root:true}).then(() => {
                             router.addRoutes(rootState.permission.addRouters)
+
                         })
-                        resolve(data.data.roleList.length)//返回角色的长度值
+                        resolve(data.data.roleList?data.data.roleList.length:0)//返回角色的长度值
                     } else {
                         reject(data.msg)
                     }
@@ -113,9 +119,11 @@ const user = {
 }
 function getRoleIdArray(roles = []) {
     let roleIdArray = []
+  if(roles){
     roles.forEach(item => {
-        roleIdArray.push(item.roleId)
+      roleIdArray.push(item.roleId)
     })
+  }
     return roleIdArray
 }
 export default user
