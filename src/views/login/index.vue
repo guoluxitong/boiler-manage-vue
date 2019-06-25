@@ -120,11 +120,7 @@ export default {
 <style lang="scss" scoped>
 .login-container {
   width: 350px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -175px;
-  margin-top: -280px;
+  margin: 100px auto auto auto;
   padding: 35px 35px 15px 35px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
@@ -146,7 +142,6 @@ export default {
   position: fixed;
   width: 100%;
   height: 100%;
-  top: 0px;
   /*background-image: url("../../../static/common/loginBackground.jpg");*/
   background-position: center;
   background-repeat: no-repeat;
