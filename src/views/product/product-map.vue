@@ -33,7 +33,7 @@
         </el-row>
       </el-form>
       <el-row style=" overflow-x: hidden;">
-        <input v-model="address"/>
+        <input id="suggestId" v-model="address"/>
         <button @click="productMapOpen">搜索</button>
         <div id="product_map" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="product_map"></div>
       </el-row>
@@ -119,9 +119,14 @@
               anchor: BMAP_ANCHOR_TOP_LEFT,
               offset: size,
             }));
-            if(this.address != ""){
+            var obj = document.getElementById("suggestId");
+            var local = new BMap.LocalSearch(map, {
+              renderOptions: { map: map }
+            });
+            local.search(obj.value);
+           /* if(this.address != ""){
               map.centerAndZoom(this.address,11);
-            }
+            }*/
             this.loadMap(map)
             this.selectPoint(map)
           })
