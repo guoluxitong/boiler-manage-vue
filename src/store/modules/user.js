@@ -1,11 +1,8 @@
-import { loginByUsername, loginByCAS } from '../../api/login'
-import { getLoginUserInfo } from '../../api/user'
-import { getToken, setToken, removeToken } from '../../utils/auth'
-import { loginout } from "../../api/loginout";
-import { config } from '../../config/index'
+import Layout from '../../views/layout/Layout'
+
 const user = {
     state: {
-        token: getToken(),
+        token: '',
         userId: '',
         password: '',
         orgId: '',
@@ -16,9 +13,9 @@ const user = {
         qQ: '',
         realName: '',
         organizationName: '',
-        roleIdArray: [],
-        roleList: [],
-        websock: null
+        role: null,
+        websock: null,
+        menus: null
     },
     mutations: {
         SET_TOKEN: (state, token) => {
@@ -54,8 +51,8 @@ const user = {
         SET_ORGANIZATIONNAME: (state, organizationName) => {
             state.organizationName = organizationName
         },
-        SET_ROLEIDARRAY: (state, roleIdArray) => {
-            state.roleIdArray = roleIdArray
+        SET_ROLE: (state, role) => {
+            state.role = role
         },
         SET_ROLELIST: (state, roleList) => {
             state.roleList = roleList
@@ -65,65 +62,112 @@ const user = {
         },
         CLOSE_WEBSOCK: (state) => {
             if (state.websock) state.websock.close()
-        }
+        },
+        SET_MENUS: (state, menus) => {
+            state.menus = menus
+        },
     },
 
     actions: {
-        initWebSock({ commit }, userId) {
-            const wsuri = process.env.NODE_ENV === 'development'
-                ? "ws://" + config.development_base_ip + ":" + config.development_base_port + "/websocket/" + userId
-                : "ws://" + config.product_base_ip + ":" + config.product_base_port + "/websocket/" + userId
-            commit('INIT_WEBSOCK', new WebSocket(wsuri))
-        },
-        LoginByUsername(store, {userInfo,router}) {
-            const { commit, dispatch, rootState } = store
-            const userName = userInfo.account.trim()
+        saveUserState(store, { baseInfo, sysInfo, router }) {
             return new Promise((resolve, reject) => {
-                loginByUsername(userName, userInfo.passWord).then(response => {
-                    const data = response.data
-                    //console.log(data)
-                    if (data.code != 0) {
-                        commit('SET_USERID', data.data.id)
-                        commit('SET_PASSWORD', data.data.password)
-                        commit('SET_ORGID', data.data.orgId)
-                        commit('SET_ORGTYPE', data.data.orgType)
-                        commit('SET_MOBILE', data.data.mobile)
-                        commit('SET_EMAIL', data.data.email)
-                        commit('SET_WEIXIN', data.data.weiXin)
-                        commit('SET_QQ', data.data.qQ)
-                        commit('SET_REALNAME', data.data.realName)
-
-                        commit('SET_ORGANIZATIONNAME', data.data.organizationName)
-
-                        commit('SET_ROLEIDARRAY', getRoleIdArray(data.data.roleList))
-
-                        commit('SET_ROLELIST', data.data.roleList)
-                        commit('SET_TOKEN', userName)
-
-                        setToken(userName)
-
-                        dispatch('permission/GenerateRoutes', {"data":data.data.listResource},{root:true}).then(() => {
-                            router.addRoutes(rootState.permission.addRouters)
-
-                        })
-                        resolve(data.data.roleList?data.data.roleList.length:0)//返回角色的长度值
-                    } else {
-                        reject(data.msg)
-                    }
-                }).catch(error => {
-                    reject(error)
-                })
+                const { commit, dispatch, rootState } = store
+                commit('SET_USERID', baseInfo.id)
+                commit('SET_PASSWORD', baseInfo.password)
+                commit('SET_ORGID', baseInfo.orgId)
+                commit('SET_ORGTYPE', baseInfo.orgType)
+                commit('SET_MOBILE', baseInfo.mobile)
+                commit('SET_EMAIL', baseInfo.email)
+                commit('SET_WEIXIN', baseInfo.weiXin)
+                commit('SET_QQ', baseInfo.qQ)
+                commit('SET_REALNAME', baseInfo.realName)
+                commit('SET_ORGANIZATIONNAME', baseInfo.orgName)
+                commit('SET_ROLE', { "roleId": sysInfo.roleId, "roleName": sysInfo.roleName })
+                let menus = generateMenusFromResources(sysInfo.listResource);
+                commit('SET_MENUS', menus)
+                router.addRoutes(generateRoutesFromMenus(menus))
+                resolve()
             })
         }
     },
 }
-function getRoleIdArray(roles = []) {
-    let roleIdArray = []
-  if(roles){
-    roles.forEach(item => {
-      roleIdArray.push(item.roleId)
-    })
-  }
-    return roleIdArray
+
+/**
+ * 由菜单列表生产路由项
+ * @param {菜单列表} menus 
+ */
+function generateRoutesFromMenus(menus = []) {
+    if (menus) {
+        let routers = []
+        menus.forEach(m => {
+            if (m.hasChilds) {
+                let router = {}
+                router.component = Layout
+                router.path = '/'
+                router.children = []
+                m.childs.forEach(s => {
+                    router.children.push(generateChildRoute(s))
+                })
+                routers.push(router)
+            }
+            else {
+                routers.push(generateSingleRoute(m))
+            }
+        })
+        return routers
+    }
+    return [];
+}
+/**
+ * 生产子路由
+ * @param {菜单项} menuitem 
+ */
+function generateChildRoute(menuitem) {
+    let child = {}
+    child.path = menuitem.url
+    child.name = Math.random()
+    if (menuitem.pageUrl) {
+        child.component = () => import('@/views' + menuitem.pageUrl)
+    } else {
+        child.component = () => import('@/views/' + menuitem.url + '/index')
+    }
+    if (menuitem.hidden) {
+        child.hidden = menuitem.hidden == 1
+    }
+    child.meta = { title: menuitem.title, noCache: true }
+    return child
+}
+/**
+ * 生产单条路由
+ * @param {菜单项} menuitem 
+ */
+function generateSingleRoute(menuitem) {
+    let router = {}
+    let child = generateChildRoute(menuitem)
+    router.component = Layout
+    router.path = '/'
+    router.children = [child]
+    return router
+}
+/**
+ * 由资源构建菜单
+ * @param {资源列表} resources 
+ */
+function generateMenusFromResources(resources = []) {
+    if (resources) {
+        let topMenus = [];
+        let topResources = resources.filter(r => r.pId == 0);
+        topResources.forEach(t => {
+            let subResources = resources.filter(r => r.pId == t.id)
+            let topMenu = { "title": t.resName, "hasChilds": subResources.length != 0, "childs": [], "url": t.url, "pageUrl": t.pageUrl, "hidden": t.hidden }
+            subResources.forEach(s => {
+                let subMenu = { "title": s.resName, "url": s.url, "pageUrl": s.pageUrl, "hidden": s.hidden }
+                topMenu.childs.push(subMenu)
+            })
+            topMenus.push(topMenu)
+        });
+        return topMenus;
+    }
+    return [];
 }
 export default user

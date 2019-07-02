@@ -112,7 +112,7 @@ export default {
       activeName: "second",
       formData: {
         id: "",
-        roleIdArray: this.$store.state.user.roleIdArray,
+        roleIdArray: this.$store.state.user.role,
         userId: this.$store.state.user.userId,
         orgId: this.$store.state.user.orgId,
         orgType: this.$store.state.user.orgType,
@@ -253,7 +253,7 @@ export default {
     initFormData() {
       if (this.title === "复制") {
         this.formData = this.productFormData;
-        this.formData.roleIdArray = this.$store.state.user.roleIdArray;
+        this.formData.roleIdArray = this.$store.state.user.role;
         this.formData.userId = this.$store.state.user.userId;
         this.formData.orgId = this.$store.state.user.orgId;
         this.formData.orgType = this.$store.state.user.orgType;

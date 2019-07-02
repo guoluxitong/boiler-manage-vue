@@ -1,36 +1,39 @@
 <template>
-  <el-menu
-    mode="horizontal"
-    :show-timeout="200"
-    :default-active="$route.path"
-    background-color="#23262E"
-    text-color="#bfcbd9"
-    active-text-color="#409EFF"
-  >
-    <sidebar-item :routes="permission_routers"></sidebar-item>
-    <div class="right-menu">
-      <span class="user-info">
-        <span v-if="organizationName">山东简洁软件有限公司&nbsp;&nbsp;&nbsp;&nbsp;组织：{{organizationName}}</span>&nbsp;&nbsp;
-        <span v-if="realName">姓名：{{realName}}</span>&nbsp;&nbsp;
-      </span>
-      <el-dropdown class="avatar-container right-menu-item" trigger="click">
-        <div class="avatar-wrapper">
-          <img class="user-avatar" src="static/common/avator.png">
-          <i class="el-icon-caret-bottom"></i>
-        </div>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item divided>
-            <span @click="dialogHomeFormVisible = true" style="display:block;">软件设置</span>
-          </el-dropdown-item>
-          <el-dropdown-item divided>
-            <span @click="dialogFormVisible = true" style="display:block;">修改密码</span>
-          </el-dropdown-item>
-          <el-dropdown-item divided>
-            <span @click="logout" style="display:block;">退出</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
-    </div>
+  <div style="background-color:#23262E">
+    <el-row>
+      <el-col :span="15">
+      <sidebar-item></sidebar-item>
+      </el-col>
+      <el-col :span="9">
+       <el-row class="right-menu">
+         <el-col :span="20">
+          <p class="user-info">
+          <span v-if="organizationName">山东简洁软件有限公司&nbsp;&nbsp;组织：{{organizationName}}</span>
+          <span v-if="realName">{{realName}}</span>
+          </p>
+         </el-col>
+         <el-col :span="4">
+          <el-dropdown class="avatar-container right-menu-item" trigger="click">
+            <div class="avatar-wrapper">
+              <img class="user-avatar" src="static/common/avator.png">
+              <i class="el-icon-caret-bottom"></i>
+            </div>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item divided>
+                <span @click="dialogHomeFormVisible = true" style="display:block;">软件设置</span>
+              </el-dropdown-item>
+              <el-dropdown-item divided>
+                <span @click="dialogFormVisible = true" style="display:block;">修改密码</span>
+              </el-dropdown-item>
+              <el-dropdown-item divided>
+                <span @click="logout" style="display:block;">退出</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+         </el-col>
+      </el-row>
+    </el-col>
+    </el-row>
     <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
       <el-form
         :model="passWordChangeFormData"
@@ -134,12 +137,11 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-  </el-menu>
+  </div>
 </template>
 
 <script>
 import { validateURL } from "@/utils/validate";
-import { mapGetters } from "vuex";
 import sidebarItem from "./sidebar/sidebarItem";
 import { editUserPass } from "@/api/user";
 import { deleteFile } from "@/api/upload";
@@ -155,9 +157,6 @@ const baseURL =
     : "http://" + config.product_base_ip + ":" + config.product_base_port;
 export default {
   components: { sidebarItem },
-  computed: {
-    ...mapGetters(["permission_routers"])
-  },
   data() {
     let validateOldPassWord = (rule, value, callback) => {
       if (value === "") {
@@ -441,21 +440,21 @@ export default {
 };
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
-.el-menu--horizontal {
-  border-bottom: solid 0px #e6e6e6;
-}
 .right-menu {
-  float: right;
+  font-size:14px;
   height: 100%;
   line-height: 100%;
   .user-info {
     color: white;
+    line-height:34px;
+    text-align:right
   }
   &:focus {
     outline: none;
   }
   .right-menu-item {
     display: inline-block;
+    color:#fff;
     margin: 0 8px;
   }
   .screenfull {

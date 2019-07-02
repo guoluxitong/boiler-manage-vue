@@ -8,11 +8,13 @@ const getters = {
   weiXin: state => state.user.weiXin,
   qQ: state => state.user.qQ,
   realName: state => state.user.realName,
-  organizationName:state => state.user.organizationName,
-  roleIdArray: state => state.user.roleIdArray,
-  roleList:state => state.user.roleList,
-  websock:state=>state.user.websock,
-  permission_routers: state => state.permission.routers,
+  organizationName: state => state.user.organizationName,
+  role: state => state.user.roleIdArray,
+  websock: state => state.user.websock,
+  permission_routers: function (state) {
+    return state.permission.routers
+  },
+  menus: state => state.user.menus,
   addRouters: state => state.permission.addRouters
 }
 export default getters

@@ -143,7 +143,7 @@ export default {
     return {
       formData: {
         id: "",
-        roleIdArray: this.$store.state.user.roleIdArray,
+        roleIdArray: this.$store.state.user.role,
         userId: this.$store.state.user.userId,
         orgId: this.$store.state.user.orgId,
         orgType: this.$store.state.user.orgType,
@@ -208,7 +208,7 @@ export default {
         this.isEdit = false;
         this.formData = {};
         this.formData.isSell = 0;
-        this.formData.roleIdArray = this.$store.state.user.roleIdArray;
+        this.formData.roleIdArray = this.$store.state.user.role;
         this.formData.userId = this.$store.state.user.userId;
         this.formData.orgId = this.$store.state.user.orgId;
         this.formData.orgType = this.$store.state.user.orgType;
@@ -224,7 +224,7 @@ export default {
         this.formData = this.productFormData;
         this.formData.boilerNo = "";
         this.formData.controllerNo = "";
-        this.formData.roleIdArray = this.$store.state.user.roleIdArray;
+        this.formData.roleIdArray = this.$store.state.user.role;
         this.formData.userId = this.$store.state.user.userId;
         this.formData.orgId = this.$store.state.user.orgId;
         this.formData.orgType = this.$store.state.user.orgType;

@@ -9,7 +9,7 @@
       class="login-container"
     >
       <div class="picBox">
-        <img class="pic" :src="logoUrl" v-if="logoUrl!=''">
+        <img class="pic" :src="logoUrl" v-if="logoUrl!=''" />
       </div>
       <h3 class="title">锅炉远程监控平台</h3>
       <el-form-item prop="account">
@@ -33,7 +33,9 @@
   </div>
 </template>
 <script>
-import request from "@/utils/request";
+import { login, getUserInfo, a, b, c } from "@/api/login";
+import { resolve } from "url";
+import { fail } from 'assert';
 export default {
   name: "login",
   data() {
@@ -58,37 +60,58 @@ export default {
   },
   created() {
     this.initCopyrightInfoAndLogoUrl();
-    // request({
-    //   url: "/data/index",
-    //   method: "post"
-    // }).then(function(res) {
-    //   console.log(res.data.msg);
-    // });
   },
+
   methods: {
     handleLogin() {
+      // a().then(d1 => {
+      //     let i1 = d1.data.value
+      //     console.log('a='+i1)
+      //     return b(i1);
+      //   })
+      //   .then(d2 => {
+      //     let i2 = d2.data.value
+      //     console.log('b='+i2)
+      //     return c(i2);
+      //   })
+      //   .then(d3 => {
+      //     let i3 = d3.data.value
+      //     console.log('c='+i3)
+      //   })
+      //   .catch(ex => {
+      //     console.log("111111111111111111")
+      //   });
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
-          this.$store
-            .dispatch("LoginByUsername", {"userInfo":this.loginForm,"router":this.$router})
-            .then(data => {
-              this.loading = false;
-
-              if(data>0)//检测返回的角色长度值是否 >0
-              {
-                this.$router.push({ path: this.redirect || "/home/index" });
+          let baseInfo,resources;
+          login(this.loginForm.account.trim(), this.loginForm.passWord)
+            .then(response => {
+              let data = response.data;
+              baseInfo = data.data;
+              if (data.code == 0) {
+                return getUserInfo(baseInfo.id);
+              } else {
+                return Promise.reject(data.msg);
               }
-              else
-              {
-                 this.$message.error('您尚未被允许进入平台，请联系锅炉厂管理人员进行授权!')
-              }
-
             })
-            .catch(msg => {
-              this.$message.error(msg);
-              console.log(msg)
-              this.loading = false;
+            .then(response => {
+              let data = response.data;
+              if (data.code == 0) {
+                return this.$store.dispatch("saveUserState", {
+                  "baseInfo": baseInfo,
+                  "sysInfo": data.data,
+                  "router": this.$router
+                });
+              }
+            })
+            .then(() => {
+              this.loading = false
+              this.$router.push({ path: this.redirect || "/index" });
+            })
+            .catch(resion => {
+              this.loading = false
+              this.$message.error(resion);
             });
         } else {
           return false;

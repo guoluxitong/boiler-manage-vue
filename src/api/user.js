@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 
-export function getLoginUserInfo(loginid) {
+export function getUserInfo(employeeId) {
   return request({
-    url: '/user/getloginuserinfo',
+    url: '/webapi/boilermanage/user/info',
     method: 'get',
-    params:{loginid}
+    params:{employeeId}
   })
 }
 export function getUserListByConditionAndPage(query) {
