@@ -23,18 +23,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item label="售出地址" prop="saleAddress">
-              <el-input v-model="formData.saleAddress" readonly></el-input>
-            </el-form-item>
+           <el-form-item label="地址">
+             <el-input id="suggestId" v-model="address"></el-input>
+           </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-button type="primary" @click="confirmSubmit" style="margin-left: 10px">确定</el-button>
+            <el-button @click="productMapOpen">搜索</el-button>
           </el-col>
         </el-row>
+        <el-form-item label="售出地址" prop="saleAddress">
+          <el-input v-model="formData.saleAddress" readonly></el-input>
+        </el-form-item>
+        <el-button  type="primary" @click="confirmSubmit"  style=" width: 100% ">确定</el-button>
       </el-form>
       <el-row style=" overflow-x: hidden;">
-        <input id="suggestId" v-model="address"/>
-        <button @click="productMapOpen">搜索</button>
         <div id="product_map" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="product_map"></div>
       </el-row>
     </el-dialog>

@@ -1,6 +1,12 @@
 <template>
   <div>
     <el-row class="app-query">
+      <el-autocomplete
+        v-model="listQuery.boilerCustomerName"
+        :fetch-suggestions="querySearchAsyncuser"
+        placeholder="客户名称"
+        @select="((item)=>{handleSelectuser(item)})"
+      ></el-autocomplete>
       <el-input v-model="listQuery.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
       <el-select
         clearable
@@ -43,6 +49,7 @@
 <script>
 import checkPermission from "@/utils/permission";
 import { productDataOnMap } from "@/api/product";
+import {getBoilerCustomerListByConditionAndPage} from "@/api/boilerCustomer";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getBoilerModelListByCondition } from "@/api/boilerModel";
 import { validatePositiveAndSmallAndFloatNum } from "@/utils/validate";
@@ -97,6 +104,15 @@ export default {
         fuel: null,
         userId: null
       },
+      listQuery2: {
+        total: 500,
+        pageNum: 1,
+        pageSize: 50,
+        realName: "",
+        mobile: null,
+        orgType: this.$store.state.user.orgType,
+        orgId: this.$store.state.user.orgId
+      },
       boilerModelNumberArray: [],
       mediumArray: [],
       fuelArray: [],
@@ -121,6 +137,7 @@ export default {
       userId: "",
       controllerNoArray: [],
       addressArray: [],
+      customerList:[],
       address: "",
       controllerNo: "",
       controllerRunInfoDialogVisible: false
@@ -175,6 +192,26 @@ export default {
       productDataOnMap(this.listQuery).then(res => {
         this.showMapData(map, res.data.data);
       });
+    },
+    querySearchAsyncuser(queryString, callback) {
+      getBoilerCustomerListByConditionAndPage(this.listQuery2).then(response => {
+        this.customerList = [];
+        var results = [];
+        for (let i = 0, len = response.data.data.list.length; i < len; i++) {
+          response.data.data.list[i].value = response.data.data.list[i].name;
+        }
+        this.customerList = response.data.data.list;
+        results = queryString ? this.customerList.filter(this.createFilteruser(queryString)) : this.customerList;
+        callback(results);
+      });
+    },
+
+    createFilteruser(queryString, queryArr) {
+      return (queryArr) => {
+        return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    handleSelectuser(item) {
     },
     showMapData(map, data) {
       this.mapPoints = data;

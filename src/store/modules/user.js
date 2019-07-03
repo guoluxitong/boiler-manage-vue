@@ -81,7 +81,6 @@ const user = {
             return new Promise((resolve, reject) => {
                 loginByUsername(userName, userInfo.passWord).then(response => {
                     const data = response.data
-                    //console.log(data)
                     if (data.code != 0) {
                         commit('SET_USERID', data.data.id)
                         commit('SET_PASSWORD', data.data.password)
@@ -92,11 +91,8 @@ const user = {
                         commit('SET_WEIXIN', data.data.weiXin)
                         commit('SET_QQ', data.data.qQ)
                         commit('SET_REALNAME', data.data.realName)
-
                         commit('SET_ORGANIZATIONNAME', data.data.organizationName)
-
                         commit('SET_ROLEIDARRAY', getRoleIdArray(data.data.roleList))
-
                         commit('SET_ROLELIST', data.data.roleList)
                         commit('SET_TOKEN', userName)
 
