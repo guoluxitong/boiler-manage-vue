@@ -1,7 +1,7 @@
 export const config = {
   //测试环境使用
   development_base_ip: '127.0.0.1',
-  development_base_port: '8091',
+  development_base_port: '8080',
   //正式环境当中使用  boilermanage.sdcsoft.com.cn
   product_base_ip: 'boilermanage.sdcsoft.com.cn',
   product_base_port: '',
@@ -12,7 +12,7 @@ export const config = {
   //正式环境-数据报表url
   //report_data_url:'http://report.sdcsoft.com.cn',
   //首页地址
-  default_home_url: 'https://www.baidu.com',
+  default_home_url: '#',//https://www.baidu.com',
   //帮助文档地址
   helpDocumentHref: 'http://autoupdate.sdcsoft.com.cn/files/BoilerPlantSystem/document/help.docx?' + Math.random(),
 
