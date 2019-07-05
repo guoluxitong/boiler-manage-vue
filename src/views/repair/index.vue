@@ -65,27 +65,12 @@
       >
         <el-table-column align="left" :show-overflow-tooltip="true" label="真实姓名">
           <template slot-scope="scope">
-            <span>{{scope.row.realName}}</span>
+            <span>{{scope.row.userName}}</span>
           </template>
         </el-table-column>
-        <el-table-column align="left" :show-overflow-tooltip="true" label="手机号">
+        <el-table-column align="left" :show-overflow-tooltip="true" label="权限">
           <template slot-scope="scope">
-            <span>{{scope.row.mobile}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="left" :show-overflow-tooltip="true" label="邮箱">
-          <template slot-scope="scope">
-            <span>{{scope.row.email}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="left" :show-overflow-tooltip="true" label="微信">
-          <template slot-scope="scope">
-            <span>{{scope.row.weiXin}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="left" :show-overflow-tooltip="true" label="QQ">
-          <template slot-scope="scope">
-            <span>{{scope.row.qQ}}</span>
+            <span>{{scope.row.roleName}}</span>
           </template>
         </el-table-column>
         <el-table-column  align='center' label="操作">
@@ -144,17 +129,17 @@
           </el-table-column>
           <el-table-column  align='center' label="录入人" width="130">
             <template slot-scope="scope">
-              <span size="medium">{{ scope.row.inputName }}</span>
+              <span size="medium">{{ scope.row.createUserName }}</span>
             </template>
           </el-table-column>
           <el-table-column  align='center' label="维保人员" width="130">
             <template slot-scope="scope">
-              <span size="medium">{{ scope.row.repairUserName }}</span>
+              <span size="medium">{{ scope.row.userName }}</span>
             </template>
           </el-table-column>
           <el-table-column  align='center' label="录入时间" width="170">
             <template slot-scope="scope">
-              <span style="margin-left: 10px">{{ dateFormat(scope.row.inputDatetime) }}</span>
+              <span style="margin-left: 10px">{{ dateFormat(scope.row.createDatetime) }}</span>
             </template>
           </el-table-column>
           <el-table-column  align='center' label="维保内容" width="450">
@@ -203,12 +188,12 @@
           </el-form-item>
           <el-form-item label="录入时间">
             <el-col :span="24">
-              <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.inputDate" style="width: 100%;"></el-date-picker>
+              <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.createDatetime" style="width: 100%;"></el-date-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="维保时间">
             <el-col :span="24">
-              <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.repairDate" style="width: 100%;"></el-date-picker>
+              <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.repairDatetime" style="width: 100%;"></el-date-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="维保内容">
@@ -245,12 +230,12 @@
         newRepairDialogFlag: false,
         newRepairDialogFlaguser: false,
         repairform: [{
-          repairUserName: "",
+          userName: "",
           repairDatetime: "",
           repairContent: "",
           realName: "",
-          inputDatetime: '',
-          inputName: '',
+          createDatetime: '',
+          createUserName: '',
           userId: '',
           controllerNo: '',
           id: '',
@@ -288,31 +273,36 @@
           orgType: this.$store.state.user.orgType,
           orgId: this.$store.state.user.orgId
         },
+        product: {
+          boilerNo: "",
+          saleDate: null,
+          controllerNo: "",
+          customerName: null,
+          productCategoryId: 530,
+          tonnageNum: null,
+          media: null,
+          power: null,
+          userId: null,
+          isSell: null,
+        },
         listQuery2: {
           total: 500,
           pageNum: 1,
           pageSize: 50,
           realName: "",
           mobile: null,
-          orgType: this.$store.state.user.orgType,
           orgId: this.$store.state.user.orgId
         },
         userlistQuery2: {
           total: 500,
           pageNum: 1,
           pageSize: 50,
-          realName: "",
-          mobile: null,
-          orgType: this.$store.state.user.orgType,
           orgId: this.$store.state.user.orgId
         },
         userlistQuery: {
           total: 50,
           pageNum: 1,
           pageSize: 5,
-          realName: "",
-          mobile: null,
-          orgType: this.$store.state.user.orgType,
           orgId: this.$store.state.user.orgId
         },
       };
@@ -452,9 +442,7 @@
         this.getrepairListuser();
       },
       getrepairListuser() {
-        getRepairInfoListByUserId({
-          userId: this.userFormData.id,
-        }).then(response => {
+        getRepairInfoListByUserId(this.userFormData.id).then(response => {
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
         });
@@ -464,7 +452,7 @@
           this.repairform.userList = [];
           var results = [];
           for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-            response.data.data.list[i].value = response.data.data.list[i].realName;
+            response.data.data.list[i].value = response.data.data.list[i].userName;
           }
           this.repairform.userList = response.data.data.list;
           results = queryString ? this.repairform.userList.filter(this.createFilter(queryString)) : this.repairform.userList;
@@ -477,7 +465,7 @@
         };
       },
       handleSelect1(item) {
-        this.repairform.userId = item;
+        this.repairform.userId = item.id;
       },
       querySearchAsyncuser(queryString, callback) {
         getProductListByCondition(this.listQuery2).then(response => {

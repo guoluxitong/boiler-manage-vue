@@ -12,7 +12,7 @@ export const config = {
   //正式环境-数据报表url
   //report_data_url:'http://report.sdcsoft.com.cn',
   //首页地址
-  default_home_url: '#',//https://www.baidu.com',
+  default_home_url: 'https://www.baidu.com',
   //帮助文档地址
   helpDocumentHref: 'http://autoupdate.sdcsoft.com.cn/files/BoilerPlantSystem/document/help.docx?' + Math.random(),
 

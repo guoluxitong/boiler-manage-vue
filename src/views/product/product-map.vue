@@ -45,7 +45,7 @@
 
 <script>
   import {formatDateTime} from '@/utils/date'
-  import {getBoilerCustomerListByCondition} from '@/api/boilerCustomer'
+  import {getBoilerCustomerListByConditionAndPage} from '@/api/boilerCustomer'
   export default {
     name: 'product-map',
     data(){
@@ -77,6 +77,10 @@
           street:'',
           saleAddress:'',
           editDateTime:formatDateTime(new Date(),"yyyy-MM-dd hh:mm:ss")
+        },
+        listQuery: {
+          pageNum: 1,
+          pageSize: 5,
         },
         rules:{
           boilerCustomerId: [{ required: true,trigger: 'blur', validator: validateBoilerCustomerId }],
@@ -139,8 +143,8 @@
         this.$emit('productMapDialogClose',{productMapDialogVisible:false})
       },
       initBoilerCustomerSelect(){
-        getBoilerCustomerListByCondition({orgId:this.$store.state.user.orgId,orgType:this.$store.state.user.orgType}).then(data=>{
-          data.data.data.forEach(item=>{
+        getBoilerCustomerListByConditionAndPage(this.listQuery).then(data=>{
+          data.data.data.list.forEach(item=>{
             let optionItem={}
             optionItem.value=item.id
             optionItem.label=item.name

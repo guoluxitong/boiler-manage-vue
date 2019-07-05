@@ -1,10 +1,12 @@
 import request from '@/utils/request'
-
-export function getProductListByCondition(query) {
+import qs from 'qs'
+export function getProductListByCondition(data) {
+  console.log(data)
   return request({
-    url: '/product/productlistbycondition',
-    method: 'get',
-    params: query
+    url: '/webapi/boilermanage/product/search',
+    method: 'post',
+    data: data.product,
+    params: {pageNum: data.pageNum, pageSize: data.pageSize}
   })
 }
 
@@ -22,11 +24,11 @@ export function getProductByboilerNo(query) {
     params: query
   })
 }
-export function productDataOnMap(query) {
+export function productDataOnMap(product) {
   return request({
-    url: '/product/productdataonmap',
+    url: '/webapi/boilermanage/product/map',
     method: 'get',
-    params: query
+    params: {product: product}
   })
 }
 

@@ -128,7 +128,7 @@
           this.largeClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
           this.largeClassArray=response.data.data
         })
-        getAuxiliaryMachineSmallClassListByCondition({}).then(response=>{
+        getAuxiliaryMachineSmallClassListByCondition(41).then(response=>{
           this.smallClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
           this.smallClassArray=response.data.data
         })

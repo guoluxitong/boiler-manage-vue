@@ -158,6 +158,7 @@ export default {
         isSell: 0,
         productAuxiliaryMachineInfoList: []
       },
+      largeClassArray: {},
       isEdit: false,
       visible: this.show,
       boilerModelNumberArray: [],
@@ -252,10 +253,7 @@ export default {
       });
     },
     initBoilerModel() {
-      getBoilerModelListByCondition({
-        orgId: this.$store.state.user.orgId,
-        orgType: this.$store.state.user.orgType
-      }).then(data => {
+      getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
         this.boilerModelNumberArray = data.data.data;
       });
     },
@@ -264,8 +262,9 @@ export default {
         this.largeClassOptions = this.getAuxiliaryMachineAboutOptions(
           response.data.data
         );
+        this.largeClassArray=response.data.data
       });
-      getAuxiliaryMachineSmallClassListByCondition({}).then(response => {
+      getAuxiliaryMachineSmallClassListByCondition(41).then(response => {
         this.smallClassOptions = this.getAuxiliaryMachineAboutOptions(
           response.data.data
         );

@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
-export function getAuxiliaryMachineSmallClassListByCondition(query) {
+export function getAuxiliaryMachineSmallClassListByCondition(partCategoryId) {
+  console.log(partCategoryId)
     return request({
-        url: '/auxiliarymachinesmallclass/auxiliarymachinesmallclasslistbycondition',
+        url: '/webapi/boilermanage/partsubcategory/list',
         method: 'get',
-        params: query
+        params: {partCategoryId}
     })
 }
 
@@ -12,7 +13,7 @@ export function editAuxiliaryMachineSmallClass(data) {
   return request({
     url: '/auxiliarymachinesmallclass/editauxiliarymachinesmallclass',
     method: 'post',
-    data:data
+    data: data
   })
 }
 export function deleteAuxiliaryMachineSmallClassById(id) {

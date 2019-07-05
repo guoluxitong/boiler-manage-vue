@@ -1,13 +1,14 @@
 import axios from 'axios'
 import { config } from '@/config/index'
-const baseURL = process.env.NODE_ENV === 'development'
+/*const baseURL = process.env.NODE_ENV === 'development'
   ? 'http://' + config.development_base_ip + ':' + config.development_base_port
-  : 'http://' + config.product_base_ip + ':' + config.product_base_port
+  : 'http://' + config.product_base_ip + ':' + config.product_base_port*/
 
 const service = axios.create({
-  baseURL: baseURL,
+  baseURL: '/api',
   timeout: 10000
 })
+
 service.defaults.withCredentials = true
 service.interceptors.request.use(config => {
   return config

@@ -22,11 +22,6 @@
       style="width: 120%"
       @row-contextmenu="openTableMenu"
     >
-      <el-table-column align="left" :show-overflow-tooltip="true" label="客户编号">
-        <template slot-scope="scope">
-          <span>{{scope.row.customerNo}}</span>
-        </template>
-      </el-table-column>
       <el-table-column align="left" :show-overflow-tooltip="true" label="客户名称">
         <template slot-scope="scope">
           <span>{{scope.row.name}}</span>
@@ -71,7 +66,7 @@
         :page-sizes="[5,10,15,20]"
         :page-size="listQuery.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="listQuery.total"
+        :total="total"
       ></el-pagination>
     </div>
 
@@ -86,41 +81,34 @@
       >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="客户编号" prop="customerNo">
-              <el-input v-model="boilerCustomerFormData.customerNo" size="small"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="客户名称" prop="name">
               <el-input v-model="boilerCustomerFormData.name"></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="电话" prop="phone">
               <el-input v-model="boilerCustomerFormData.phone"></el-input>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item label="微信" prop="weiXin">
               <el-input v-model="boilerCustomerFormData.weiXin"></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="省">
               <el-input v-model="boilerCustomerFormData.province"></el-input>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item label="市">
               <el-input v-model="boilerCustomerFormData.city"></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="区">
               <el-input v-model="boilerCustomerFormData.district"></el-input>
@@ -148,7 +136,9 @@ import checkPermission from "@/utils/permission";
 import {
   getBoilerCustomerListByConditionAndPage,
   editBoilerCustomer,
-  deleteBoilerCustomerById
+  deleteBoilerCustomerById,
+  createCustomer,
+  getBoilerCustomerListByName
 } from "@/api/boilerCustomer";
 import {
   validateRealName,
@@ -188,14 +178,10 @@ export default {
     return {
       list: null,
       listQuery: {
-        total: 50,
         pageNum: 1,
         pageSize: 5,
-        name: null,
-        orgType: null,
-        orgId: null,
-        userId: null
       },
+      total: 50,
       textMap: {
         update: "编辑",
         create: "新增"
@@ -211,7 +197,6 @@ export default {
         province: "",
         city: "",
         district: "",
-        orgType: this.$store.state.user.orgType,
         orgId: this.$store.state.user.orgId
       },
       rules: {
@@ -244,19 +229,25 @@ export default {
       );
     },
     handleFilter() {
-      this.listQuery.pageNum = 1;
-      this.getList();
+      this.getListByName();
+    },
+    getListByName() {
+      this.listLoading = true;
+      getBoilerCustomerListByName(this.listQuery.name).then(response => {
+        const data = response.data.data;
+        this.list = data;
+        this.total = 1;
+        this.listQuery.pageNum = 1;
+        this.listQuery.pageSize = 1;
+        this.listLoading = false;
+      });
     },
     getList() {
       this.listLoading = true;
-      if (checkPermission(["3", "5"])) {
-        this.listQuery.orgType = this.$store.state.user.orgType;
-        this.listQuery.orgId = this.$store.state.user.orgId;
-      }
       getBoilerCustomerListByConditionAndPage(this.listQuery).then(response => {
         const data = response.data.data;
         this.list = data.list;
-        this.listQuery.total = data.total;
+        this.total = data.total;
         this.listQuery.pageNum = data.pageNum;
         this.listQuery.pageSize = data.pageSize;
         this.listLoading = false;
@@ -272,7 +263,6 @@ export default {
         province: "",
         city: "",
         district: "",
-        orgType: this.$store.state.user.orgType,
         orgId: this.$store.state.user.orgId
       };
     },
@@ -295,14 +285,26 @@ export default {
     editData() {
       this.$refs.boilerCustomerForm.validate(valid => {
         if (valid) {
-          editBoilerCustomer(this.boilerCustomerFormData).then(data => {
-            this.dialogFormVisible = false;
-            this.$message({
-              message: "成功",
-              type: "success"
+          if(this.dialogStatus == "create"){
+            createCustomer(this.boilerCustomerFormData).then(data => {
+              this.dialogFormVisible = false;
+              this.$message({
+                message: "成功",
+                type: "success"
+              });
+              this.getList();
             });
-            this.getList();
-          });
+          } else{
+            editBoilerCustomer(this.boilerCustomerFormData).then(data => {
+              this.dialogFormVisible = false;
+              this.$message({
+                message: "成功",
+                type: "success"
+              });
+              this.getList();
+            });
+          }
+
         } else {
           return false;
         }

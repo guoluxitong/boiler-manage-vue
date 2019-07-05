@@ -1,8 +1,6 @@
 <template>
   <div class="app-container boilerModel-container">
     <el-row class="app-query">
-      <el-input v-model="listQuery.label" placeholder="名称" style="width: 150px;"></el-input>
-      <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button
         style="margin-left: 10px;"
         @click="handleCreate"
@@ -24,7 +22,7 @@
     >
       <el-table-column align="left" :show-overflow-tooltip="true" label="名称">
         <template slot-scope="scope">
-          <span>{{scope.row.label}}</span>
+          <span>{{scope.row.name}}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -53,11 +51,12 @@
         label-width="80px"
         style="width: 90%; margin-left:15px;"
       >
-        <el-row>
-          <el-form-item label="名称" prop="label">
-            <el-input v-model="boilerModelFormData.label" size="small"></el-input>
+          <el-form-item label="名称" prop="name">
+            <el-input v-model="boilerModelFormData.name" size="small"></el-input>
           </el-form-item>
-        </el-row>
+          <el-form-item label="排序" prop="sort">
+            <el-input v-model="boilerModelFormData.sort" size="small"></el-input>
+          </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
@@ -80,6 +79,7 @@ import checkPermission from "@/utils/permission";
 import {
   getBoilerModelListByConditionAndPage,
   editBoilerModel,
+  createBoilerModel,
   deleteBoilerModelById
 } from "@/api/boilerModel";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
@@ -102,8 +102,7 @@ export default {
         total: 50,
         pageNum: 1,
         pageSize: 5,
-        label: null,
-        orgType: null,
+        name: null,
         orgId: null
       },
       textMap: {
@@ -114,14 +113,12 @@ export default {
       dialogFormVisible: false,
       boilerModelFormData: {
         id: "",
-        label: "",
-        value: "",
-        orgType: this.$store.state.user.orgType,
+        name: "",
         orgId: this.$store.state.user.orgId,
         sort: null
       },
       rules: {
-        label: [
+        name: [
           { required: true, trigger: "blur", message: "型号名称不能为空" }
         ],
         value: [{ required: true, trigger: "blur", message: "型号值不能为空" }],
@@ -150,10 +147,7 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      if (checkPermission(["3", "5"])) {
-        this.listQuery.orgType = this.$store.state.user.orgType;
         this.listQuery.orgId = this.$store.state.user.orgId;
-      }
       getBoilerModelListByConditionAndPage(this.listQuery).then(response => {
         const data = response.data.data;
         this.list = data.list;
@@ -192,14 +186,26 @@ export default {
     editData() {
       this.$refs.boilerModelForm.validate(valid => {
         if (valid) {
-          editBoilerModel(this.boilerModelFormData).then(data => {
-            this.dialogFormVisible = false;
-            this.$message({
-              message: "成功",
-              type: "success"
+          if (this.dialogStatus =="create"){
+            createBoilerModel(this.boilerModelFormData).then(data => {
+              this.dialogFormVisible = false;
+              this.$message({
+                message: "成功",
+                type: "success"
+              });
+              this.getList();
             });
-            this.getList();
-          });
+          } else {
+            editBoilerModel(this.boilerModelFormData).then(data => {
+              this.dialogFormVisible = false;
+              this.$message({
+                message: "成功",
+                type: "success"
+              });
+              this.getList();
+            });
+          }
+
         } else {
           return false;
         }

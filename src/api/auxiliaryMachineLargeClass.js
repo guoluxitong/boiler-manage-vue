@@ -9,7 +9,7 @@ export function getAuxiliaryMachineLargeClassListByConditionAndPage(query) {
 }
 export function getAuxiliaryMachineLargeClassListByCondition(query) {
     return request({
-        url: '/auxiliarymachinelargeclass/auxiliarymachinelargeclasslistbycondition',
+        url: '/webapi/boilermanage/partcategory/list',
         method: 'get',
         params: query
     })

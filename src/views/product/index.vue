@@ -3,16 +3,16 @@
     <!--查询-->
     <el-row class="app-query">
       <el-autocomplete
-        v-model="listQuery.boilerCustomerName"
+        v-model="product.customerName"
         :fetch-suggestions="querySearchAsyncuser"
         placeholder="客户名称"
         @select="((item)=>{handleSelectuser(item)})"
       ></el-autocomplete>
-      <el-input v-model="listQuery.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
+      <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
       <el-select
         clearable
         style="width: 150px"
-        v-model="listQuery.boilerModelNumber"
+        v-model="product.ProductCategoryId"
         placeholder="锅炉型号"
       >
         <el-option
@@ -22,8 +22,8 @@
           :value="item.value"
         ></el-option>
       </el-select>
-      <el-input v-model="listQuery.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
-      <el-select clearable style="width: 150px" v-model="listQuery.fuel" placeholder="燃料">
+      <el-input v-model="product.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
+      <el-select clearable style="width: 150px" v-model="product.power" placeholder="燃料">
         <el-option
           v-for="item in fuelArray"
           :key="item.value"
@@ -31,7 +31,7 @@
           :value="item.value"
         ></el-option>
       </el-select>
-      <el-select clearable style="width: 150px" v-model="listQuery.medium" placeholder="介质">
+      <el-select clearable style="width: 150px" v-model="product.media" placeholder="介质">
         <el-option
           v-for="item in mediumArray"
           :key="item.value"
@@ -40,7 +40,7 @@
         ></el-option>
       </el-select>
       <el-date-picker
-        v-model="listQuery.saleDate"
+        v-model="product.saleDate"
         type="date"
         value-format="yyyy-MM-dd"
         placeholder="售出时间"
@@ -74,7 +74,7 @@
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉型号">
         <template slot-scope="scope">
-          <span>{{scope.row.boilerModelNumber | dictionaryValueFieldFilter(boilerModelNumberArray)}}</span>
+          <span>{{scope.row.productCategoryId | dictionaryValueFieldFilter(boilerModelNumberArray)}}</span>
         </template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" align="left" label="控制器编号">
@@ -229,13 +229,13 @@
     </el-dialog>
 
     <!--辅机信息-->
-    <auxiliary-machine-dialog
+   <!-- <auxiliary-machine-dialog
       :show.sync="auxiliaryMachineDialogVisible"
       :productFormData="productFormData"
       :title="titleName"
       @auxiliaryMachineDialogClose="auxiliaryMachineDialogClose"
       @confirmAuxiliaryMachineDialog="confirmAuxiliaryMachineDialog"
-    ></auxiliary-machine-dialog>
+    ></auxiliary-machine-dialog>-->
     <!--运行信息-->
     <el-dialog title="运行信息报表" :visible.sync="showEchartDialog" height="100%" width="100%">
       <device-chart></device-chart>
@@ -339,6 +339,21 @@ export default {
         fuel: null,
         userId: null
       },
+      total: 50,
+      pageNum: 1,
+      pageSize: 5,
+      product: {
+        boilerNo: "",
+        saleDate: null,
+        controllerNo: "",
+        customerName: null,
+        productCategoryId: 530,
+        tonnageNum: null,
+        media: null,
+        power: null,
+        userId: null,
+        isSell: null,
+      },
       listQuery2: {
         total: 500,
         pageNum: 1,
@@ -430,10 +445,7 @@ export default {
     handleSelectuser(item) {
     },
     initSelect() {
-      getBoilerModelListByCondition({
-        orgId: this.$store.state.user.orgId,
-        orgType: this.$store.state.user.orgType
-      }).then(data => {
+      getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
         this.boilerModelNumberArray = data.data.data;
       });
       initMedium().then(data => {
@@ -448,12 +460,13 @@ export default {
     },
     initAuxiliaryMachineAbout() {
       return new Promise((resolve, reject) => {
-        getAuxiliaryMachineLargeClassListByCondition({}).then(response => {
+        getAuxiliaryMachineLargeClassListByCondition().then(response => {
           this.largeClassArray = this.getAuxiliaryMachineAboutOptions(
             response.data.data
           );
+          this.largeClassArray= response.data.data
         });
-        getAuxiliaryMachineSmallClassListByCondition({}).then(response => {
+        getAuxiliaryMachineSmallClassListByCondition(41).then(response => {
           this.smallClassArray = this.getAuxiliaryMachineAboutOptions(
             response.data.data
           );
@@ -487,10 +500,12 @@ export default {
     getList() {
       this.listLoading = true;
       //3->锅炉厂管理员 5->锅炉厂普通用户
-      if (checkPermission(["3", "5"])) {
-        this.listQuery.userId = this.$store.state.user.userId;
-      }
-      getProductListByCondition(this.listQuery).then(response => {
+        this.product.userId = this.$store.state.user.userId;
+      getProductListByCondition({
+        product: this.product,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }).then(response => {
         const data = response.data.data;
         this.list = data.list;
         this.listQuery.total = data.total;

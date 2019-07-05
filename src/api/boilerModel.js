@@ -1,32 +1,39 @@
 import request from '@/utils/request'
-
+import qs from 'qs'
 export function getBoilerModelListByConditionAndPage(query) {
   return request({
-    url: '/boilermodel/boilermodellistbyconditionandpage',
+    url: '/webapi/boilermanage/productcategory/pagelist',
     method: 'get',
     params: query
   })
 }
 
-export function getBoilerModelListByCondition(query) {
+export function getBoilerModelListByCondition(orgId) {
   return request({
-    url: '/boilermodel/boilermodellistbycondition',
+    url: '/webapi/boilermanage/productcategory/list',
     method: 'get',
-    params: query
+    params: {orgId}
   })
 }
 
 export function editBoilerModel(data) {
   return request({
-    url: '/boilermodel/editboilermodel',
+    url: '/webapi/boilermanage/productcategory/modify',
     method: 'post',
-    data:data
+    data: data
+  })
+}
+export function createBoilerModel(data) {
+  return request({
+    url: '/webapi/boilermanage/productcategory/create',
+    method: 'post',
+    data: data
   })
 }
 export function deleteBoilerModelById(id) {
   return request({
-    url: '/boilermodel/deleteboilermodelbyid',
+    url: '/webapi/boilermanage/productcategory/deleteboilermodelbyid',
     method: 'post',
-    params:{id}
+    params: {id: id}
   })
 }

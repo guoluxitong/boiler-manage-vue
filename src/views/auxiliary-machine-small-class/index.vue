@@ -105,7 +105,7 @@ export default {
     getList() {
       this.listLoading = true;
       this.listQuery.largeClassId = this.$route.query.largeClassId;
-      getAuxiliaryMachineSmallClassListByCondition(this.listQuery).then(
+      getAuxiliaryMachineSmallClassListByCondition(41).then(
         response => {
           this.list = response.data.data;
           this.listLoading = false;

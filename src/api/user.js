@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-
+import qs from 'qs'
 
 export function getUserInfo(employeeId) {
   return request({
@@ -10,7 +10,7 @@ export function getUserInfo(employeeId) {
 }
 export function getUserListByConditionAndPage(query) {
   return request({
-    url: '/user/userlistbyconditionandpage',
+    url: '/webapi/boilermanage/user/list',
     method: 'get',
     params: query
   })
@@ -38,25 +38,25 @@ export function editUserRole(data) {
     data:data
   })
 }
-export function editUser(data) {
+export function editUser(user) {
   return request({
-    url: '/user/edituser',
+    url: '/webapi/boilermanage/user/modify',
     method: 'post',
-    data:data
+    data:{"user": user}
   })
 }
 export function editUserPass(data) {
   return request({
     url: '/user/editUserPass',
     method: 'post',
-    data:data
+    data: data
   })
 }
 
 export function deleteUserById(id) {
   return request({
-    url: '/user/deleteuserbyid',
+    url: '/webapi/boilermanage/user/remove',
     method: 'post',
-    params:{id}
+    data: qs.stringify({id: id})
   })
 }

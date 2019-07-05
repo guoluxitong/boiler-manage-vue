@@ -1,16 +1,14 @@
 <template>
   <div class="app-container user-container">
-    <el-row class="app-query">
-      <el-input clearable v-model="listQuery.realName" placeholder="用户姓名" style="width: 150px;"></el-input>
-      <el-input clearable v-model="listQuery.mobile" placeholder="电话" style="width: 150px;"></el-input>
+   <!-- <el-row class="app-query">
+      <el-autocomplete
+        v-model="userFormData.userName"
+        :fetch-suggestions="querySearchAsyncuser"
+        placeholder="员工姓名"
+        @select="((item)=>{handleSelectuser(item)})"
+      ></el-autocomplete>
       <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-      <el-button  v-permission="['6']"
-        style="margin-left: 10px;"
-        @click="handleCreate"
-        type="primary"
-        icon="el-icon-edit"
-      >新增</el-button>
-    </el-row>
+    </el-row>-->
 
     <el-table
       :data="list"
@@ -22,44 +20,21 @@
       style="width: 120% ;height: 100%"
       @row-contextmenu="openTableMenu"
     >
-      <el-table-column align="left" :show-overflow-tooltip="true" label="真实姓名">
+      <el-table-column align="left" :show-overflow-tooltip="true" label="员工姓名">
         <template slot-scope="scope">
-          <span>{{scope.row.realName}}</span>
+          <span>{{scope.row.userName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="left" :show-overflow-tooltip="true" label="手机号">
+      <el-table-column align="left" :show-overflow-tooltip="true" label="权限">
         <template slot-scope="scope">
-          <span>{{scope.row.mobile}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="left" :show-overflow-tooltip="true" label="邮箱">
-        <template slot-scope="scope">
-          <span>{{scope.row.email}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="left" :show-overflow-tooltip="true" label="微信">
-        <template slot-scope="scope">
-          <span>{{scope.row.weiXin}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="left" :show-overflow-tooltip="true" label="QQ">
-        <template slot-scope="scope">
-          <span>{{scope.row.qQ}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" :show-overflow-tooltip="true" label="状态">
-        <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status | statusFilter"
-          >{{scope.row.status | statusFilterLabel(isAvailableArray)[0].label}}</el-tag>
+          <span>{{scope.row.roleName}}</span>
         </template>
       </el-table-column>
     </el-table>
     <menu-context ref="menuContext">
       <menu-context-item @click="handleUpdate">编辑</menu-context-item>
-      <menu-context-item v-permission="['6']" @click="handleShenHe">审核通过</menu-context-item>
       <span :style="{display:roleManageShow}">
-        <menu-context-item @click="handleEditRole">角色管理</menu-context-item>
+        <menu-context-item @click="handleEditRole">职能管理</menu-context-item>
       </span>
       <menu-context-item @click="handleDelete">删除</menu-context-item>
     </menu-context>
@@ -79,64 +54,16 @@
       <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="40%">
         <el-form
           :rules="rules"
-          ref="userFormData"
+          ref="userForm"
           :model="userFormData"
           label-position="right"
           label-width="80px"
           style="width: 95%; margin-left:5px;"
         >
-          <el-row v-permission="['6']">
-            <el-col :span="12">
-              <el-form-item label="组织" prop="orgId">
-                <el-select
-                  clearable
-                  class="filter-item"
-                  v-model="userFormData.orgId"
-                  style="width: 100%"
-                >
-                  <el-option
-                    v-for="item in customerOption"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
           <el-row>
-            <el-col :span="12">
-              <el-form-item label="真实姓名" prop="realName">
-                <el-input v-model="userFormData.realName"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" :style="{'display':mobileIsShow}">
-              <el-form-item label="电话" prop="mobile">
-                <el-input v-model="userFormData.mobile"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" :style="{'display':mobileIsShow}">
-              <el-form-item label="邮箱" prop="email">
-                <el-input v-model="userFormData.email"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="微信" prop="weiXin">
-                <el-input v-model="userFormData.weiXin"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="QQ" prop="qQ">
-                <el-input v-model="userFormData.qQ"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="密码" prop="password">
-                <el-input type="password" v-model="userFormData.password"></el-input>
+            <el-col :span="24">
+              <el-form-item label="员工姓名" prop="userName">
+                <el-input v-model="userFormData.userName"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -153,27 +80,25 @@
       </el-dialog>
     </div>
     <el-dialog title="角色管理" :visible.sync="dialogRoleFormVisible" width="30%">
-      <el-form
-        ref="roleForm"
+      <el-table
         :model="roleFormData"
         label-position="right"
         label-width="80px"
         style="width: 95%; margin-left:5px;"
+        @selection-change="handleSelectionChange"
       >
-        <el-select
-          v-model="roleFormData.roleIdArray"
-          multiple
-          style="width: 100%"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in roleFormData.roleOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </el-form>
+        <el-table-column align="center" type="selection" width="55" fixed></el-table-column>
+        <el-table-column align="left" :show-overflow-tooltip="true" label="权限">
+          <template slot-scope="scope">
+            <span>{{scope.row.roleName}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="left" :show-overflow-tooltip="true" label="权限序列">
+          <template slot-scope="scope">
+            <span>{{scope.row.roleDesc}}</span>
+          </template>
+        </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogRoleFormVisible = false">取消</el-button>
         <el-button type="primary" @click="editUserRole">确认</el-button>
@@ -196,14 +121,6 @@ import {getProductByboilerNo
 } from '@/api/product';
 import checkPermission from "@/utils/permission";
 import {
-  validateRealName,
-  validatePassWord,
-  validatePhone,
-  validateWeiXin,
-  validateQQ,
-  validateEmail
-} from "@/utils/validate";
-import {
   getUserListByConditionAndPage,
   editUser,
   editUserRole,
@@ -218,59 +135,6 @@ export default {
   },
   directives: { permission },
   data() {
-    const validateOrgIdFun = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error("组织机构不能为空"));
-      } else {
-        callback();
-      }
-    };
-    const validateRealNameFun = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error("真实姓名不能为空"));
-      } else if (!validateRealName(value)) {
-        callback(new Error("真实姓名必须为汉字"));
-      } else {
-        callback();
-      }
-    };
-    const validatePassWordFun = (rule, value, callback) => {
-      if (!validatePassWord(value)) {
-        callback(new Error("密码至少为6位"));
-      } else {
-        callback();
-      }
-    };
-    const validatePhoneFun = (rule, value, callback) => {
-      if (value.length <= 0) {
-        callback(new Error("手机号码不能为空"));
-      } else if (!validatePhone(value)) {
-        callback(new Error("手机号码格式有误"));
-      } else {
-        callback();
-      }
-    };
-    const validateWeiXinFun = (rule, value, callback) => {
-      if (value && !validateWeiXin(value)) {
-        callback(new Error("微信格式有误"));
-      } else {
-        callback();
-      }
-    };
-    const validateQQFun = (rule, value, callback) => {
-      if (value && !validateQQ(value)) {
-        callback(new Error("QQ格式有误"));
-      } else {
-        callback();
-      }
-    };
-    const validateEmailFun = (rule, value, callback) => {
-      if (value && !validateEmail(value)) {
-        callback(new Error("邮箱格式有误"));
-      } else {
-        callback();
-      }
-    };
     return {
       userId: null,
       list: null,
@@ -294,12 +158,8 @@ export default {
       productRepairDialogVisible: false,
       newRepairDialogFlag: false,
       listQuery: {
-        total: 50,
         pageNum: 1,
         pageSize: 5,
-        realName: "",
-        mobile: null,
-        orgType: this.$store.state.user.orgType,
         orgId: this.$store.state.user.orgId
       },
       repairUserFormData: {},
@@ -317,43 +177,30 @@ export default {
       ],
       mobileIsShow: "inline",
       userFormData: {
-        mobile: "",
-        orgType: "3",
-        orgId: "",
-        email: "",
-        weiXin: "",
-        qQ: "",
-        realName: "",
-        password: "",
-        status: 0,
-        mark: ""
+        id: '',
+        orgId: '',
+        employeeId: '',
+        userName: '',
+        roleName: '',
+        roleId: '',
+        mark: ''
       },
       rules: {
-        orgId: [{ required: true, validator: validateOrgIdFun }],
-        realName: [
-          { trigger: "blur", required: true, validator: validateRealNameFun }
-        ],
-        mobile: [
-          {
-            required: true,
-            trigger: "blur",
-            required: true,
-            validator: validatePhoneFun
-          }
-        ],
-        email: [{ trigger: "blur", validator: validateEmailFun }],
-        weiXin: [{ trigger: "blur", validator: validateWeiXinFun }],
-        qQ: [{ trigger: "blur", validator: validateQQFun }],
-        password: [
-          { trigger: "blur", required: true, validator: validatePassWordFun }
-        ]
+
       },
       dialogRoleFormVisible: false,
       roleFormData: {
-        userId: "",
-        roleIdArray: [],
-        roleOptions: []
+        id: '',
+        roleName: '',
+        roleDesc: ''
       },
+      role: {
+        id: '',
+        roleName: '',
+        roleDesc: ''
+      },
+      employeeId: '',
+      userList: [],
       listLoading: true,
       delId: -1,
       deleteValidateFormDialogVisible: false
@@ -376,9 +223,33 @@ export default {
   },
   created() {
     this.getList();
-    this.initCustomerList();
+   /* this.initCustomerList();*/
   },
   methods: {
+    handleSelectionChange(val){
+     this.role=val;
+},
+    querySearchAsyncuser(queryString, callback) {
+      getUserListByConditionAndPage(this.listQuery).then(response => {
+        this.userList = [];
+        var results = [];
+        for (let i = 0, len = response.data.data.list.length; i < len; i++) {
+          response.data.data.list[i].value = response.data.data.list[i].userName;
+        }
+        this.userList = response.data.data.list;
+        results = queryString ? this.userList.filter(this.createFilteruser(queryString)) : this.userList;
+        callback(results);
+      });
+    },
+
+    createFilteruser(queryString, queryArr) {
+      return (queryArr) => {
+        return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    handleSelectuser(item) {
+      this.employeeId = item.employeeId;
+    },
     dateForma: function (row,column){
       var date = row[column.property];
       if (date == undefined){return ''};
@@ -453,17 +324,11 @@ export default {
       this.mobileIsShow = "inline";
       this.dialogFormVisible = true;
       this.$nextTick(() => {
-        this.$refs["userFormData"].clearValidate();
+        this.$refs["userForm"].clearValidate();
       });
     },
     handleUpdate(row) {
       this.userFormData = Object.assign({}, row); // copy obj
-      if (checkPermission(["3", "5"])) {
-        this.mobileIsShow = "none";
-      }
-      if (checkPermission(["6"])) {
-        this.mobileIsShow = "inline";
-      }
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
       this.$nextTick(() => {
@@ -480,9 +345,6 @@ export default {
       });
     },
     handleEditRole(row) {
-      if (checkPermission(["3", "5"])) {
-        this.userId = this.$store.state.user.userId;
-      }
       this.roleFormData.userId = row.id;
       getRoleListByUserId(this.userId)
         .then(response => {
@@ -526,7 +388,7 @@ export default {
       });
     },
     editData() {
-      this.$refs.userFormData.validate(valid => {
+      this.$refs.userForm.validate(valid => {
         if (valid) {
           editUser(this.userFormData).then(data => {
             if (data.data.code == 400) {
@@ -537,8 +399,6 @@ export default {
             } else {
               this.dialogFormVisible = false;
               let message = "成功";
-              if (this.userFormData.status == 0)
-                message = "成功，当前用户不可用，请联系相关工作人员进行开通";
               this.$message({
                 message: message,
                 type: "success"

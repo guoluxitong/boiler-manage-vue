@@ -159,10 +159,7 @@ export default {
   },
   methods: {
     initSelect() {
-      getBoilerModelListByCondition({
-        orgId: this.$store.state.user.orgId,
-        orgType: this.$store.state.user.orgType
-      }).then(data => {
+      getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
         this.boilerModelNumberArray = data.data.data;
       });
       initMedium().then(data => {
@@ -187,7 +184,6 @@ export default {
       map.enableDoubleClickZoom(true);
       map.clearOverlays();
       //3->锅炉厂管理员 5->锅炉厂普通用户
-      if (checkPermission(["3", "5"]))
         this.userId = this.$store.state.user.userId;
       productDataOnMap(this.listQuery).then(res => {
         this.showMapData(map, res.data.data);

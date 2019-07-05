@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-
+import qs from 'qs'
 export function a() {
   return request({
     url: '/home/a',
@@ -26,11 +26,11 @@ export function c(i) {
 
 
 
-export function login(userName, passWord) {
+export function login(account, password) {
   return request({
-    url: '/webapi/login',
+    url: '/webapi/customer/login',
     method: 'post',
-    params:{ 'loginId': userName, 'password': passWord}
+    data: qs.stringify({ "loginId": account, "password": password})
   })
 }
 

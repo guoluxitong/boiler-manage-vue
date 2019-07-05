@@ -20,27 +20,14 @@
       style="width: 120%"
       @row-contextmenu="openTableMenu"
     >
-      <el-table-column :show-overflow-tooltip="true" align="left" label="客户名称">
+      <el-table-column :show-overflow-tooltip="true" align="left" label="员工姓名">
         <template slot-scope="scope">
-          <span>{{scope.row.customerName}}</span>
+          <span>{{scope.row.userName}}</span>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="所属企业">
+      <el-table-column :show-overflow-tooltip="true" align="left" label="权限">
         <template slot-scope="scope">
-          <span
-            v-for="item in enterpriseOption"
-            v-if="item.value==scope.row.enterpriseId"
-          >{{item.label}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="是否可用">
-        <template slot-scope="scope">
-          <span v-for="item in statusArray" v-if="item.value==scope.row.status">{{item.label}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="编码">
-        <template slot-scope="scope">
-          <span>{{scope.row.customerNo}}</span>
+          <span>{{scope.row.roleName}}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -193,10 +180,9 @@ export default {
     return {
       list: null,
       listQuery: {
-        total: 50,
         pageNum: 1,
         pageSize: 5,
-        customerName: ""
+        orgId: this.$store.state.user.orgId
       },
       statusArray: [{ value: 0, label: "否" }, { value: 1, label: "是" }],
       enterpriseOption: [],
@@ -241,9 +227,9 @@ export default {
     };
   },
   created() {
-    Promise.all([this.initEnterpriseList()]).then(() => {
+    /*Promise.all([this.initEnterpriseList()]).then(() => {*/
       this.getList();
-    });
+   /* });*/
   },
   methods: {
     openTableMenu(row, event) {
@@ -272,7 +258,6 @@ export default {
       getCustomerListByConditionAndPage(this.listQuery).then(response => {
         const data = response.data.data;
         this.list = data.list;
-        this.listQuery.total = data.total;
         this.listQuery.pageNum = data.pageNum;
         this.listQuery.pageSize = data.pageSize;
         this.listLoading = false;

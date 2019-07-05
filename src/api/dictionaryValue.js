@@ -2,9 +2,9 @@ import request from '@/utils/request'
 
 export function getDictionaryValueListByType(type) {
   return request({
-    url: '/dictionaryvalue/dictionaryvaluelistbytype',
+    url: '/webapi/boilermanage/dictionaryvalue/list',
     method: 'get',
-    params: {type}
+    params: {type: type}
   })
 }
 
@@ -12,7 +12,7 @@ export function editDictionaryValue(data) {
   return request({
     url: '/dictionaryvalue/editdictionaryvalue',
     method: 'post',
-    data:data
+    data: data
   })
 }
 export function deleteDictionaryValueById(id) {

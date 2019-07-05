@@ -11,18 +11,25 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-        '/apis': {
-            target: 'https://restapi.amap.com',//设置你调用的接口域名和端口号 别忘了加http
+       '/apis': {
+            target: "https://restapi.amap.com",//设置你调用的接口域名和端口号 别忘了加http
             changeOrigin: true,
             pathRewrite: {
                 '^/apis': '',
             }
+        },
+      '/api': {
+        target: "http://sdcsoft.xicp.io:14409",//设置你调用的接口域名和端口号 别忘了加http
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': '',
         }
+      }
     },
 
     // Various Dev Server settings
-    host: '127.0.0.1', // can be overwritten by process.env.HOST
-    port: 8083, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    host: 'localhost', // can be overwritten by process.env.HOST
+    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,

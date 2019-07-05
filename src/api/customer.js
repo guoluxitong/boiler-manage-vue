@@ -10,7 +10,7 @@ export function getCustomerListByCondition(query) {
 
 export function getCustomerListByConditionAndPage(query) {
     return request({
-        url: '/customer/customerlistbyconditionandpage',
+        url: '/webapi/boilermanage/user/list',
         method: 'get',
         params: query
     })

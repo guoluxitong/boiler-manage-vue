@@ -1,8 +1,8 @@
 import request from '@/utils/request'
-
+import qs from 'qs'
 export function getBoilerCustomerListByConditionAndPage(query) {
   return request({
-    url: '/boilercustomer/boilercustomerlistbyconditionandpage',
+    url: '/webapi/boilermanage/customer/list',
     method: 'get',
     params: query
   })
@@ -15,18 +15,32 @@ export function getBoilerCustomerListByCondition(query) {
     params: query
   })
 }
-
-export function editBoilerCustomer(data) {
+export function getBoilerCustomerListByName(name) {
   return request({
-    url: '/boilercustomer/editboilercustomer',
+    url: '/webapi/boilermanage/customer/search',
+    method: 'get',
+    params: {name: name}
+  })
+}
+export function createCustomer(data) {
+  return request({
+    url: '/webapi/boilermanage/customer/create',
     method: 'post',
-    data:data
+    data: data
+  })
+}
+export function editBoilerCustomer(data) {
+  console.log(data)
+  return request({
+    url: '/webapi/boilermanage/customer/modify',
+    method: 'post',
+    data: data
   })
 }
 export function deleteBoilerCustomerById(id) {
   return request({
-    url: '/boilercustomer/deleteboilercustomerbyid',
+    url: '/webapi/boilermanage/customer/remove',
     method: 'post',
-    params:{id}
+    data: qs.stringify({id: id})
   })
 }
