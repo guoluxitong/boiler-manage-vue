@@ -2,16 +2,16 @@
   <div>
     <el-row class="app-query">
       <el-autocomplete
-        v-model="listQuery.boilerCustomerName"
+        v-model="product.customerName"
         :fetch-suggestions="querySearchAsyncuser"
         placeholder="客户名称"
         @select="((item)=>{handleSelectuser(item)})"
       ></el-autocomplete>
-      <el-input v-model="listQuery.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
+      <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
       <el-select
         clearable
         style="width: 150px"
-        v-model="listQuery.boilerModelNumber"
+        v-model="product.productCategoryId"
         placeholder="锅炉型号"
       >
         <el-option
@@ -22,7 +22,7 @@
         ></el-option>
       </el-select>
       <el-input v-model="listQuery.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
-      <el-select clearable style="width: 150px" v-model="listQuery.fuel" placeholder="燃料">
+      <el-select clearable style="width: 150px" v-model="product.power" placeholder="燃料">
         <el-option
           v-for="item in fuelArray"
           :key="item.value"
@@ -30,7 +30,7 @@
           :value="item.value"
         ></el-option>
       </el-select>
-      <el-select clearable style="width: 150px" v-model="listQuery.medium" placeholder="介质">
+      <el-select clearable style="width: 150px" v-model="product.media" placeholder="介质">
         <el-option
           v-for="item in mediumArray"
           :key="item.value"
@@ -48,7 +48,7 @@
 </template>
 <script>
 import checkPermission from "@/utils/permission";
-import { productDataOnMap } from "@/api/product";
+import { getProductListByCondition } from "@/api/product";
 import {getBoilerCustomerListByConditionAndPage} from "@/api/boilerCustomer";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getBoilerModelListByCondition } from "@/api/boilerModel";
@@ -100,10 +100,25 @@ export default {
         boilerCustomerName: null,
         boilerModelNumber: null,
         tonnageNum: null,
-        medium: null,
-        fuel: null,
+        media: null,
+        power: null,
         userId: null
       },
+      product: {
+        boilerNo: "",
+        saleDate: null,
+        controllerNo: "",
+        customerName: null,
+        productCategoryId: null,
+        tonnageNum: null,
+        media: null,
+        power: null,
+        userId: null,
+        isSell: null,
+        productCategoryName: ''
+      },
+      pageNum: 1,
+      pageSize: 5,
       listQuery2: {
         total: 500,
         pageNum: 1,
@@ -127,8 +142,8 @@ export default {
         controllerNo: [
           { required: true, trigger: "blur", message: "设备编号不能为空" }
         ],
-        fuel: [{ required: true, trigger: "blur", validator: validateFuelFun }],
-        medium: [
+        power: [{ required: true, trigger: "blur", validator: validateFuelFun }],
+        media: [
           { required: true, trigger: "blur", validator: validateMediumFun }
         ]
       },
@@ -184,9 +199,13 @@ export default {
       map.enableDoubleClickZoom(true);
       map.clearOverlays();
       //3->锅炉厂管理员 5->锅炉厂普通用户
-        this.userId = this.$store.state.user.userId;
-      productDataOnMap(this.listQuery).then(res => {
-        this.showMapData(map, res.data.data);
+      this.userId = this.$store.state.user.userId;
+      getProductListByCondition({
+        product: this.product,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }).then(res => {
+        this.showMapData(map, res.data.data.list);
       });
     },
     querySearchAsyncuser(queryString, callback) {

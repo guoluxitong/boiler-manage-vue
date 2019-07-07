@@ -11,8 +11,8 @@
       <el-form :rules="rules" ref="productMap" :model="formData" label-position="right" label-width="100px">
         <el-row style="margin-top: 10px">
           <el-col :span="7">
-            <el-form-item label="客户" prop="boilerCustomerId">
-              <el-select clearable class="filter-item" v-model="formData.boilerCustomerId" style="width: 100%" @change="changeBoilerCustomerGetLabel">
+            <el-form-item label="客户" prop="customerId">
+              <el-select clearable class="filter-item" v-model="formData.customerId" style="width: 100%" @change="changeBoilerCustomerGetLabel">
                 <el-option v-for="item in boilerCustomerArray" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -49,7 +49,7 @@
   export default {
     name: 'product-map',
     data(){
-      const validateBoilerCustomerId = (rule, value, callback) => {
+      const validateCustomerId = (rule, value, callback) => {
         if(value==null){
           callback(new Error('请选择客户'))
         }else {
@@ -66,7 +66,7 @@
           id:'',
           controllerNo:'',
           isSell:1,//售出的状态
-          boilerCustomerId:null,
+         customerId:null,
           boilerCustomerName:null,
           saleDate:'',
           longitude:'',
@@ -83,7 +83,7 @@
           pageSize: 5,
         },
         rules:{
-          boilerCustomerId: [{ required: true,trigger: 'blur', validator: validateBoilerCustomerId }],
+          customerId: [{ required: true,trigger: 'blur', validator: validateCustomerId }],
           saleDate: [{ required: true,trigger: 'blur', message: '售出时间不能为空' }],
           saleAddress: [{ required: true,trigger: 'blur', message: '售出地址不能为空' }]
         }
@@ -158,7 +158,7 @@
         this.formData.id=this.productFormData.id
         this.formData.controllerNo=this.productFormData.controllerNo
         this.formData.saleDate=this.productFormData.saleDate
-        this.formData.boilerCustomerId=this.productFormData.boilerCustomerId
+        this.formData.customerId=this.productFormData.customerId
         this.formData.boilerCustomerName=this.productFormData.boilerCustomerName
         this.formData.longitude=this.productFormData.longitude
         this.formData.latitude=this.productFormData.latitude
@@ -186,7 +186,7 @@
         let boilerCustomerItem=this.boilerCustomerArray.find(item=>{
           return item.value == value;
         });
-        this.formData.boilerCustomerName=boilerCustomerItem.label
+        this.formData.customerName=boilerCustomerItem.label
       },
       selectPoint(map){
         let menu = new BMap.ContextMenu();

@@ -11,14 +11,14 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="大类" >
-                <el-select clearable class="filter-item" v-model="productAuxiliaryMachineInfoFormData.largeClassId" style="width: 100%" @change="largeClassChange">
+                <el-select clearable class="filter-item" v-model="productAuxiliaryMachineInfoFormData.partCategoryId" style="width: 100%" @change="largeClassChange">
                   <el-option v-for="item in largeClassOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item clearable label="小类" >
-                <el-select clearable class="filter-item" v-model="productAuxiliaryMachineInfoFormData.smallClassId" style="width: 100%" @change="smallClassChange">
+                <el-select clearable class="filter-item" v-model="productAuxiliaryMachineInfoFormData.partSubCategoryId" style="width: 100%" @change="smallClassChange">
                   <el-option v-for="item in smallClassOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -59,11 +59,11 @@
             <el-col :span="24">
               <el-form-item>
                 <el-button type="primary" @click="submitForm">确认</el-button>
+                <el-button type="primary" @click="visible=false">取消</el-button>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
-
       </div>
     </el-dialog>
 </template>
@@ -78,18 +78,19 @@
       return {
         visible: this.show,
         largeClassArray:[],
+        partCategoryId: '',
         smallClassArray:[],
         largeClassOptions:[],
         smallClassOptions:[],
         productAuxiliaryMachineInfoFormData:{
-          id:'',
-          largeClassId:null,
-          smallClassId:null,
-          brandName:'',
-          modelName:'',
-          amountOfUser:'',
-          supplier:'',
-          remarks:'',
+          id: '',
+          partCategoryId: null,
+          partSubCategoryId: null,
+          brandName: '',
+          modelName: '',
+          amountOfUser: '',
+          supplier: '',
+          remarks: ''
         }
       }
     },
@@ -100,7 +101,7 @@
       },
       productAuxiliaryMachineInfo:{
         type: Object,
-        default: ()=>{}
+        default:()=>{}
       },
       title:{
         type:String,
@@ -121,16 +122,13 @@
         this.$emit('auxiliaryMachineInfoDialogClose',{auxiliaryMachineInfoDialogVisible:false})
       },
       auxiliaryMachineInfoOpen(){
+        console.log(this.productAuxiliaryMachineInfo)
         Promise.all([this.initAuxiliaryMachineAbout()]).then(()=>{this.initFormData()})
       },
       initAuxiliaryMachineAbout(){
         getAuxiliaryMachineLargeClassListByCondition({}).then(response=>{
           this.largeClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
           this.largeClassArray=response.data.data
-        })
-        getAuxiliaryMachineSmallClassListByCondition(41).then(response=>{
-          this.smallClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
-          this.smallClassArray=response.data.data
         })
       },
       getAuxiliaryMachineAboutOptions(dataList){
@@ -149,18 +147,23 @@
         }
       },
       largeClassChange(val){
+        this.partCategoryId=val;
+        getAuxiliaryMachineSmallClassListByCondition(this.partCategoryId).then(response=>{
+          this.smallClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
+          this.smallClassArray=response.data.data
+        })
         let smallClassArray=this.smallClassArray.filter(item=>{
-          return item.largeClassId===val
+          return item.partCategoryId===val
         })
         this.smallClassOptions=this.getAuxiliaryMachineAboutOptions(smallClassArray)
-        this.productAuxiliaryMachineInfoFormData.smallClassId=null
+        this.productAuxiliaryMachineInfoFormData.partSubCategoryId=null
       },
       smallClassChange(val){
-        this.smallClassArray.forEach(smallClass=>{
+       /* this.smallClassArray.forEach(smallClass=>{
           if(val===smallClass.id){
             this.productAuxiliaryMachineInfoFormData.largeClassId=smallClass.largeClassId
           }
-        })
+        })*/
       },
       submitForm() {
         this.$emit('confirmAuxiliaryMachineInfoDialog', {auxiliaryMachineInfoDialogVisible: false,flag:true,auxiliaryMachineInfoFormData:this.productAuxiliaryMachineInfoFormData,title:this.title,paramData:this.productAuxiliaryMachineInfo})

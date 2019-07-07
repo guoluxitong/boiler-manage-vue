@@ -8,17 +8,18 @@ export function getRepairInfoListByProductId(query) {
   });
 }
 export function getRepairInfoListByDate(query) {
+  console.log(query)
   return request({
     url: '/webapi/boilermanage/repairinfo/list/product/date',
     method: 'get',
-    params: query
+    params: {productId: query.productId, startTime: query.startTime, endTime: query.endTime}
   });
 }
 export function getRepairInfoListBydate(query) {
   return request({
     url: '/webapi/boilermanage/repairinfo/list/user/date',
     method: 'get',
-    params: query
+    params: {userId: query.userId, startTime: query.startTime, endTime: query.endTime}
   });
 }
 
@@ -40,7 +41,7 @@ export function insertRepairUserInfo(data) {
   return request({
     url: '/repairinfo/insertrepairuserinfo',
     method: 'post',
-    data: data
+    data: qs.stringify(data)
   })
 };
 export function deleteRepairInfoByProductId(id) {

@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 
 export function getAuxiliaryMachineSmallClassListByCondition(partCategoryId) {
-  console.log(partCategoryId)
     return request({
         url: '/webapi/boilermanage/partsubcategory/list',
         method: 'get',

@@ -1,15 +1,17 @@
 <template>
-  <div class="app-container">
+  <div class="app-container boilerCustomer-container">
     <el-row class="app-query">
-      <el-input v-model="listQuery.customerName" placeholder="客户名称" style="width: 150px;"></el-input>
+      <el-input v-model="listQuery.name" placeholder="客户名称" style="width: 150px;"></el-input>
       <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button
         style="margin-left: 10px;"
         @click="handleCreate"
         type="primary"
         icon="el-icon-edit"
+        v-permission="['3','5']"
       >新增</el-button>
     </el-row>
+
     <el-table
       :data="list"
       v-loading="listLoading"
@@ -20,22 +22,40 @@
       style="width: 120%"
       @row-contextmenu="openTableMenu"
     >
-      <el-table-column :show-overflow-tooltip="true" align="left" label="员工姓名">
+      <el-table-column align="left" :show-overflow-tooltip="true" label="客户名称">
         <template slot-scope="scope">
-          <span>{{scope.row.userName}}</span>
+          <span>{{scope.row.name}}</span>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="权限">
+      <el-table-column align="left" :show-overflow-tooltip="true" label="电话">
         <template slot-scope="scope">
-          <span>{{scope.row.roleName}}</span>
+          <span>{{scope.row.phone}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="left" :show-overflow-tooltip="true" label="微信">
+        <template slot-scope="scope">
+          <span>{{scope.row.weiXin}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="left" :show-overflow-tooltip="true" label="省">
+        <template slot-scope="scope">
+          <span>{{scope.row.province}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="left" :show-overflow-tooltip="true" label="市">
+        <template slot-scope="scope">
+          <span>{{scope.row.city}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="left" :show-overflow-tooltip="true" label="区">
+        <template slot-scope="scope">
+          <span>{{scope.row.district}}</span>
         </template>
       </el-table-column>
     </el-table>
     <menu-context ref="menuContext">
-      <menu-context-item @click="handleUpdate">编辑</menu-context-item>
-      <menu-context-item @click="handleEditResource">分配权限</menu-context-item>
-      <menu-context-item @click="handleEditCustomerUser">权限分配用户</menu-context-item>
-      <menu-context-item @click="handleDelete">删除</menu-context-item>
+      <menu-context-item @click="handleUpdate" v-permission="['3','5']">编辑</menu-context-item>
+      <menu-context-item @click="handleDelete" v-permission="['3','5']">删除</menu-context-item>
     </menu-context>
     <div class="pagination-container">
       <el-pagination
@@ -46,133 +66,111 @@
         :page-sizes="[5,10,15,20]"
         :page-size="listQuery.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="listQuery.total"
+        :total="total"
       ></el-pagination>
     </div>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
+
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form
         :rules="rules"
-        ref="customerForm"
-        :model="customerFormData"
+        ref="boilerCustomerForm"
+        :model="boilerCustomerFormData"
         label-position="right"
         label-width="80px"
-        style="width: 95%; margin-left:5px;"
+        style="width: 90%; margin-left:15px;"
       >
-        <el-form-item label="所属企业" prop="enterpriseId">
-          <el-select
-            clearable
-            class="filter-item"
-            v-model="customerFormData.enterpriseId"
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in enterpriseOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="名称" prop="customerName">
-          <el-input v-model="customerFormData.customerName"></el-input>
-        </el-form-item>
-        <el-form-item label="是否可用">
-          <el-select
-            clearable
-            class="filter-item"
-            v-model="customerFormData.status"
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in statusArray"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="编码">
-          <el-input v-model="customerFormData.customerNo"></el-input>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="客户名称" prop="name">
+              <el-input v-model="boilerCustomerFormData.name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="电话" prop="phone">
+              <el-input v-model="boilerCustomerFormData.phone"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="微信" prop="weiXin">
+              <el-input v-model="boilerCustomerFormData.weiXin"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="省">
+              <el-input v-model="boilerCustomerFormData.province"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="市">
+              <el-input v-model="boilerCustomerFormData.city"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="区">
+              <el-input v-model="boilerCustomerFormData.district"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
         <el-button type="primary" @click="editData">确认</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="分配权限" :visible.sync="dialogResourceFormVisible" width="15%">
-      <el-form
-        :rules="rules"
-        ref="resourceForm"
-        :model="resourceFormData"
-        label-position="right"
-        label-width="80px"
-        style="width: 95%; margin-left:2px;"
-      >
-        <el-tree
-          :data="resourceFormData.resourceList"
-          show-checkbox
-          default-expand-all
-          node-key="id"
-          ref="tree"
-          highlight-current
-          :props="resourceFormData.defaultProps"
-          :default-checked-keys="resourceFormData.resIdArray"
-        ></el-tree>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogResourceFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="editCustomerResource">确认</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="权限分配用户" :visible.sync="dialogCustomerUserFormVisible" width="30%">
-      <el-form
-        ref="customerUserForm"
-        :model="customerUserFormData"
-        label-position="right"
-        label-width="80px"
-        style="width: 95%; margin-left:5px;"
-      >
-        <el-select
-          v-model="customerUserFormData.userIdArray"
-          multiple
-          style="width: 100%"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in customerUserFormData.userOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogCustomerUserFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="editCustomerUser">确认</el-button>
-      </div>
-    </el-dialog>
+    <boiler-common-delete-validate-dialog
+      @confirmDeleteValidate="confirmDeleteValidate"
+      @confirmCancelValidate="confirmCancelValidate"
+      :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
+      :id="delId"
+    ></boiler-common-delete-validate-dialog>
   </div>
 </template>
 
 <script>
+import permission from "@/directive/permission/index.js"; // 权限判断指令
+import checkPermission from "@/utils/permission";
 import {
-  getCustomerListByConditionAndPage,
-  editCustomer,
-  insertManyCustomerResource,
-  insertManyCustomerUser,
-  deleteCustomerById
-} from "@/api/customer";
-import { getUserListByOrganizationTypeAndId } from "@/api/user";
-import { getUserIdListByCustomerId } from "@/api/customerUser";
-import { getResourceIdListByCustomerId } from "@/api/customerResource";
-import { getEnterpriseListByCondition } from "@/api/enterprise";
-import { getResourceListByCondition } from "@/api/resource";
+  getBoilerCustomerListByConditionAndPage,
+  editBoilerCustomer,
+  deleteBoilerCustomerById,
+  createCustomer,
+  getBoilerCustomerListByName
+} from "@/api/boilerCustomer";
+import {
+  validateRealName,
+  validatePhone,
+  validateWeiXin
+} from "@/utils/validate";
+import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 export default {
+  components: {
+    "boiler-common-delete-validate-dialog": boilerCommonDeleteValidate
+  },
+  directives: { permission },
   data() {
-    const validateEnterpriseFun = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error("所属企业不能为空"));
+    const validateRealNameFun = (rule, value, callback) => {
+      if (!validateRealName(value)) {
+        callback(new Error("姓名必须为汉字"));
+      } else {
+        callback();
+      }
+    };
+    const validatePhoneFun = (rule, value, callback) => {
+      if (value.length <= 0) {
+        callback(new Error("手机号码不能为空"));
+      } else if (!validatePhone(value)) {
+        callback(new Error("手机号码格式有误"));
+      } else {
+        callback();
+      }
+    };
+    const validateWeiXinFun = (rule, value, callback) => {
+      if (!validateWeiXin(value)) {
+        callback(new Error("微信格式有误"));
       } else {
         callback();
       }
@@ -182,54 +180,44 @@ export default {
       listQuery: {
         pageNum: 1,
         pageSize: 5,
-        orgId: this.$store.state.user.orgId
       },
-      statusArray: [{ value: 0, label: "否" }, { value: 1, label: "是" }],
-      enterpriseOption: [],
+      total: 50,
       textMap: {
         update: "编辑",
         create: "新增"
       },
       dialogStatus: "",
       dialogFormVisible: false,
-      customerFormData: {
+      boilerCustomerFormData: {
         id: "",
-        enterpriseId: "",
-        customerName: "",
-        status: 1,
-        customerNo: ""
+        customerNo: "",
+        name: "",
+        phone: "",
+        weiXin: "",
+        province: "",
+        city: "",
+        district: "",
+        orgId: this.$store.state.user.orgId
       },
       rules: {
-        enterpriseId: [
-          { required: true, trigger: "blur", validator: validateEnterpriseFun }
+        customerNo: [
+          { required: true, trigger: "blur", message: "客户编号不能为空" }
         ],
-        customerName: [
-          { required: true, message: "名称不能为空", trigger: "blur" }
-        ]
+        name: [
+          { required: true, trigger: "blur", validator: validateRealNameFun }
+        ],
+        phone: [
+          { required: true, trigger: "blur", validator: validatePhoneFun }
+        ],
+        weiXin: [{ trigger: "blur", validator: validateWeiXinFun }]
       },
-      dialogResourceFormVisible: false,
-      resourceFormData: {
-        resIdArray: [],
-        customerId: "",
-        resourceList: [],
-        defaultProps: {
-          children: "children",
-          label: "label"
-        }
-      },
-      dialogCustomerUserFormVisible: false,
-      customerUserFormData: {
-        customerId: "",
-        userIdArray: [],
-        userOptions: []
-      },
-      listLoading: true
+      listLoading: true,
+      delId: -1,
+      deleteValidateFormDialogVisible: false
     };
   },
   created() {
-    /*Promise.all([this.initEnterpriseList()]).then(() => {*/
-      this.getList();
-   /* });*/
+    this.getList();
   },
   methods: {
     openTableMenu(row, event) {
@@ -240,36 +228,42 @@ export default {
         window.event.clientY
       );
     },
-    initEnterpriseList() {
-      let enterpriseOption = [];
-      getEnterpriseListByCondition().then(data => {
-        data.data.data.forEach(item => {
-          enterpriseOption.push({ value: item.id, label: item.enterpriseName });
-        });
-        this.enterpriseOption = enterpriseOption;
-      });
-    },
     handleFilter() {
-      this.listQuery.pageNum = 1;
-      this.getList();
+      this.getListByName();
+    },
+    getListByName() {
+      this.listLoading = true;
+      getBoilerCustomerListByName(this.listQuery.name).then(response => {
+        const data = response.data.data;
+        this.list = data;
+        this.total = 1;
+        this.listQuery.pageNum = 1;
+        this.listQuery.pageSize = 1;
+        this.listLoading = false;
+      });
     },
     getList() {
       this.listLoading = true;
-      getCustomerListByConditionAndPage(this.listQuery).then(response => {
+      getBoilerCustomerListByConditionAndPage(this.listQuery).then(response => {
         const data = response.data.data;
         this.list = data.list;
+        this.total = data.total;
         this.listQuery.pageNum = data.pageNum;
         this.listQuery.pageSize = data.pageSize;
         this.listLoading = false;
       });
     },
     resetTemp() {
-      this.customerFormData = {
+      this.boilerCustomerFormData = {
         id: "",
-        enterpriseId: "",
-        customerName: "",
-        status: 1,
-        customerNo: ""
+        customerNo: "",
+        name: "",
+        phone: "",
+        weiXin: "",
+        province: "",
+        city: "",
+        district: "",
+        orgId: this.$store.state.user.orgId
       };
     },
     handleCreate() {
@@ -277,130 +271,43 @@ export default {
       this.dialogStatus = "create";
       this.dialogFormVisible = true;
       this.$nextTick(() => {
-        this.$refs["customerForm"].clearValidate();
+        this.$refs["boilerCustomerForm"].clearValidate();
       });
     },
     handleUpdate(row) {
-      this.customerFormData = Object.assign({}, row); // copy obj
+      this.boilerCustomerFormData = Object.assign({}, row); // copy obj
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
       this.$nextTick(() => {
-        this.$refs["customerForm"].clearValidate();
+        this.$refs["boilerCustomerForm"].clearValidate();
       });
     },
-    handleEditCustomerUser(row) {
-      getUserListByOrganizationTypeAndId({ orgType: 3, orgId: row.id })
-        .then(response => {
-          this.customerUserFormData.userOptions = response.data.data.map(
-            user => {
-              return { value: user.id.toString(), label: user.realName };
-            }
-          );
-          return getUserIdListByCustomerId({ customerId: row.id });
-        })
-        .then(response => {
-          this.customerUserFormData.userIdArray = response.data.data;
-          this.customerUserFormData.customerId = row.id;
-          this.dialogCustomerUserFormVisible = true;
-          this.$nextTick(() => {
-            this.$refs["customerUserForm"].clearValidate();
-          });
-        });
-    },
-    handleEditResource(row) {
-      this.resourceFormData.resIdArray = [];
-      getResourceListByCondition()
-        .then(response => {
-          const allResourceList = response.data.data;
-          const resourceList = this.filterFirstLevelResource(
-            allResourceList,
-            0
-          );
-          resourceList.forEach(item => {
-            item.children = this.getChildResourceList(item.id, allResourceList);
-          });
-          this.resourceFormData.resourceList = resourceList;
-          return getResourceIdListByCustomerId({ customerId: row.id });
-        })
-        .then(response => {
-          console.info(response.data.data);
-          this.resourceFormData.customerId = row.id;
-          this.resourceFormData.resIdArray = response.data.data;
-          this.dialogResourceFormVisible = true;
-          this.$nextTick(() => {
-            this.$refs["resourceForm"].clearValidate();
-          });
-        });
-    },
     editData() {
-      this.$refs.customerForm.validate(valid => {
+      this.$refs.boilerCustomerForm.validate(valid => {
         if (valid) {
-          editCustomer(this.customerFormData).then(data => {
-            this.dialogFormVisible = false;
-            this.$message({
-              message: "成功",
-              type: "success"
+          if(this.dialogStatus == "create"){
+            createCustomer(this.boilerCustomerFormData).then(data => {
+              this.dialogFormVisible = false;
+              this.$message({
+                message: "成功",
+                type: "success"
+              });
+              this.getList();
             });
-            this.getList();
-          });
+          } else{
+            editBoilerCustomer(this.boilerCustomerFormData).then(data => {
+              this.dialogFormVisible = false;
+              this.$message({
+                message: "成功",
+                type: "success"
+              });
+              this.getList();
+            });
+          }
+
         } else {
           return false;
         }
-      });
-    },
-    editCustomerUser() {
-      let customerUserList = this.customerUserFormData.userIdArray.map(
-        userId => {
-          return {
-            userId: userId,
-            customerId: this.customerUserFormData.customerId
-          };
-        }
-      );
-      insertManyCustomerUser({
-        id: this.customerUserFormData.customerId,
-        customerUserList: customerUserList
-      }).then(response => {
-        this.dialogCustomerUserFormVisible = false;
-        this.$message({
-          message: "添加成功",
-          type: "success"
-        });
-        this.getList();
-      });
-    },
-    editCustomerResource() {
-      let parentResIdArray = [];
-      let childResIdArray = [];
-      this.$refs.tree.getCheckedNodes().forEach(node => {
-        if (parentResIdArray.indexOf(node.pId) == -1) {
-          parentResIdArray.push(node.pId);
-        }
-        childResIdArray.push(node.id);
-      });
-      let resIdArray = [];
-      parentResIdArray.concat(childResIdArray).forEach(resId => {
-        if (resIdArray.indexOf(resId) == -1 && resId != 0) {
-          resIdArray.push(resId);
-        }
-      });
-      let customerResourceList = [];
-      resIdArray.forEach(resId => {
-        customerResourceList.push({
-          customerId: this.resourceFormData.customerId,
-          resourceId: resId
-        });
-      });
-      insertManyCustomerResource({
-        id: this.resourceFormData.customerId,
-        customerResourceList: customerResourceList
-      }).then(response => {
-        this.dialogResourceFormVisible = false;
-        this.$message({
-          message: "分配成功",
-          type: "success"
-        });
-        this.getList();
       });
     },
     handleDelete(row) {
@@ -410,13 +317,8 @@ export default {
         type: "warning"
       })
         .then(() => {
-          deleteCustomerById(row.id).then(data => {
-            this.$message({
-              message: "删除成功",
-              type: "success"
-            });
-            this.list.splice(this.list.indexOf(row), 1);
-          });
+          this.deleteValidateFormDialogVisible = true;
+          this.delId = row.id;
         })
         .catch(() => {
           this.$message({
@@ -425,6 +327,23 @@ export default {
           });
         });
     },
+    confirmDeleteValidate(obj) {
+      if (obj.flag) {
+        this.deleteValidateFormDialogVisible =
+          obj.deleteValidateFormDialogVisible;
+        deleteBoilerCustomerById(obj.id).then(data => {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+          this.getList();
+        });
+      }
+    },
+    confirmCancelValidate(obj) {
+      this.deleteValidateFormDialogVisible =
+        obj.deleteValidateFormDialogVisible;
+    },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;
       this.getList();
@@ -432,28 +351,14 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.pageNum = val;
       this.getList();
-    },
-    filterFirstLevelResource(menus, menu_level) {
-      const firstLevelResourceList = menus.filter(item => {
-        return item.pId == menu_level;
-      });
-      return this.reGenerateResourceTreeData(firstLevelResourceList);
-    },
-    getChildResourceList(id, resoruceList = []) {
-      let childResourceList = resoruceList.filter(item => {
-        return id == item.pId;
-      });
-      childResourceList = this.reGenerateResourceTreeData(childResourceList);
-      childResourceList.forEach(item => {
-        item.children = this.getChildResourceList(item.id, resoruceList);
-      });
-      return childResourceList;
-    },
-    reGenerateResourceTreeData(resourceList) {
-      return resourceList.map(item => {
-        return { id: item.resId, pId: item.pId, label: item.resName };
-      });
     }
   }
 };
 </script>
+<style rel="stylesheet/scss" lang="scss">
+.boilerCustomer-container {
+  .el-dialog {
+    width: 40%;
+  }
+}
+</style>

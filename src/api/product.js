@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 import qs from 'qs'
 export function getProductListByCondition(data) {
-  console.log(data)
   return request({
     url: '/webapi/boilermanage/product/search',
     method: 'post',
@@ -31,35 +30,47 @@ export function productDataOnMap(product) {
     params: {product: product}
   })
 }
-
+export function getUsers(productId) {
+  return request({
+    url: '/webapi/boilermanage/product/users',
+    method: 'get',
+    params: {productId: productId}
+  })
+}
 export function editProduct(data) {
   return request({
-    url: '/product/editproduct',
+    url: '/webapi/boilermanage/product/modify',
     method: 'post',
-    data:data
+    data: data
   })
 }
 
 export function updateProductSellAbout(data) {
     return request({
-        url: '/product/updateproductsellabout',
+        url: '/webapi/boilermanage/product/sell',
         method: 'post',
-        data:data
+        data: data
     })
 }
-
+export function insertProduct(data) {
+  return request({
+    url: '/webapi/boilermanage/product/create',
+    method: 'post',
+    data: data
+  })
+}
 export function insertManyProductUser(data) {
   return request({
-    url: '/product/insertmanyproductuser',
+    url: '/webapi/boilermanage/product/users/modify',
     method: 'post',
-    data:data
+    data: data
   })
 }
 export function deleteProductById(id,controllerNo) {
   return request({
-    url: '/product/deleteproductbyid',
+    url: '/webapi/boilermanage/product/remove',
     method: 'post',
-    params:{'id':id,'controllerNo':controllerNo}
+    data: qs.stringify({id: id, controllerNo: controllerNo})
   })
 }
 export function productTypeAmountByCondition(userId) {

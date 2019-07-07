@@ -111,8 +111,8 @@ export default {
         controllerNo: "",
         boilerModelNumber: null,
         tonnageNum: null,
-        medium: null,
-        fuel: null,
+        media: null,
+        power: null,
         userId: null,
         isSell: null
       },

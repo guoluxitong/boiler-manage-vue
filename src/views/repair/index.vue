@@ -18,11 +18,6 @@
             <span>{{scope.row.boilerNo}}</span>
           </template>
         </el-table-column>
-        <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉型号">
-          <template slot-scope="scope">
-            <span>{{scope.row.boilerModelNumber }}</span>
-          </template>
-        </el-table-column>
         <el-table-column :show-overflow-tooltip="true" align="left" label="控制器编号">
           <template slot-scope="scope">
             <span>{{scope.row.controllerNo}}</span>
@@ -99,7 +94,7 @@
     <el-form>
       <div style="width:100%">
         <el-col :span="6">
-          <el-date-picker   type="date" placeholder="选择查询起始日期" v-model="starttime" style="width: 100%;"></el-date-picker>
+          <el-date-picker  type="date" placeholder="选择查询起始日期" v-model="starttime" style="width: 100%;"></el-date-picker>
         </el-col>
         <el-col style="margin-left:20px" :span="6">
           <el-date-picker   type="date" placeholder="选择查询结束日期" v-model="endtime" style="width: 100%;"></el-date-picker>
@@ -188,12 +183,12 @@
           </el-form-item>
           <el-form-item label="录入时间">
             <el-col :span="24">
-              <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.createDatetime" style="width: 100%;"></el-date-picker>
+              <el-date-picker  value-format="yyyy-MM-dd hh:mm:ss" type="datetime" placeholder="选择日期" v-model="repairform.createDatetime" style="width: 100%;"></el-date-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="维保时间">
             <el-col :span="24">
-              <el-date-picker  value-format="yyyy-MM-dd hh:mm" type="datetime" placeholder="选择日期" v-model="repairform.repairDatetime" style="width: 100%;"></el-date-picker>
+              <el-date-picker  value-format="yyyy-MM-dd hh:mm:ss" type="datetime" placeholder="选择日期" v-model="repairform.repairDatetime" style="width: 100%;"></el-date-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="维保内容">
@@ -211,6 +206,7 @@
 </template>
 <script>
   import {getProductListByCondition} from '@/api/product';
+  import { formatDateTime } from "@/utils/date";
   import {getRepairInfoListByDate,
     insertRepairInfo,
     getRepairInfoListByProductId,
@@ -250,8 +246,8 @@
         userFormData: '',
         userlist: [],
         selectlistRow: [],
-        starttime:'',
-        endtime:'',
+        starttime: '',
+        endtime: '',
         titleName: "",
         deindex:'',
         restaurants: [],
@@ -263,6 +259,8 @@
         pageNum1: 1,
         pageSize1: 5,
         deleteId: -1,
+        pageNum: 1,
+        pageSize: 5,
         productFormData: {},
         listQuery: {
           total: 50,
@@ -278,7 +276,7 @@
           saleDate: null,
           controllerNo: "",
           customerName: null,
-          productCategoryId: 530,
+          productCategoryId: null,
           tonnageNum: null,
           media: null,
           power: null,
@@ -465,14 +463,18 @@
         };
       },
       handleSelect1(item) {
-        this.repairform.userId = item.id;
+        this.repairform.userId = item;
       },
       querySearchAsyncuser(queryString, callback) {
-        getProductListByCondition(this.listQuery2).then(response => {
+        getProductListByCondition({
+          product: this.product,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }).then(response => {
           this.repairform.boilerNoList = [];
           var results = [];
           for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-            response.data.data.list[i].value = response.data.data.list[i].boilerNo;
+            response.data.data.list[i].value = response.data.data.list[i].controllerNo;
           }
           this.repairform.boilerNoList = response.data.data.list;
           results = queryString ? this.repairform.boilerNoList.filter(this.createFilteruser(queryString)) : this.repairform.boilerNoList;
@@ -491,13 +493,14 @@
       submitRepairuser() {
         if (this.inputname) {
           insertRepairInfo({
-            repairUserName: this.repairform.realName,
-            repairDatetime: this.repairform.repairDate,
-            inputDatetime: this.repairform.inputDate,
-            inputName: this.$store.getters.realName,
+           userName: this.repairform.realName,
+            repairDatetime: this.repairform.repairDatetime,
+            createDatetime: this.repairform.createDatetime,
+            createUserName: this.$store.getters.realName,
+            createUserId: this.$store.getters.id,
             repairContent: this.repairform.repairContent,
             productId: this.productFormData.id,
-            repairUserId: this.repairform.userId.id
+            userId: this.repairform.userId.id
           }).then(data => {
             this.newRepairDialogFlaguser = false;
             this.titleName = "维保信息";
@@ -509,13 +512,14 @@
           });
         } else {
           insertRepairInfo({
-            repairUserName: this.userFormData.realName,
-            repairDatetime: this.repairform.repairDate,
-            inputDatetime: this.repairform.inputDate,
-            inputName: this.$store.getters.realName,
+            userName: this.userFormData.realName,
+            repairDatetime: this.repairform.repairDatetime,
+            createDatetime: this.repairform.createDatetime,
+            createUserName: this.$store.getters.realName,
+            createUserId: this.$store.getters.id,
             repairContent: this.repairform.repairContent,
             productId: this.repairform.productId.id,
-            repairUserId: this.userFormData.id
+           userId: this.userFormData.id
           }).then(data => {
             this.newRepairDialogFlaguser = false;
             this.titleName = "维保信息";
@@ -536,20 +540,24 @@
         this.currentPage1 = currentPage;
       },
       getrepairListBydate() {
+        var starttime = formatDateTime(new Date(this.starttime), "yyyy-MM-dd hh:mm:ss");
+        var endtime = formatDateTime(new Date(this.endtime), "yyyy-MM-dd hh:mm:ss");
         getRepairInfoListByDate({
           productId: this.productFormData.id,
-          startTime: this.starttime,
-          endTime: this.endtime
+          startTime: starttime,
+          endTime: endtime
         }).then(response => {
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
         });
       },
       getrepairListBydateuser() {
+        var starttime = formatDateTime(new Date(this.starttime), "yyyy-MM-dd hh:mm:ss");
+        var endtime = formatDateTime(new Date(this.endtime), "yyyy-MM-dd hh:mm:ss");
         getRepairInfoListBydate({
           userId: this.userFormData.id,
-          startTime: this.starttime,
-          endTime: this.endtime
+          endTime: endtime,
+          startTime: starttime
         }).then(response => {
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
@@ -593,7 +601,11 @@
       },
       handleSizeChange2(val) {
         this.listQuery.pageSize = val;
-        getProductListByCondition(this.listQuery).then(response => {
+        getProductListByCondition({
+          product: this.product,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }).then(response => {
           let productInfoList = response.data.data;
           this.productList = productInfoList.list;
           this.listQuery.total = productInfoList.total;
@@ -603,7 +615,11 @@
       },
       handleCurrentChange2(val) {
         this.listQuery.pageNum = val;
-        getProductListByCondition(this.listQuery).then(response => {
+        getProductListByCondition({
+          product: this.product,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }).then(response => {
           let productInfoList = response.data.data;
           this.productList = productInfoList.list;
           this.listQuery.total = productInfoList.total;
@@ -613,7 +629,11 @@
       },
       getWaterDetails(val) {
         if (val == 0) {
-          getProductListByCondition(this.listQuery).then(response => {
+          getProductListByCondition({
+            product: this.product,
+            pageNum: this.pageNum,
+            pageSize: this.pageSize
+          }).then(response => {
             let productInfoList = response.data.data;
             this.productList = productInfoList.list;
             this.listQuery.total = productInfoList.total;

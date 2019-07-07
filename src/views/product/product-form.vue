@@ -19,9 +19,9 @@
             <el-form-item label="锅炉型号">
               <el-select
                 clearable
-                class="filter-item"
-                v-model="formData.boilerModelNumber"
-                style="width: 60%"
+                style="width: 150px"
+                v-model="formData.productCategoryId"
+                placeholder="锅炉型号"
               >
                 <el-option
                   v-for="item in boilerModelNumberArray"
@@ -47,7 +47,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="控制器编号" prop="controllerNo">
-              <el-input v-model="formData.controllerNo" placeholder="控制器编号" :disabled="isEdit"></el-input>
+              <el-input v-model="formData.controllerNo" placeholder="控制器编号" ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -58,8 +58,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="燃料" prop="fuel">
-              <el-select clearable class="filter-item" v-model="formData.fuel" style="width: 100%">
+            <el-form-item label="燃料" prop="power">
+              <el-select clearable class="filter-item" v-model="formData.power" style="width: 100%">
                 <el-option
                   v-for="item in fuelArray"
                   :key="item.value"
@@ -70,11 +70,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="介质" prop="medium">
+            <el-form-item label="介质" prop="media">
               <el-select
                 clearable
                 class="filter-item"
-                v-model="formData.medium"
+                v-model="formData.media"
                 style="width: 100%"
               >
                 <el-option
@@ -149,10 +149,10 @@ export default {
         orgType: this.$store.state.user.orgType,
         controllerNo: "",
         boilerNo: "",
-        boilerModelNumber: null,
+        productCategoryId: null,
         tonnageNum: null,
-        medium: null,
-        fuel: null,
+        media: null,
+        power: null,
         createDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
         editDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
         isSell: 0,
@@ -176,11 +176,11 @@ export default {
         ],
         controllerNo: [
           { required: true, trigger: "blur", message: "设备编号不能为空" }
-        ],
-        fuel: [{ required: true, trigger: "blur", validator: validateFuelFun }],
-        medium: [
-          { required: true, trigger: "blur", validator: validateMediumFun }
         ]
+       /* power: [{ required: true, trigger: "blur", validator: validateFuelFun }],
+        media: [
+          { required: true, trigger: "blur", validator: validateMediumFun }
+        ]*/
       },
       boilerModelCompleteDialogVisible: false
     };
@@ -241,7 +241,11 @@ export default {
   },
   methods: {
     initSelect() {
-      this.initBoilerModel();
+      getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
+        this.boilerModelNumberArray = this.getAuxiliaryMachineAboutOptions(
+          data.data.data
+        );
+      });
       initMedium().then(data => {
         this.mediumArray = data;
       });
@@ -250,11 +254,6 @@ export default {
       });
       initIsSell().then(data => {
         this.isSellArray = data;
-      });
-    },
-    initBoilerModel() {
-      getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
-        this.boilerModelNumberArray = data.data.data;
       });
     },
     initAuxiliaryMachineAbout() {
