@@ -9,17 +9,17 @@ export function getResourceByAccount() {
   })
 }
 
-export function getResourceListByCondition(query) {
+export function getUserResources(employeeId) {
   return request({
-    url: '/resource/resourcelistbycondition',
+    url: '/webapi/boilermanage/resource/user',
     method: 'get',
-    params: query
+    params: {employeeId}
   })
 }
 
-export function getResourceResIdListByRoleId(roleId) {
+export function getRoleResources(roleId) {
   return request({
-    url: '/resource/resourceresidlistbyroleid',
+    url: '/webapi/boilermanage/resource/role',
     method: 'get',
     params: {roleId}
   })
