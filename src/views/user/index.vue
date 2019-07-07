@@ -34,7 +34,7 @@
     <menu-context ref="menuContext">
       <menu-context-item @click="handleUpdate">编辑</menu-context-item>
       <span :style="{display:roleManageShow}">
-        <menu-context-item @click="handleEditRole">职能管理</menu-context-item>
+        <menu-context-item @click="handleEditRole">职务管理</menu-context-item>
       </span>
       <menu-context-item @click="handleDelete">删除</menu-context-item>
     </menu-context>

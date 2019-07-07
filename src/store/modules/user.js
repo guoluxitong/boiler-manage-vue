@@ -159,9 +159,9 @@ function generateMenusFromResources(resources = []) {
         let topResources = resources.filter(r => r.pId == 0);
         topResources.forEach(t => {
             let subResources = resources.filter(r => r.pId == t.id)
-            let topMenu = { "title": t.resName, "hasChilds": subResources.length != 0, "childs": [], "url": t.url, "pageUrl": t.pageUrl, "hidden": t.hidden }
+            let topMenu = {"id":t.id, "title": t.resName, "hasChilds": subResources.length != 0, "childs": [], "url": t.url, "pageUrl": t.pageUrl, "hidden": t.hidden }
             subResources.forEach(s => {
-                let subMenu = { "title": s.resName, "url": s.url, "pageUrl": s.pageUrl, "hidden": s.hidden }
+                let subMenu = { "id":s.id,"title": s.resName, "url": s.url, "pageUrl": s.pageUrl, "hidden": s.hidden }
                 topMenu.childs.push(subMenu)
             })
             topMenus.push(topMenu)

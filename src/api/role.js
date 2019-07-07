@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function getRoleListByCondition(query) {
+export function getRoleList(pageNum,pageSize) {
   return request({
-    url: '/role/rolelistbycondition',
+    url: '/webapi/boilermanage/role/list',
     method: 'get',
-    params: query
+    params:{pageNum,pageSize}
   })
 }
 export function getRoleListByUserId(userId) {
@@ -15,25 +15,34 @@ export function getRoleListByUserId(userId) {
   })
 }
 
+export function createRole(data) {
+  return request({
+    url: '/webapi/boilermanage/role/create',
+    method: 'post',
+    data:data
+  })
+}
 export function editRole(data) {
   return request({
-    url: '/role/editrole',
+    url: '/webapi/boilermanage/role/modify',
     method: 'post',
     data:data
   })
 }
 
-export function editRoleResource(data) {
+
+export function editRoleResources(roleId,data) {
   return request({
-    url: '/role/editroleresource',
+    url: '/webapi/boilermanage/role/resource/map',
     method: 'post',
+    params:{roleId},
     data:data
   })
 }
 
-export function deleteRoleById(roleId) {
+export function deleteRole(roleId) {
   return request({
-    url: '/role/deleterolebyid',
+    url: '/webapi/boilermanage/role/remove',
     method: 'post',
     params:{roleId}
   })

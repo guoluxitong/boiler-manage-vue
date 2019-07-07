@@ -8,7 +8,6 @@
         @click="handleCreate"
         type="primary"
         icon="el-icon-edit"
-        v-permission="['3','5']"
       >新增</el-button>
     </el-row>
 
@@ -54,8 +53,8 @@
       </el-table-column>
     </el-table>
     <menu-context ref="menuContext">
-      <menu-context-item @click="handleUpdate" v-permission="['3','5']">编辑</menu-context-item>
-      <menu-context-item @click="handleDelete" v-permission="['3','5']">删除</menu-context-item>
+      <menu-context-item @click="handleUpdate">编辑</menu-context-item>
+      <menu-context-item @click="handleDelete">删除</menu-context-item>
     </menu-context>
     <div class="pagination-container">
       <el-pagination
@@ -131,8 +130,6 @@
 </template>
 
 <script>
-import permission from "@/directive/permission/index.js"; // 权限判断指令
-import checkPermission from "@/utils/permission";
 import {
   getBoilerCustomerListByConditionAndPage,
   editBoilerCustomer,
@@ -150,7 +147,7 @@ export default {
   components: {
     "boiler-common-delete-validate-dialog": boilerCommonDeleteValidate
   },
-  directives: { permission },
+  //directives: { permission },
   data() {
     const validateRealNameFun = (rule, value, callback) => {
       if (!validateRealName(value)) {
@@ -169,17 +166,17 @@ export default {
       }
     };
     const validateWeiXinFun = (rule, value, callback) => {
-      if (!validateWeiXin(value)) {
-        callback(new Error("微信格式有误"));
-      } else {
-        callback();
-      }
+      // if (!validateWeiXin(value)) {
+      //   callback(new Error("微信格式有误"));
+      // } else {
+      //   callback();
+      // }
     };
     return {
       list: null,
       listQuery: {
         pageNum: 1,
-        pageSize: 5,
+        pageSize: 5
       },
       total: 50,
       textMap: {
@@ -208,8 +205,8 @@ export default {
         ],
         phone: [
           { required: true, trigger: "blur", validator: validatePhoneFun }
-        ],
-        weiXin: [{ trigger: "blur", validator: validateWeiXinFun }]
+        ]
+        //weiXin: [{ trigger: "blur", validator: validateWeiXinFun }]
       },
       listLoading: true,
       delId: -1,
@@ -285,8 +282,12 @@ export default {
     editData() {
       this.$refs.boilerCustomerForm.validate(valid => {
         if (valid) {
-          if(this.dialogStatus == "create"){
+          if (this.dialogStatus == "create") {
             createCustomer(this.boilerCustomerFormData).then(data => {
+              if (data.data.code) {
+                this.$message.error(data.data.msg);
+                return;
+              }
               this.dialogFormVisible = false;
               this.$message({
                 message: "成功",
@@ -294,8 +295,12 @@ export default {
               });
               this.getList();
             });
-          } else{
+          } else {
             editBoilerCustomer(this.boilerCustomerFormData).then(data => {
+              if (data.data.code) {
+                this.$message.error(data.data.msg);
+                return;
+              }
               this.dialogFormVisible = false;
               this.$message({
                 message: "成功",
@@ -304,7 +309,6 @@ export default {
               this.getList();
             });
           }
-
         } else {
           return false;
         }
@@ -332,6 +336,10 @@ export default {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
         deleteBoilerCustomerById(obj.id).then(data => {
+          if (data.data.code) {
+            this.$message.error(data.data.msg);
+            return;
+          }
           this.$message({
             message: "删除成功",
             type: "success"

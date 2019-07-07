@@ -1,18 +1,21 @@
 <template>
   <div style="background-color:#23262E">
     <el-row>
-      <el-col :span="15">
+      <el-col :span="18">
       <sidebar-item></sidebar-item>
       </el-col>
-      <el-col :span="9">
+      <el-col :span="6">
        <el-row class="right-menu">
-         <el-col :span="20">
+         <el-col :span="19">
+           <p class="user-info">
+          <span>山东简洁软件有限公司</span>
+          </p>
           <p class="user-info">
-          <span v-if="organizationName">山东简洁软件有限公司&nbsp;&nbsp;组织：{{organizationName}}</span>
+          <span v-if="organizationName">组织：{{organizationName}}</span>
           <span v-if="realName">{{realName}}</span>
           </p>
          </el-col>
-         <el-col :span="4">
+         <el-col :span="5">
           <el-dropdown class="avatar-container right-menu-item" trigger="click">
             <div class="avatar-wrapper">
               <img class="user-avatar" src="static/common/avator.png">
@@ -440,14 +443,15 @@ export default {
 };
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+.el-menu.el-menu--horizontal{ border-bottom: none}
 .right-menu {
   font-size:14px;
   height: 100%;
   line-height: 100%;
   .user-info {
     color: white;
-    line-height:34px;
-    text-align:right
+    text-align:right;
+    margin: 10px 0px;
   }
   &:focus {
     outline: none;

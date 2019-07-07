@@ -1,13 +1,11 @@
 <template>
   <div class="app-container role-container">
     <el-row class="app-query">
-      <el-input v-model="listQuery.roleName" placeholder="角色名称" style="width: 150px;"></el-input>
-      <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-button
-        style="margin-left: 10px;"
+        style="margin-left: 10px"
         @click="handleCreate"
         type="primary"
-        icon="el-icon-edit"
+        icon="el-icon-plus"
       >新增</el-button>
     </el-row>
 
@@ -21,12 +19,12 @@
       style="width: 120%"
       @row-contextmenu="openTableMenu"
     >
-      <el-table-column :show-overflow-tooltip="true" align="left" label="角色名称">
+      <el-table-column :show-overflow-tooltip="true" align="left" label="职务名称">
         <template slot-scope="scope">
           <span>{{scope.row.roleName}}</span>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="描述">
+      <el-table-column :show-overflow-tooltip="true" align="left" label="职务描述">
         <template slot-scope="scope">
           <span>{{scope.row.roleDesc}}</span>
         </template>
@@ -49,25 +47,25 @@
         :total="listQuery.total"
       ></el-pagination>
     </div>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog :title="dialogIsCreate?'新增':'编辑'" :visible.sync="dialogFormVisible" width="30%">
       <el-form
         :rules="rules"
         ref="roleForm"
         :model="roleFormData"
         label-position="right"
         label-width="80px"
-        style="width: 95%; margin-left:5px;"
+        style="width: 95% margin-left:5px"
       >
-        <el-form-item label="角色名称">
+        <el-form-item label="职务名称">
           <el-input v-model="roleFormData.roleName"></el-input>
         </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model="roleFormData.roleDesc"></el-input>
+        <el-form-item label="职务描述">
+          <el-input type="textarea" :rows="2" v-model="roleFormData.roleDesc"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="editData">确认</el-button>
+        <el-button type="primary" @click="createOrEditRole">确认</el-button>
       </div>
     </el-dialog>
     <el-dialog title="分配权限" :visible.sync="dialogResourceFormVisible" width="15%">
@@ -77,7 +75,7 @@
         :model="resourceFormData"
         label-position="right"
         label-width="80px"
-        style="width: 95%; margin-left:2px;"
+        style="width: 95% margin-left:2px"
       >
         <el-tree
           :data="resourceFormData.resourceList"
@@ -99,17 +97,16 @@
 </template>
 
 <script>
-import checkPermission from "@/utils/permission";
 import {
-  getRoleListByCondition,
+  getRoleList,
+  createRole,
   editRole,
-  deleteRoleById,
-  editRoleResource
+  editRoleResources,
+  deleteRole
 } from "@/api/role";
-import {
-  getResourceListByCondition,
-  getResourceResIdListByRoleId
-} from "@/api/resource";
+import { getUserResources, getRoleResources } from "@/api/resource";
+import { fail } from "assert";
+import { truncate } from "fs";
 export default {
   data() {
     return {
@@ -121,14 +118,10 @@ export default {
         roleName: null,
         userId: ""
       },
-      textMap: {
-        update: "编辑",
-        create: "新增"
-      },
-      dialogStatus: "",
+      dialogIsCreate: true,
       dialogFormVisible: false,
       roleFormData: {
-        roleId: "",
+        id: "",
         roleName: "",
         roleDesc: ""
       },
@@ -137,7 +130,7 @@ export default {
       resourceFormData: {
         resIdArray: [],
         userId: "",
-        roleId: "",
+        roleId: null,
         resourceList: [],
         defaultProps: {
           children: "children",
@@ -165,28 +158,31 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      if (checkPermission(["3", "5"])) {
-        this.listQuery.userId = this.$store.state.user.userId;
-      }
-      getRoleListByCondition(this.listQuery).then(response => {
-        const data = response.data.data;
-        this.list = data.list;
-        this.listQuery.total = data.total;
-        this.listQuery.pageNum = data.pageNum;
-        this.listQuery.pageSize = data.pageSize;
-        this.listLoading = false;
-      });
+      getRoleList(this.listQuery.pageNum, this.listQuery.pageSize).then(
+        response => {
+          this.listLoading = false;
+          let data = response.data.data;
+          if (data.code) {
+            this.$message.error(data.msg);
+          } else {
+            this.list = data.list;
+            this.listQuery.total = data.total;
+            this.listQuery.pageNum = data.pageNum;
+            this.listQuery.pageSize = data.pageSize;
+          }
+        }
+      );
     },
     resetTemp() {
       this.roleFormData = {
-        roleId: "",
+        id: "",
         roleName: "",
         roleDesc: ""
       };
     },
     handleCreate() {
       this.resetTemp();
-      this.dialogStatus = "create";
+      this.dialogIsCreate = true;
       this.dialogFormVisible = true;
       this.$nextTick(() => {
         this.$refs["roleForm"].clearValidate();
@@ -194,86 +190,136 @@ export default {
     },
     handleUpdate(row) {
       this.roleFormData = Object.assign({}, row); // copy obj
-      this.dialogStatus = "update";
+      this.dialogIsCreate = false;
       this.dialogFormVisible = true;
       this.$nextTick(() => {
         this.$refs["roleForm"].clearValidate();
       });
     },
     handleEditResource(row) {
-      this.resourceFormData.resIdArray = [];
-      if (checkPermission(["3", "5"])) {
-        this.resourceFormData.userId = this.$store.state.user.userId;
-      }
-      getResourceListByCondition({ userId: this.resourceFormData.userId })
+      let menus = this.$store.state.user.menus;
+      let resources = [];
+      menus.forEach(m => {
+        let resource = {};
+        resource.id = m.id;
+        resource.label = m.title;
+        resource.children = [];
+        m.childs.forEach(c => {
+          let subResource = {};
+          subResource.id = c.id;
+          subResource.label = c.title;
+          resource.children.push(subResource);
+        });
+        resources.push(resource);
+      });
+      this.$set(this.resourceFormData, "resourceList", resources);
+      getRoleResources(row.id)
         .then(response => {
-          const allResourceList = response.data.data;
-          const resourceList = this.filterFirstLevelResource(
-            allResourceList,
-            0
-          );
-          resourceList.forEach(item => {
-            item.children = this.getChildResourceList(item.id, allResourceList);
-          });
-          this.resourceFormData.resourceList = resourceList;
-          return getResourceResIdListByRoleId(row.roleId);
+          let checkIds = [];
+          let data = response.data;
+          if (data.code) {
+            this.$message.error(data.msg);
+          } else {
+            data.data.forEach(r => {
+              if (r.pId) {
+                checkIds.push(r.id);
+              } else {
+                if (null != r.url && "" != r.url) {
+                  checkIds.push(r.id);
+                }
+              }
+            });
+            this.$set(this.resourceFormData, "resIdArray", checkIds);
+            this.resourceFormData.roleId = row.id;
+            this.dialogResourceFormVisible = true;
+            if (this.$refs["tree"]) {
+              this.$refs["tree"].setCheckedKeys(
+                this.resourceFormData.resIdArray
+              );
+            }
+          }
         })
-        .then(response => {
-          let resIdArray = [];
-          response.data.data.forEach(resource => {
-            resIdArray.push(resource.resId);
-          });
-          this.resourceFormData.roleId = row.roleId;
-          this.resourceFormData.resIdArray = resIdArray;
-          this.dialogResourceFormVisible = true;
-          this.$nextTick(() => {
-            this.$refs["resourceForm"].clearValidate();
-          });
+        .catch(resion => {
+          this.$message.error(resion);
         });
     },
-    editResource() {
-      let parentResIdArray = [];
-      let childResIdArray = [];
+    checkContains(array, item) {
+      for (let i = 0; i < array.length; i++) {
+        if (array[i] == item) return true;
+      }
+      return false;
+    },
+    editResource(row) {
+      let map = [];
+      let checkIds = [];
       this.$refs.tree.getCheckedNodes().forEach(node => {
-        if (parentResIdArray.indexOf(node.pId) == -1) {
-          parentResIdArray.push(node.pId);
+        checkIds.push(node.id);
+      });
+      this.resourceFormData.resourceList.forEach(m => {
+        if (m.children.length > 0) {
+          let ids = [];
+          m.children.forEach(s => {
+            if (this.checkContains(checkIds, s.id)) {
+              ids.push(s.id);
+            }
+          });
+          if (ids.length) {
+            map.push({ roleId: this.resourceFormData.roleId, resId: m.id });
+            ids.forEach(i => {
+              map.push({ roleId: this.resourceFormData.roleId, resId: i });
+            });
+          }
+        } else {
+          if (this.checkContains(checkIds, m.id)) {
+            map.push({ roleId: this.resourceFormData.roleId, resId: m.id });
+          }
         }
-        childResIdArray.push(node.id);
       });
-      let resIdArray = [];
-      parentResIdArray.concat(childResIdArray).forEach(resId => {
-        if (resIdArray.indexOf(resId) == -1 && resId != 0) {
-          resIdArray.push(resId);
-        }
-      });
-      let roleResourceList = [];
-      resIdArray.forEach(resId => {
-        roleResourceList.push({
-          roleId: this.resourceFormData.roleId,
-          resId: resId
+      editRoleResources(this.resourceFormData.roleId, map)
+        .then(response => {
+          if (response.data.code) {
+            this.$message.error(response.data.msg);
+            this.resourceFormData.roleId = null;
+          } else {
+            this.$message({
+              message: "设置成功",
+              type: "success"
+            });
+            this.dialogResourceFormVisible = false;
+          }
+        })
+        .catch(resion => {
+          this.$message.error(resion);
         });
-      });
-      editRoleResource({
-        roleId: this.resourceFormData.roleId,
-        roleResourceList: roleResourceList
-      }).then(response => {
-        this.dialogResourceFormVisible = false;
-        this.$message({
-          message: "分配成功",
-          type: "success"
-        });
-        this.getList();
-      });
     },
-    editData() {
-      editRole(this.roleFormData).then(data => {
-        this.dialogFormVisible = false;
-        this.$message({
-          message: "成功",
-          type: "success"
+    createOrEditRole() {
+      if (this.dialogIsCreate) {
+        createRole(this.roleFormData).then(data => {
+          this.dialogFormVisible = false;
+          if (data.data.code) {
+            this.$message.error(data.data.msg);
+          } else {
+            this.$message({
+              message: "成功",
+              type: "success"
+            });
+            this.getList();
+          }
         });
-        this.getList();
-      });
+      } else {
+        editRole(this.roleFormData).then(data => {
+          this.dialogFormVisible = false;
+          if (data.data.code) {
+            this.$message.error(data.data.msg);
+          } else {
+            this.$message({
+              message: "成功",
+              type: "success"
+            });
+            this.getList();
+          }
+        });
+      }
     },
     handleDelete(row) {
       this.$confirm("确认删除?", "提示", {
@@ -282,12 +328,20 @@ export default {
         type: "warning"
       })
         .then(() => {
-          deleteRoleById(row.roleId).then(data => {
+          deleteRole(row.id).then(response => {
+            if(response.data.code){
+              this.$message.error(response.data.msg)
+              return;
+            }
             this.$message({
               message: "删除成功",
               type: "success"
             });
             this.list.splice(this.list.indexOf(row), 1);
+            if (this.list.length == 0) {
+              this.listQuery.pageNum = this.pageNum > 1 ? this.pageNum - 1 : 1;
+            }
+            this.getList();
           });
         })
         .catch(() => {
@@ -304,36 +358,6 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.pageNum = val;
       this.getList();
-    },
-    filterFirstLevelResource(menus, menu_level) {
-      const firstLevelResourceList = menus.filter(item => {
-        return item.pId == menu_level;
-      });
-      return this.reGenerateResourceTreeData(firstLevelResourceList);
-    },
-    getChildResourceList(id, resoruceList = []) {
-      let childResourceList = [];
-      resoruceList.forEach(item => {
-        if (id == item.pId) {
-          childResourceList.push(item);
-        }
-      });
-      childResourceList = this.reGenerateResourceTreeData(childResourceList);
-      childResourceList.forEach(item => {
-        item.children = this.getChildResourceList(item.id, resoruceList);
-      });
-      return childResourceList;
-    },
-    reGenerateResourceTreeData(resourceList) {
-      let reGenerateResourceList = [];
-      resourceList.forEach(resource => {
-        reGenerateResourceList.push({
-          id: resource.resId,
-          pId: resource.pId,
-          label: resource.resName
-        });
-      });
-      return reGenerateResourceList;
     }
   }
 };
