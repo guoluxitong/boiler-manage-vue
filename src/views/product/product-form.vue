@@ -30,7 +30,7 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-button type="primary" @click="handleAddBoilerModel" v-permission="['3']">添加</el-button>
+              <el-button icon="el-icon-plus" type="success" @click="handleAddBoilerModel" >添加</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -111,10 +111,8 @@ import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getAuxiliaryMachineLargeClassListByCondition } from "@/api/auxiliaryMachineLargeClass";
 import { getAuxiliaryMachineSmallClassListByCondition } from "@/api/auxiliaryMachineSmallClass";
 import { editProduct } from "@/api/product";
-import permission from "@/directive/permission/index.js";
 import boilerModelCompleteDialog from "./boiler-model-complete-page";
 export default {
-  directives: { permission },
   components: {
     boilerModelCompleteDialog
   },

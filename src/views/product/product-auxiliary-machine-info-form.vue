@@ -59,7 +59,7 @@
             <el-col :span="24">
               <el-form-item>
                 <el-button type="primary" @click="submitForm">确认</el-button>
-                <el-button type="primary" @click="visible=false">取消</el-button>
+                <el-button type="warning" icon="el-icon-back" @click="visible=false">取消</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -90,7 +90,8 @@
           modelName: '',
           amountOfUser: '',
           supplier: '',
-          remarks: ''
+          remarks: '',
+          productId: ''
         }
       }
     },
@@ -122,7 +123,6 @@
         this.$emit('auxiliaryMachineInfoDialogClose',{auxiliaryMachineInfoDialogVisible:false})
       },
       auxiliaryMachineInfoOpen(){
-        console.log(this.productAuxiliaryMachineInfo)
         Promise.all([this.initAuxiliaryMachineAbout()]).then(()=>{this.initFormData()})
       },
       initAuxiliaryMachineAbout(){

@@ -6,13 +6,13 @@
       <el-button
         style="margin-left: 10px;"
         @click="handleCreate"
-        type="primary"
-        icon="el-icon-edit"
+        type="success"
+        icon="el-icon-plus"
       >新增</el-button>
     </el-row>
 
     <el-table
-      :data="list"
+      :data="list.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
       v-loading="listLoading"
       element-loading-text="给我一点时间"
       border
@@ -31,11 +31,6 @@
           <span>{{scope.row.phone}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="left" :show-overflow-tooltip="true" label="微信">
-        <template slot-scope="scope">
-          <span>{{scope.row.weiXin}}</span>
-        </template>
-      </el-table-column>
       <el-table-column align="left" :show-overflow-tooltip="true" label="省">
         <template slot-scope="scope">
           <span>{{scope.row.province}}</span>
@@ -51,6 +46,11 @@
           <span>{{scope.row.district}}</span>
         </template>
       </el-table-column>
+      <el-table-column align="left" :show-overflow-tooltip="true" label="详细地址">
+        <template slot-scope="scope">
+          <span>{{scope.row.address}}</span>
+        </template>
+      </el-table-column>
     </el-table>
     <menu-context ref="menuContext">
       <menu-context-item @click="handleUpdate">编辑</menu-context-item>
@@ -59,13 +59,11 @@
     <div class="pagination-container">
       <el-pagination
         background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="listQuery.pageNum"
-        :page-sizes="[5,10,15,20]"
-        :page-size="listQuery.pageSize"
+        @size-change="handleSizeChange1"
+        @current-change="handleCurrentChange1" :current-page="currentPage1"
+        :page-sizes="[5]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
+        :total="this.total"
       ></el-pagination>
     </div>
 
@@ -91,32 +89,33 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="微信" prop="weiXin">
-              <el-input v-model="boilerCustomerFormData.weiXin"></el-input>
-            </el-form-item>
-          </el-col>
+
           <el-col :span="12">
             <el-form-item label="省">
               <el-input v-model="boilerCustomerFormData.province"></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="市">
               <el-input v-model="boilerCustomerFormData.city"></el-input>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item label="区">
               <el-input v-model="boilerCustomerFormData.district"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="详细地址" prop="weiXin">
+              <el-input v-model="boilerCustomerFormData.address"></el-input>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
         <el-button type="primary" @click="editData">确认</el-button>
       </div>
     </el-dialog>
@@ -131,7 +130,7 @@
 
 <script>
 import {
-  getBoilerCustomerListByConditionAndPage,
+  getList,
   editBoilerCustomer,
   deleteBoilerCustomerById,
   createCustomer,
@@ -173,11 +172,14 @@ export default {
       // }
     };
     return {
-      list: null,
+      list: [],
       listQuery: {
         pageNum: 1,
         pageSize: 5
       },
+      currentPage1:1,
+      pageNum1: 1,
+      pageSize1: 5,
       total: 50,
       textMap: {
         update: "编辑",
@@ -190,7 +192,7 @@ export default {
         customerNo: "",
         name: "",
         phone: "",
-        weiXin: "",
+        address: "",
         province: "",
         city: "",
         district: "",
@@ -241,13 +243,17 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      getBoilerCustomerListByConditionAndPage(this.listQuery).then(response => {
+      getList(this.listQuery).then(response => {
+        if (response.data.code==0){
         const data = response.data.data;
         this.list = data.list;
         this.total = data.total;
         this.listQuery.pageNum = data.pageNum;
-        this.listQuery.pageSize = data.pageSize;
         this.listLoading = false;
+      } else {
+          this.$message.error(response.data.msg);
+          return;
+        }
       });
     },
     resetTemp() {
@@ -352,14 +358,14 @@ export default {
       this.deleteValidateFormDialogVisible =
         obj.deleteValidateFormDialogVisible;
     },
-    handleSizeChange(val) {
-      this.listQuery.pageSize = val;
-      this.getList();
+    //分页
+    handleSizeChange1: function (pageSize) {
+      this.pageSize1 = pageSize;
+      this.handleCurrentChange1(this.currentPage);
     },
-    handleCurrentChange(val) {
-      this.listQuery.pageNum = val;
-      this.getList();
-    }
+    handleCurrentChange1: function (currentPage) {//页码切换
+      this.currentPage1 = currentPage;
+    },
   }
 };
 </script>
