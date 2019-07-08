@@ -1,7 +1,7 @@
 <template>
-  <section class="app-main">
+  <div class="app-main">
     <router-view :key="key"></router-view>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -14,3 +14,9 @@
         }
     }
 </script>
+<style rel="stylesheet/scss" lang="scss">
+.app-main{
+  width: 99.4%;
+  margin: auto;
+}
+</style>

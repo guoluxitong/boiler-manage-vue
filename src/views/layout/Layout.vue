@@ -2,7 +2,7 @@
     <div>
         <navbar></navbar>
         <breadcrumb class="breadcrumb-container"></breadcrumb>
-        <app-main :style="{'height':appMainHeight+'px','overflow-y':'auto'}"></app-main>
+        <app-main :style="{'height':appMainHeight+'px'}"></app-main>
     </div>
 </template>
 

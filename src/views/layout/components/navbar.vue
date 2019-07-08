@@ -1,10 +1,10 @@
 <template>
   <div style="background-color:#23262E">
     <el-row>
-      <el-col :span="18">
+      <el-col :span="17">
       <sidebar-item></sidebar-item>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="7">
        <el-row class="right-menu">
          <el-col :span="19">
            <p class="user-info">

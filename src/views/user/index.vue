@@ -1,15 +1,5 @@
 <template>
   <div class="app-container user-container">
-   <!-- <el-row class="app-query">
-      <el-autocomplete
-        v-model="userFormData.userName"
-        :fetch-suggestions="querySearchAsyncuser"
-        placeholder="员工姓名"
-        @select="((item)=>{handleSelectuser(item)})"
-      ></el-autocomplete>
-      <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-    </el-row>-->
-
     <el-table
       :data="list"
       v-loading="listLoading"
@@ -17,7 +7,6 @@
       border
       fit
       highlight-current-row
-      style="width: 120% ;height: 100%"
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" :show-overflow-tooltip="true" label="员工姓名">
@@ -121,7 +110,7 @@ import {getProductByboilerNo
 } from '@/api/product';
 import checkPermission from "@/utils/permission";
 import {
-  getUserListByConditionAndPage,
+  getUserList,
   editUser,
   editUserRole,
   deleteUserById
@@ -230,7 +219,7 @@ export default {
      this.role=val;
 },
     querySearchAsyncuser(queryString, callback) {
-      getUserListByConditionAndPage(this.listQuery).then(response => {
+      getUserList(this.listQuery).then(response => {
         this.userList = [];
         var results = [];
         for (let i = 0, len = response.data.data.list.length; i < len; i++) {
@@ -286,7 +275,7 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      getUserListByConditionAndPage(this.listQuery).then(response => {
+      getUserList(this.listQuery).then(response => {
         const data = response.data.data;
         this.list = data.list;
         this.listQuery.total = data.total;

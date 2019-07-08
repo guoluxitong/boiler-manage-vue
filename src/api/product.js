@@ -9,11 +9,11 @@ export function getProductListByCondition(data) {
   })
 }
 
-export function getProductUserListByProductCondition(query) {
+export function getProductUsers(productId) {
   return request({
-    url: '/product/productuserListbycondition',
+    url: '/webapi/boilermanage/product/users',
     method: 'get',
-    params: query
+    params: {productId}
   })
 }
 export function getProductByboilerNo(query) {
@@ -59,11 +59,13 @@ export function insertProduct(data) {
     data: data
   })
 }
-export function insertManyProductUser(data) {
+
+export function modifyProductUser(productId,data) {
   return request({
     url: '/webapi/boilermanage/product/users/modify',
     method: 'post',
-    data: data
+    params:{productId},
+    data:data
   })
 }
 export function deleteProductById(id,controllerNo) {

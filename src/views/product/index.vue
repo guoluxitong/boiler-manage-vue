@@ -65,7 +65,7 @@
       border
       fit
       highlight-current-row
-      style="width: 120%"
+      
       @row-contextmenu="openTableMenu"
     >
       <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉编号">
@@ -142,7 +142,7 @@
         v-permission="['3']"
         :width="100"
         :fontSize="14"
-      >分配</menu-context-item>
+      >负责员工</menu-context-item>
       <menu-context-item
         @click="handleDelete"
         v-permission="['3','6']"
@@ -176,35 +176,18 @@
     ></product-form-dialog>
     <!--分配用户dialog-->
     <div class="user-select">
-      <el-dialog title="分配用户" :visible.sync="dialogChoiceUserFormVisible" width="60%">
-        <el-table
-          :data="userlist"
-          v-loading="listLoading"
-          element-loading-text="给我一点时间"
-          ref="docTable"
-          border
-          fit
-          highlight-current-row
-          style="width: 120% ;height: 100%"
-          @row-contextmenu="openTableMenu"
-        >
-          <el-table-column type="selection" width="30"></el-table-column>
-          <el-table-column align="left" :show-overflow-tooltip="true" label="序号">
-            <template slot-scope="scope">
-              <span>{{scope.row.id}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="left" :show-overflow-tooltip="true" label="员工姓名">
-            <template slot-scope="scope">
-              <span>{{scope.row.userName}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="left" :show-overflow-tooltip="true" label="权限">
-            <template slot-scope="scope">
-              <span>{{scope.row.roleName}}</span>
-            </template>
-          </el-table-column>
-        </el-table>
+      <el-dialog title="负责员工" :visible.sync="dialogChoiceUserFormVisible" width="50%">
+        <el-form
+          ref="choiceUserForm"
+          :model="choiceUserFormData"
+          label-position="right"
+          label-width="80px">
+          <el-transfer
+            v-model="choiceUserFormData.checkedUsers"
+            :data="choiceUserFormData.sourceUsers"
+            :titles="['可分配', '已分配']"
+          ></el-transfer>
+        </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogChoiceUserFormVisible = false">取消</el-button>
           <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
@@ -334,7 +317,9 @@ import {
   getProductUserListByProductCondition,
   insertManyProductUser,
   insertProduct,
-  getUsers
+  getUsers,
+  getProductUsers,
+  modifyProductUser
 } from "@/api/product";
 import {getBoilerCustomerListByConditionAndPage} from "@/api/boilerCustomer";
 import { getProductAuxiliaryMachineInfoListByProductId, createProductAuxiliaryMachineInfoList,
@@ -353,6 +338,7 @@ import controllerRunInfoDialog from "@/components/controller-run-info/index";
 import { updateProductSellAbout } from "@/api/product";
 import { getControllerByteData, getControllerType } from "@/api/controller";
 import auxiliaryMachineInfoDialog from "./product-auxiliary-machine-info-form";
+import { getUserList } from "@/api/user";
 
 function dictionaryValueFilter(dictionaryValue, value) {
   const dictionaryValueItem = dictionaryValue.filter(item => {
@@ -490,10 +476,9 @@ export default {
       },
       dialogChoiceUserFormVisible: false,
       choiceUserFormData: {
-        userOptions: [],
-        userArray: [],
-        productUserArray: [], //设备原始分布用户Id列表
-        selectUserIdArray: [],
+        users: [],
+        sourceUsers: [],
+        checkedUsers: [], //设备原始分布用户Id列表
         productId: 0
       },
       productFormData: {},
@@ -520,7 +505,7 @@ export default {
       customerList: [],
       listLoading: true,
       delId: -1,
-      delCtlNo:null,
+      delCtlNo: null,
       updateId: -1,
       deleteValidateFormDialogVisible: false,
       productFromDialogVisible: false,
@@ -580,25 +565,30 @@ export default {
       this.choiceUserFormData.selectUserIdArray = tag;
     },
     querySearchAsyncuser(queryString, callback) {
-      getBoilerCustomerListByConditionAndPage(this.listQuery2).then(response => {
-        this.customerList = [];
-        var results = [];
-        for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-          response.data.data.list[i].value = response.data.data.list[i].name;
+      getBoilerCustomerListByConditionAndPage(this.listQuery2).then(
+        response => {
+          this.customerList = [];
+          var results = [];
+          for (let i = 0, len = response.data.data.list.length; i < len; i++) {
+            response.data.data.list[i].value = response.data.data.list[i].name;
+          }
+          this.customerList = response.data.data.list;
+          results = queryString
+            ? this.customerList.filter(this.createFilteruser(queryString))
+            : this.customerList;
+          callback(results);
         }
-        this.customerList = response.data.data.list;
-        results = queryString ? this.customerList.filter(this.createFilteruser(queryString)) : this.customerList;
-        callback(results);
-      });
+      );
     },
 
     createFilteruser(queryString, queryArr) {
-      return (queryArr) => {
-        return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      return queryArr => {
+        return (
+          queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
       };
     },
-    handleSelectuser(item) {
-    },
+    handleSelectuser(item) {},
     initSelect() {
       getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
         this.boilerModelNumberArray = this.getAuxiliaryMachineAboutOptions(
@@ -621,7 +611,7 @@ export default {
           this.largeClassOptions = this.getAuxiliaryMachineAboutOptions(
             response.data.data
           );
-          this.largeClassArray= response.data.data
+          this.largeClassArray = response.data.data;
         });
         resolve();
       });
@@ -656,7 +646,7 @@ export default {
     getList() {
       this.listLoading = true;
       //3->锅炉厂管理员 5->锅炉厂普通用户
-        this.product.userId = this.$store.state.user.userId;
+      this.product.userId = this.$store.state.user.userId;
       getProductListByCondition({
         product: this.product,
         pageNum: this.pageNum,
@@ -783,135 +773,84 @@ export default {
         newWindow = null;
       });
     },
+    initTransfer() {
+      let sourceUsers = [];
+      this.choiceUserFormData.users.forEach(u => {
+        sourceUsers.push({ key: u.key, label: u.label });
+      });
+      getProductUsers(this.choiceUserFormData.productId).then(response => {
+        let data = response.data;
+        if (data.code) {
+          this.$message.error(data.msg);
+          return;
+        } else {
+          let users = [];
+          data.data.forEach(d => {
+            if (1 != d.roleId) {
+              users.push(d.userId);
+            }
+          });
+          //组建source target
+          users.forEach(u => {
+            for (let i = 0; i < sourceUsers.length; i++) {
+              if (u.key == sourceUsers[i].key) {
+                u.label = sourceUsers[i].label;
+                sourceUsers.splice(i, 1);
+              }
+            }
+          });
+         
+          this.choiceUserFormData.sourceUsers = sourceUsers;
+          this.choiceUserFormData.checkedUsers = users;
+          this.dialogChoiceUserFormVisible = true;
+        }
+      }).catch(resion=>{
+        this.$message.error(resion)
+      })
+    },
     handleChoiceUser(row) {
       this.dialogStatus = "update";
       this.dialogChoiceUserFormVisible = true;
       this.choiceUserFormData.productId = row.id;
-      this.choiceUserFormData.userOptions = [];
-      getUsers(this.choiceUserFormData.productId).then(response => {
-        this.user = response.data.data;
-
-      });
-      getUserListByConditionAndPage(this.listQuery3).then(response => {
-        const data = response.data.data;
-        this.userlist = data.list;
-        this.listQuery.total = data.total;
-        this.listQuery.pageNum = data.pageNum;
-        this.listQuery.pageSize = data.pageSize;
-        this.listLoading = false;
-      });
-      let arr = []
-      this.userlist.forEach(item => {
-        this.user.forEach(val => {
-          if (val.userId === item.id) {
-            arr.push(item)
-          }
-        })
-      })
-      this.toggleSelection(arr)
-      /*getUserListByCondition({
-        status: statusManage.STATUS_ENABLE,
-        orgId: this.$store.state.user.orgId,
-        orgType: this.$store.state.user.orgType
-      }).then(response => {
-        let userArray = response.data.data;
-        this.choiceUserFormData.userArray = userArray;
-        userArray.forEach(item => {
-          if (item.id != this.$store.state.user.userId)
-            this.choiceUserFormData.userOptions.push({
-              value: item.id,
-              label: item.realName
+      if (this.choiceUserFormData.users.length < 1) {
+        getUserList().then(response => {
+          let data = response.data;
+          if (data.code) {
+            this.$message.error(data.msg);
+            return;
+          } else {
+            let users = [];
+            data.data.forEach(d => {
+              if (1 != d.roleId) {
+                users.push({ key: d.id, label: d.userName });
+              }
             });
-        });
-      });
-
-      getProductUserListByProductCondition({ productId: row.id }).then(data => {
-        this.choiceUserFormData.productUserArray = [];
-            this.choiceUserFormData.selectUserIdArray = []
-        //let userIdArray = [];
-        data.data.data.forEach(item => {
-          if (item.userId != this.$store.state.user.userId){
-            this.choiceUserFormData.productUserArray.push(item.userId);
-            this.choiceUserFormData.selectUserIdArray.push(item.userId)
+            this.choiceUserFormData.users = users;
+            this.initTransfer()
           }
         });
-        //this.choiceUserFormData.deleteUserIdArray = userIdArray;
-        //this.choiceUserFormData.selectUserIdArray = userIdArray;
-      });
-      this.dialogStatus = "update";
-      this.dialogChoiceUserFormVisible = true;
-      this.$nextTick(() => {
-        this.$refs["choiceUserForm"].clearValidate();
-      });*/
-    },
-    toggleSelection (rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.docTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.docTable.clearSelection()
+      }else{
+        this.initTransfer()
       }
-    },
-    checkArrayContains(v, dataArray) {
-      let flag = false;
-      for (let i = 0; i < dataArray.length; i++) {
-        if (v == dataArray[i]) {
-          flag = true;
-          break;
-        }
-      }
-      return flag;
     },
     confirmSubmitChoiceUser() {
-      let insertProductUserList = [];
-
-     /* for (
-        let i = 0;
-        i < this.choiceUserFormData.productUserArray.length;
-        i++
-      ) {
-        if (
-          !this.checkArrayContains(
-            this.choiceUserFormData.productUserArray[i],
-            this.choiceUserFormData.selectUserIdArray
-          )
-        ) {
-          deleteProductUserList.push({
-            userId: this.choiceUserFormData.productUserArray[i],
-            productId: this.choiceUserFormData.productId
-          });
+      let productId = this.choiceUserFormData.productId
+      let checkedUsers = this.choiceUserFormData.checkedUsers
+      let data = []
+      checkedUsers.forEach(u=>{
+        data.push({"productId":productId,"userId":u})
+      })
+      modifyProductUser(productId,data).then(response=>{
+        if(response.data.code){
+          this.$message.error(response.data.msg)
+          return
         }
-      }
-      let insertProductUserList = [];
-      for (
-        let i = 0;
-        i < this.choiceUserFormData.selectUserIdArray.length;
-        i++
-      ) {
-        if (
-          !this.checkArrayContains(
-            this.choiceUserFormData.selectUserIdArray[i],
-            this.choiceUserFormData.productUserArray
-          )
-        ) {
-          insertProductUserList.push({
-            userId: this.choiceUserFormData.selectUserIdArray[i],
-            productId: this.choiceUserFormData.productId
-          });
-        }
-      }*/
-      insertManyProductUser({
-        productId: this.choiceUserFormData.productId,
-        productUsers: insertProductUserList
-      }).then(data => {
-        this.dialogChoiceUserFormVisible = false;
-        this.$message({
-          message: "分配成功",
-          type: "success"
-        });
-        //this.getList();
-      });
+        this.choiceUserFormData.sourceUsers=[]
+        this.choiceUserFormData.checkedUsers=[]
+        this.dialogChoiceUserFormVisible = false
+      }).catch(resion=>{
+        this.$message.error(resion)
+      })
     },
     handleDelete(row) {
       this.$confirm("确认删除?", "提示", {
@@ -922,7 +861,7 @@ export default {
         .then(() => {
           this.deleteValidateFormDialogVisible = true;
           this.delId = row.id;
-          this.delCtlNo = row.controllerNo
+          this.delCtlNo = row.controllerNo;
         })
         .catch(() => {
           this.$message({
@@ -935,7 +874,7 @@ export default {
       if (obj.flag) {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
-        deleteProductById(obj.id,obj.controllerNo).then(response => {
+        deleteProductById(obj.id, obj.controllerNo).then(response => {
           this.$message({
             message: "删除成功",
             type: "success"
