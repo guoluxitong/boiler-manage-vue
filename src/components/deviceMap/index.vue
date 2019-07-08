@@ -47,9 +47,8 @@
   </div>
 </template>
 <script>
-import checkPermission from "@/utils/permission";
 import { getProductListByCondition } from "@/api/product";
-import {getBoilerCustomerListByConditionAndPage} from "@/api/boilerCustomer";
+import {getList} from "@/api/boilerCustomer";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getBoilerModelListByCondition } from "@/api/boilerModel";
 import { validatePositiveAndSmallAndFloatNum } from "@/utils/validate";
@@ -209,7 +208,7 @@ export default {
       });
     },
     querySearchAsyncuser(queryString, callback) {
-      getBoilerCustomerListByConditionAndPage(this.listQuery2).then(response => {
+      getList(this.listQuery2).then(response => {
         this.customerList = [];
         var results = [];
         for (let i = 0, len = response.data.data.list.length; i < len; i++) {

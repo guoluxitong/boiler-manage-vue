@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import qs from 'qs'
-export function getBoilerCustomerListByConditionAndPage(query) {
+export function getList(query) {
   return request({
     url: '/webapi/boilermanage/customer/list',
     method: 'get',
@@ -30,7 +30,6 @@ export function createCustomer(data) {
   })
 }
 export function editBoilerCustomer(data) {
-  console.log(data)
   return request({
     url: '/webapi/boilermanage/customer/modify',
     method: 'post',

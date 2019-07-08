@@ -4,7 +4,7 @@
       <el-button
         style="margin-left: 10px"
         @click="handleCreate"
-        type="primary"
+        type="success"
         icon="el-icon-plus"
       >新增</el-button>
     </el-row>

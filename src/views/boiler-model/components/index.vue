@@ -4,9 +4,8 @@
       <el-button
         style="margin-left: 10px;"
         @click="handleCreate"
-        type="primary"
-        icon="el-icon-edit"
-        v-permission="['3','5']"
+        icon="el-icon-plus"
+        type="success"
       >新增</el-button>
     </el-row>
 
@@ -27,8 +26,8 @@
       </el-table-column>
     </el-table>
     <menu-context ref="menuContext">
-      <menu-context-item @click="handleUpdate" v-permission="['3','5']">编辑</menu-context-item>
-      <menu-context-item @click="handleDelete" v-permission="['3','5']">删除</menu-context-item>
+      <menu-context-item @click="handleUpdate" >编辑</menu-context-item>
+      <menu-context-item @click="handleDelete">删除</menu-context-item>
     </menu-context>
     <div class="pagination-container">
       <el-pagination
@@ -54,12 +53,9 @@
           <el-form-item label="名称" prop="name">
             <el-input v-model="boilerModelFormData.name" size="small"></el-input>
           </el-form-item>
-          <el-form-item label="排序" prop="sort">
-            <el-input v-model="boilerModelFormData.sort" size="small"></el-input>
-          </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
         <el-button type="primary" @click="editData">确认</el-button>
       </div>
     </el-dialog>
@@ -74,8 +70,6 @@
 </template>
 
 <script>
-import permission from "@/directive/permission/index.js"; // 权限判断指令
-import checkPermission from "@/utils/permission";
 import {
   getBoilerModelListByConditionAndPage,
   editBoilerModel,
@@ -88,7 +82,6 @@ export default {
   components: {
     "boiler-common-delete-validate-dialog": boilerCommonDeleteValidate
   },
-  directives: { permission },
   props: {
     width: {
       type: String,
@@ -115,14 +108,12 @@ export default {
         id: "",
         name: "",
         orgId: this.$store.state.user.orgId,
-        sort: null
+        sort: 0
       },
       rules: {
         name: [
           { required: true, trigger: "blur", message: "型号名称不能为空" }
         ],
-        value: [{ required: true, trigger: "blur", message: "型号值不能为空" }],
-        sort: [{ required: true, trigger: "blur", message: "排序不能为空" }]
       },
       listLoading: true,
       delId: -1,
@@ -149,12 +140,17 @@ export default {
       this.listLoading = true;
         this.listQuery.orgId = this.$store.state.user.orgId;
       getBoilerModelListByConditionAndPage(this.listQuery).then(response => {
+        if ( response.data.code==0){
         const data = response.data.data;
         this.list = data.list;
         this.listQuery.total = data.total;
         this.listQuery.pageNum = data.pageNum;
         this.listQuery.pageSize = data.pageSize;
         this.listLoading = false;
+        } else {
+          this.$message.error(response.data.msg);
+          return;
+        }
       });
     },
     resetTemp() {
@@ -162,9 +158,8 @@ export default {
         id: "",
         label: "",
         value: "",
-        orgType: this.$store.state.user.orgType,
         orgId: this.$store.state.user.orgId,
-        sort: null
+        sort: 0
       };
     },
     handleCreate() {
@@ -188,21 +183,31 @@ export default {
         if (valid) {
           if (this.dialogStatus =="create"){
             createBoilerModel(this.boilerModelFormData).then(data => {
+              if (data.data.code == 0) {
               this.dialogFormVisible = false;
               this.$message({
                 message: "成功",
                 type: "success"
               });
               this.getList();
+            } else {
+                this.$message.error(data.data.msg);
+                return;
+              }
             });
           } else {
             editBoilerModel(this.boilerModelFormData).then(data => {
+              if (data.data.code == 0) {
               this.dialogFormVisible = false;
               this.$message({
                 message: "成功",
                 type: "success"
               });
               this.getList();
+              } else {
+                this.$message.error(data.data.msg);
+                return;
+              }
             });
           }
 
@@ -233,11 +238,16 @@ export default {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
         deleteBoilerModelById(obj.id).then(data => {
+          if (data.data.code == 0) {
           this.$message({
             message: "删除成功",
             type: "success"
           });
           this.getList();
+          } else {
+            this.$message.error(data.data.msg);
+            return;
+          }
         });
       }
     },

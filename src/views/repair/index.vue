@@ -6,7 +6,7 @@
     <el-tab-pane label="设备维保信息" name="repairdevice">
       <div>
       <el-table
-        :data="productList"
+        :data="productList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
         element-loading-text="给我一点时间"
         border
         @open="handleClick"
@@ -37,11 +37,9 @@
       <div>
         <el-pagination
           background
-          @size-change="handleSizeChange2"
-          @current-change="handleCurrentChange2"
-          :current-page="listQuery.pageNum"
+          @size-change="handleSizeChange1"
+          @current-change="handleCurrentChange1" :current-page="currentPage1"
           :page-sizes="[5]"
-          :page-size="listQuery.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="listQuery.total"
         ></el-pagination>
@@ -51,7 +49,7 @@
     <el-tab-pane label="用户维保信息" name="repairuser">
       <div >
       <el-table
-        :data="userlist"
+        :data="userlist.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
         element-loading-text="给我一点时间"
         border
         fit
@@ -77,11 +75,9 @@
         <div>
           <el-pagination
             background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="userlistQuery.pageNum"
+            @size-change="handleSizeChange1"
+            @current-change="handleCurrentChange1" :current-page="currentPage1"
             :page-sizes="[5]"
-            :page-size="userlistQuery.pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="userlistQuery.total"
           ></el-pagination>
@@ -99,9 +95,9 @@
         <el-col style="margin-left:20px" :span="6">
           <el-date-picker   type="date" placeholder="选择查询结束日期" v-model="endtime" style="width: 100%;"></el-date-picker>
         </el-col>
-        <el-button style="margin-left:20px" type="success"  @click="queryByTimeuser"  >查询</el-button>
-        <el-button style="margin-left:25%" type="primary"   @click="repairAdduser">添加</el-button>
-        <el-button type="warning" style="margin-left: 20px" @click="canceluser">取消</el-button>
+        <el-button style="margin-left:20px" icon="el-icon-search"  type="primary" @click="queryByTimeuser"  >查询</el-button>
+        <el-button style="margin-left:25%"   icon="el-icon-plus" type="success"   @click="repairAdduser">添加</el-button>
+        <el-button type="warning" icon="el-icon-back" style="margin-left: 20px" @click="canceluser">取消</el-button>
       </div>
       <el-row>
         <el-table
@@ -144,7 +140,7 @@
           </el-table-column>
           <el-table-column  align='center' label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" type="danger" @click="repairdeleteuser(scope.$index, scope.row)">删除</el-button>
+              <el-button size="mini" icon="el-icon-delete" type="danger" @click="repairdeleteuser(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -155,7 +151,6 @@
           @size-change="handleSizeChange1"
           @current-change="handleCurrentChange1" :current-page="currentPage1"
           :page-sizes="[5]"
-          :page-size="pageSize1"
           layout="total, sizes, prev, pager, next, jumper"
           :total="repairuserList.length"
         ></el-pagination>
@@ -391,7 +386,7 @@
         })
           .then(() => {
             deleteRepairInfoByProductId(id).then(response => {
-              if (response.data.code == 200) {
+              if (response.data.code == 0) {
                 this.repairList.splice(index, 1)
                 this.$message({
                   message: "删除成功",
@@ -432,8 +427,13 @@
         getRepairInfoListByProductId({
           productId: this.productFormData.id
         }).then(response => {
+          if (response.data.code ==0){
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
+        } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
         });
       },
       repairOpenuser() {
@@ -441,8 +441,13 @@
       },
       getrepairListuser() {
         getRepairInfoListByUserId(this.userFormData.id).then(response => {
+          if (response.data.code ==0){
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
+          } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
         });
       },
       querySearchAsync(queryString, callback) {
@@ -497,11 +502,12 @@
             repairDatetime: this.repairform.repairDatetime,
             createDatetime: this.repairform.createDatetime,
             createUserName: this.$store.getters.realName,
-            createUserId: this.$store.getters.id,
+            createUserId: this.$store.getters.userId,
             repairContent: this.repairform.repairContent,
             productId: this.productFormData.id,
             userId: this.repairform.userId.id
           }).then(data => {
+            if(data.data.code==0){
             this.newRepairDialogFlaguser = false;
             this.titleName = "维保信息";
             this.$message({
@@ -509,18 +515,23 @@
               type: "success"
             });
             this.getrepairList();
+            } else {
+              this.$message.error(data.data.msg);
+              return;
+            }
           });
         } else {
           insertRepairInfo({
-            userName: this.userFormData.realName,
+            userName: this.userFormData.userName,
             repairDatetime: this.repairform.repairDatetime,
             createDatetime: this.repairform.createDatetime,
             createUserName: this.$store.getters.realName,
-            createUserId: this.$store.getters.id,
+            createUserId: this.$store.getters.userId,
             repairContent: this.repairform.repairContent,
             productId: this.repairform.productId.id,
            userId: this.userFormData.id
           }).then(data => {
+            if(data.data.code==0){
             this.newRepairDialogFlaguser = false;
             this.titleName = "维保信息";
             this.$message({
@@ -528,6 +539,10 @@
               type: "success"
             });
             this.getrepairListuser();
+            } else {
+              this.$message.error(data.data.msg);
+              return;
+            }
           });
         }
       },
@@ -547,8 +562,13 @@
           startTime: starttime,
           endTime: endtime
         }).then(response => {
+          if(response.data.code==0){
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
+          } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
         });
       },
       getrepairListBydateuser() {
@@ -559,8 +579,13 @@
           endTime: endtime,
           startTime: starttime
         }).then(response => {
+          if(response.data.code==0){
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
+          } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
         });
       },
       queryByTimeuser() {
@@ -586,17 +611,20 @@
           this.userlist = userInfoList.list;
           this.userlistQuery.total = userInfoList.total;
           this.userlistQuery.pageNum = userInfoList.pageNum;
-          this.userlistQuery.pageSize = userInfoList.pageSize;
         });
       },
       handleCurrentChange(val) {
         this.userlistQuery.pageNum = val;
-        getUserList(this.userlistQuery).then(response => {
+        getUserListByConditionAndPage(this.userlistQuery).then(response => {
+          if(response.data.code==0){
           let userInfoList = response.data.data;
           this.userlist = userInfoList.list;
           this.userlistQuery.total = userInfoList.total;
           this.userlistQuery.pageNum = userInfoList.pageNum;
-          this.userlistQuery.pageSize = userInfoList.pageSize;
+          } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
         });
       },
       handleSizeChange2(val) {
@@ -606,11 +634,15 @@
           pageNum: this.pageNum,
           pageSize: this.pageSize
         }).then(response => {
+          if(response.data.code==0){
           let productInfoList = response.data.data;
           this.productList = productInfoList.list;
           this.listQuery.total = productInfoList.total;
           this.listQuery.pageNum = productInfoList.pageNum;
-          this.listQuery.pageSize = productInfoList.pageSize;
+          } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
         })
       },
       handleCurrentChange2(val) {
@@ -620,11 +652,15 @@
           pageNum: this.pageNum,
           pageSize: this.pageSize
         }).then(response => {
+          if(response.data.code==0){
           let productInfoList = response.data.data;
           this.productList = productInfoList.list;
           this.listQuery.total = productInfoList.total;
           this.listQuery.pageNum = productInfoList.pageNum;
-          this.listQuery.pageSize = productInfoList.pageSize;
+          } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
         })
       },
       getWaterDetails(val) {
@@ -634,21 +670,29 @@
             pageNum: this.pageNum,
             pageSize: this.pageSize
           }).then(response => {
+            if(response.data.code==0){
             let productInfoList = response.data.data;
             this.productList = productInfoList.list;
             this.listQuery.total = productInfoList.total;
             this.listQuery.pageNum = productInfoList.pageNum;
-            this.listQuery.pageSize = productInfoList.pageSize;
+            } else {
+              this.$message.error(response.data.msg);
+              return;
+            }
           })
         }
         ;
         if (val == 1) {
-          getUserList(this.userlistQuery).then(response => {
+          getUserListByConditionAndPage(this.userlistQuery).then(response => {
+            if(response.data.code==0){
             let userInfoList = response.data.data;
             this.userlist = userInfoList.list;
             this.userlistQuery.total = userInfoList.total;
             this.userlistQuery.pageNum = userInfoList.pageNum;
-            this.userlistQuery.pageSize = userInfoList.pageSize;
+            } else {
+              this.$message.error(response.data.msg);
+              return;
+            }
           });
         }
       },

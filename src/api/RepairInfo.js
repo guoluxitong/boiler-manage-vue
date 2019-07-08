@@ -8,7 +8,6 @@ export function getRepairInfoListByProductId(query) {
   });
 }
 export function getRepairInfoListByDate(query) {
-  console.log(query)
   return request({
     url: '/webapi/boilermanage/repairinfo/list/product/date',
     method: 'get',
@@ -38,6 +37,7 @@ export function insertRepairInfo(repairInfo) {
   })
 };
 export function insertRepairUserInfo(data) {
+
   return request({
     url: '/repairinfo/insertrepairuserinfo',
     method: 'post',
