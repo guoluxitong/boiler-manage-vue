@@ -10,7 +10,7 @@
         element-loading-text="给我一点时间"
         border
         @open="handleClick"
-        style="width: 120%"
+        
         @row-contextmenu="openTableMenu"
       >
         <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉编号">
@@ -61,7 +61,7 @@
         border
         fit
         highlight-current-row
-        style="width: 120%"
+        
       >
         <el-table-column align="left" :show-overflow-tooltip="true" label="真实姓名">
           <template slot-scope="scope">
@@ -217,7 +217,7 @@
     getRepairInfoListBydate,
     getRepairInfoListByUserId,
     deleteRepairInfoByProductId} from '@/api/RepairInfo';
-  import {getUserListByConditionAndPage} from "@/api/user";
+  import {getUserList} from "@/api/user";
   export default {
     name: 'repair',
     data() {
@@ -448,7 +448,7 @@
         });
       },
       querySearchAsync(queryString, callback) {
-        getUserListByConditionAndPage(this.userlistQuery2).then(response => {
+        getUserList(this.userlistQuery2).then(response => {
           this.repairform.userList = [];
           var results = [];
           for (let i = 0, len = response.data.data.list.length; i < len; i++) {
@@ -573,7 +573,7 @@
       },
       handleSizeChange(val) {
         this.userlistQuery.pageSize = val;
-        getUserListByConditionAndPage(this.userlistQuery).then(response => {
+        getUserList(this.userlistQuery).then(response => {
           let userInfoList = response.data.data;
           this.userlist = userInfoList.list;
           this.userlistQuery.total = userInfoList.total;
@@ -583,7 +583,7 @@
       },
       handleCurrentChange(val) {
         this.userlistQuery.pageNum = val;
-        getUserListByConditionAndPage(this.userlistQuery).then(response => {
+        getUserList(this.userlistQuery).then(response => {
           let userInfoList = response.data.data;
           this.userlist = userInfoList.list;
           this.userlistQuery.total = userInfoList.total;
@@ -623,7 +623,7 @@
         }
         ;
         if (val == 1) {
-          getUserListByConditionAndPage(this.userlistQuery).then(response => {
+          getUserList(this.userlistQuery).then(response => {
             let userInfoList = response.data.data;
             this.userlist = userInfoList.list;
             this.userlistQuery.total = userInfoList.total;
