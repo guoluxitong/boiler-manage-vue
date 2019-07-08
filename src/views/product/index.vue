@@ -1,6 +1,6 @@
 <template>
   <div class="app-container product-container">
-    <div v-if="!PartCategory">
+    <div v-if="PartCategory==0">
     <!--查询-->
     <el-row class="app-query">
       <el-autocomplete
@@ -160,14 +160,14 @@
         :total="listQuery.total"
       ></el-pagination>
     </div>
-    <!--编辑-->
+    <!--&lt;!&ndash;编辑&ndash;&gt;
     <product-form-dialog
       :show.sync="productFromDialogVisible"
       :productFormData="productFormData"
       :title="titleName"
       @confirmEditDialog="confirmEditDialog"
       @productFormDialogClose="productFormDialogClose"
-    ></product-form-dialog>
+    ></product-form-dialog>-->
     <!--分配用户dialog-->
     <div class="user-select">
       <el-dialog title="分配用户" :visible.sync="dialogChoiceUserFormVisible" width="60%">
@@ -234,7 +234,7 @@
       <device-chart></device-chart>
     </el-dialog>
     </div>
-    <div v-if="PartCategory">
+    <div v-if="PartCategory==1">
       <el-form
         ref="productForm"
         :model="formData"
@@ -302,6 +302,103 @@
         @confirmAuxiliaryMachineInfoDialog="confirmAuxiliaryMachineInfoDialog"
         @auxiliaryMachineInfoDialogClose="auxiliaryMachineInfoDialogClose"
       ></auxiliary-machine-info-dialog>
+    </div>
+    <div v-if="PartCategory==2">
+      <el-form
+        :rules="rules"
+        ref="productForm"
+        :model="formData"
+        label-position="right"
+        label-width="100px"
+        style="width: 96%; margin-left:15px;margin-top:15px"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="锅炉编号" prop="boilerNo">
+              <el-input v-model="formData.boilerNo"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="锅炉型号">
+              <el-select
+                clearable
+                style="width: 150px"
+                v-model="formData.productCategoryId"
+                placeholder="锅炉型号"
+              >
+                <el-option
+                  v-for="item in boilerModelNumberArray"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+             <!-- <el-button icon="el-icon-plus" type="success" @click="handleAddBoilerModel" >添加</el-button>-->
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-show="!isEdit">
+          <el-col :span="24">
+            <el-alert
+              title="控制器编号输入警告"
+              type="warning"
+              description="错误的控制器编号会引发数据混乱，修正要先删除锅炉信息，后再执行添加。请核实输入是否正确！"
+              effect="dark" :closable="false"
+              show-icon></el-alert>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="控制器编号" prop="controllerNo">
+              <el-input v-model="formData.controllerNo" placeholder="控制器编号" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="吨位（T）" prop="tonnageNum">
+              <el-input v-model="formData.tonnageNum"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="燃料" prop="power">
+              <el-select clearable class="filter-item" v-model="formData.power" style="width: 100%">
+                <el-option
+                  v-for="item in fuelArray"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="介质" prop="media">
+              <el-select
+                clearable
+                class="filter-item"
+                v-model="formData.media"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in mediumArray"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item>
+              <el-button type="primary" @click="addsubmitForm">确认</el-button>
+              <el-button type="primary" @click="cenalForm">取消</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
     </div>
   </div>
 </template>
@@ -396,6 +493,7 @@ export default {
         pageSize: 5,
         orgId: this.$store.state.user.orgId
       },
+      isEdit: false,
       productAuxiliaryMachineInfo: {
         id: '',
         partSubCategoryName: '',
@@ -451,7 +549,7 @@ export default {
       currentPage1:1,
       pageNum1: 1,
       pageSize1: 5,
-      PartCategory: false,
+      PartCategory: 0,
       total: 50,
       pageNum: 1,
       pageSize: 5,
@@ -678,7 +776,7 @@ export default {
     },
     //产品新增
     handleCreate() {
-      this.productFromDialogVisible = true;
+      this.PartCategory = 2;
       this.titleName = "新增";
     },
     //产品编辑
@@ -757,7 +855,7 @@ export default {
     },
     // 辅机信息
     auxiliaryMachineInfo(row) {
-      this.PartCategory = true;
+      this.PartCategory = 1;
       this.productFormData = row;
       this.productId=row.id;
       this.titleName = "辅机信息";
@@ -778,7 +876,10 @@ export default {
       });
     },
     canelForm(){
-      this.PartCategory = false;
+      this.PartCategory = 0;
+    },
+    cenalForm(){
+      this.PartCategory = 0;
     },
     baseInfoInfo(row) {
       let width = Math.round(document.body.clientWidth) - 200;
@@ -817,40 +918,7 @@ export default {
         })
       })
       this.toggleSelection(arr)
-      /*getUserListByCondition({
-        status: statusManage.STATUS_ENABLE,
-        orgId: this.$store.state.user.orgId,
-        orgType: this.$store.state.user.orgType
-      }).then(response => {
-        let userArray = response.data.data;
-        this.choiceUserFormData.userArray = userArray;
-        userArray.forEach(item => {
-          if (item.id != this.$store.state.user.userId)
-            this.choiceUserFormData.userOptions.push({
-              value: item.id,
-              label: item.realName
-            });
-        });
-      });
 
-      getProductUserListByProductCondition({ productId: row.id }).then(data => {
-        this.choiceUserFormData.productUserArray = [];
-            this.choiceUserFormData.selectUserIdArray = []
-        //let userIdArray = [];
-        data.data.data.forEach(item => {
-          if (item.userId != this.$store.state.user.userId){
-            this.choiceUserFormData.productUserArray.push(item.userId);
-            this.choiceUserFormData.selectUserIdArray.push(item.userId)
-          }
-        });
-        //this.choiceUserFormData.deleteUserIdArray = userIdArray;
-        //this.choiceUserFormData.selectUserIdArray = userIdArray;
-      });
-      this.dialogStatus = "update";
-      this.dialogChoiceUserFormVisible = true;
-      this.$nextTick(() => {
-        this.$refs["choiceUserForm"].clearValidate();
-      });*/
     },
     toggleSelection (rows) {
       if (rows) {
@@ -874,41 +942,6 @@ export default {
     confirmSubmitChoiceUser() {
       let insertProductUserList = [];
 
-     /* for (
-        let i = 0;
-        i < this.choiceUserFormData.productUserArray.length;
-        i++
-      ) {
-        if (
-          !this.checkArrayContains(
-            this.choiceUserFormData.productUserArray[i],
-            this.choiceUserFormData.selectUserIdArray
-          )
-        ) {
-          deleteProductUserList.push({
-            userId: this.choiceUserFormData.productUserArray[i],
-            productId: this.choiceUserFormData.productId
-          });
-        }
-      }
-      let insertProductUserList = [];
-      for (
-        let i = 0;
-        i < this.choiceUserFormData.selectUserIdArray.length;
-        i++
-      ) {
-        if (
-          !this.checkArrayContains(
-            this.choiceUserFormData.selectUserIdArray[i],
-            this.choiceUserFormData.productUserArray
-          )
-        ) {
-          insertProductUserList.push({
-            userId: this.choiceUserFormData.selectUserIdArray[i],
-            productId: this.choiceUserFormData.productId
-          });
-        }
-      }*/
       insertManyProductUser({
         productId: this.choiceUserFormData.productId,
         productUsers: insertProductUserList
@@ -957,18 +990,16 @@ export default {
         });
       }
     },
-    confirmEditDialog(obj) {
-      if (obj.flag) {
-        this.productFromDialogVisible = obj.productFromDialogVisible;
-        if (obj.title === "编辑") {
+    addsubmitForm() {
+        this.PartCategory = 0;
+        if (this.titleName === "编辑") {
           editProduct(obj.productFormData).then(response => {
             if (response.data.code==0){
-            if (obj.title === "编辑") {
+
               this.$message({
                 message: "编辑成功",
                 type: "success"
               });
-            };
             this.getList();
             } else {
               this.$message.error(response.data.msg)
@@ -976,9 +1007,9 @@ export default {
             }
           });
         } else {
-          insertProduct(obj.productFormData).then(response => {
+          insertProduct(this.FormData).then(response => {
             if (response.data.code==0){
-            if (obj.title === "复制") {
+            if (this.titleName === "复制") {
               this.$message({
                 message: "复制成功",
                 type: "success"
@@ -996,7 +1027,7 @@ export default {
             }
           })
         }
-      }
+
     },
     confirmSellDialog(obj) {
       if (obj.flag) {
