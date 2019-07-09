@@ -130,6 +130,12 @@
           this.largeClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
           this.largeClassArray=response.data.data
         })
+        if(this.productAuxiliaryMachineInfo.partCategoryId){
+          getAuxiliaryMachineSmallClassListByCondition(this.productAuxiliaryMachineInfo.partCategoryId).then(response=>{
+            this.smallClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
+            this.smallClassArray=response.data.data
+          })
+        }
       },
       getAuxiliaryMachineAboutOptions(dataList){
         let options=[]

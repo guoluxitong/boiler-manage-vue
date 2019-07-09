@@ -115,8 +115,8 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
         <el-button type="primary" @click="editData">确认</el-button>
+        <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <boiler-common-delete-validate-dialog
@@ -139,14 +139,12 @@ import {
 import {
   validateRealName,
   validatePhone,
-  validateWeiXin
 } from "@/utils/validate";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 export default {
   components: {
     "boiler-common-delete-validate-dialog": boilerCommonDeleteValidate
   },
-  //directives: { permission },
   data() {
     const validateRealNameFun = (rule, value, callback) => {
       if (!validateRealName(value)) {
@@ -163,13 +161,6 @@ export default {
       } else {
         callback();
       }
-    };
-    const validateWeiXinFun = (rule, value, callback) => {
-      // if (!validateWeiXin(value)) {
-      //   callback(new Error("微信格式有误"));
-      // } else {
-      //   callback();
-      // }
     };
     return {
       list: [],
@@ -208,7 +199,6 @@ export default {
         phone: [
           { required: true, trigger: "blur", validator: validatePhoneFun }
         ]
-        //weiXin: [{ trigger: "blur", validator: validateWeiXinFun }]
       },
       listLoading: true,
       delId: -1,
@@ -262,7 +252,7 @@ export default {
         customerNo: "",
         name: "",
         phone: "",
-        weiXin: "",
+        address: "",
         province: "",
         city: "",
         district: "",

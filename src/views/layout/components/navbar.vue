@@ -1,10 +1,10 @@
 <template>
   <div style="background-color:#23262E">
     <el-row>
-      <el-col :span="18">
+      <el-col :span="17">
       <sidebar-item></sidebar-item>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="7">
        <el-row class="right-menu">
          <el-col :span="19">
            <p class="user-info">
@@ -148,6 +148,8 @@ import { validateURL } from "@/utils/validate";
 import sidebarItem from "./sidebar/sidebarItem";
 import { editUserPass } from "@/api/user";
 import { deleteFile } from "@/api/upload";
+import { loginout } from "@/api/loginout";
+
 import axios from "axios";
 import { config } from "@/config/index";
 
@@ -267,7 +269,6 @@ export default {
   methods: {
     handleSubmit() {
       editUserPass({
-        id: this.$store.state.user.userId,
         password: this.passWordChangeFormData.newPassWord
       })
         .then(() => {
@@ -321,7 +322,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          window.close();
+          window.close()
         })
         .catch(err => {
           this.$message({

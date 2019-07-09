@@ -7,14 +7,6 @@ export function getList(query) {
     params: query
   })
 }
-
-export function getBoilerCustomerListByCondition(query) {
-  return request({
-    url: '/boilercustomer/boilercustomerlistbycondition',
-    method: 'get',
-    params: query
-  })
-}
 export function getBoilerCustomerListByName(name) {
   return request({
     url: '/webapi/boilermanage/customer/search',

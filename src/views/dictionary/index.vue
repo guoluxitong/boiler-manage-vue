@@ -19,7 +19,7 @@
       border
       fit
       highlight-current-row
-      style="width: 120%"
+      
       @row-contextmenu="openTableMenu"
     >
       <el-table-column :show-overflow-tooltip="true" align="left" label="名称">

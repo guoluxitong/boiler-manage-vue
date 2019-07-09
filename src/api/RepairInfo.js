@@ -36,14 +36,6 @@ export function insertRepairInfo(repairInfo) {
     data: repairInfo
   })
 };
-export function insertRepairUserInfo(data) {
-
-  return request({
-    url: '/repairinfo/insertrepairuserinfo',
-    method: 'post',
-    data: qs.stringify(data)
-  })
-};
 export function deleteRepairInfoByProductId(id) {
   return request({
     url: '/webapi/boilermanage/repairinfo/remove',

@@ -28,9 +28,9 @@ export function c(i) {
 
 export function login(account, password) {
   return request({
-    url: '/webapi/customer/login',
+    url: '/account/customer/login',
     method: 'post',
-    data: qs.stringify({ "loginId": account, "password": password})
+    data: qs.stringify({ loginId: account, password: password})
   })
 }
 

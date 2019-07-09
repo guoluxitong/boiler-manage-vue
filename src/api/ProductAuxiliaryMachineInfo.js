@@ -18,7 +18,7 @@ export function editProductAuxiliaryMachineInfoList(productPartInfo) {
   return request({
     url: '/webapi/boilermanage/productpartinfo/modify',
     method: 'post',
-    data: {productPartInfo: productPartInfo}
+    data: productPartInfo
   })
 }
 export function removeProductAuxiliaryMachineInfoList(data) {
