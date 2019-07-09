@@ -9,14 +9,19 @@
       highlight-current-row
       @row-contextmenu="openTableMenu"
     >
-      <el-table-column align="left" :show-overflow-tooltip="true" label="员工姓名">
+      <el-table-column width="180" align="left" :show-overflow-tooltip="true" label="员工姓名">
         <template slot-scope="scope">
           <span>{{scope.row.userName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="left" :show-overflow-tooltip="true" label="权限">
+      <el-table-column width="180" align="left" :show-overflow-tooltip="true" label="职务">
         <template slot-scope="scope">
           <span>{{scope.row.roleName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="left" :show-overflow-tooltip="true" label="备注">
+        <template slot-scope="scope">
+          <span>{{scope.row.mark}}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -40,9 +45,9 @@
       ></el-pagination>
     </div>
     <div class="el-dialog-user">
-      <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="40%">
+      <el-dialog title="编辑" :visible.sync="dialogFormVisible" width="40%">
         <el-form
-          :rules="rules"
+          :rules="rules.userForm"
           ref="userForm"
           :model="userFormData"
           label-position="right"
@@ -57,40 +62,47 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-form-item label="备注" prop="title">
+            <el-form-item label="备注">
               <el-input type="textarea" v-model="userFormData.mark"></el-input>
             </el-form-item>
           </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取消</el-button>
           <el-button type="primary" @click="editData">确认</el-button>
+          <el-button @click="dialogFormVisible = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
-    <el-dialog title="角色管理" :visible.sync="dialogRoleFormVisible" width="30%">
-      <el-table
-        :model="roleFormData"
+    <el-dialog title="职务管理" :visible.sync="dialogRoleFormVisible" width="30%">
+      <el-form
+        :rules="rules.userRoleForm"
+        ref="userRoleForm"
+        :model="roleFormData.postData"
         label-position="right"
         label-width="80px"
         style="width: 95%; margin-left:5px;"
-        @selection-change="handleSelectionChange"
       >
-        <el-table-column align="center" type="selection" width="55" fixed></el-table-column>
-        <el-table-column align="left" :show-overflow-tooltip="true" label="权限">
-          <template slot-scope="scope">
-            <span>{{scope.row.roleName}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="left" :show-overflow-tooltip="true" label="权限序列">
-          <template slot-scope="scope">
-            <span>{{scope.row.roleDesc}}</span>
-          </template>
-        </el-table-column>
-      </el-table>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="员工">{{roleFormData.userName}}</el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item label="当前职务" prop="id">
+            <el-select v-model="roleFormData.postData.id" placeholder="请选择" @change="selectChange">
+              <el-option
+                v-for="r in roleFormData.roles"
+                :key="r.id"
+                :label="r.roleName"
+                :value="r.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-row>
+      </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogRoleFormVisible = false">取消</el-button>
         <el-button type="primary" @click="editUserRole">确认</el-button>
+        <el-button @click="dialogRoleFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <boiler-common-delete-validate-dialog
@@ -104,145 +116,106 @@
 </template>
 
 <script>
-import permission from "@/directive/permission/index.js";
-import { getBoilerModelListByCondition } from "@/api/boilerModel";
-import {getProductByboilerNo
-} from '@/api/product';
-import checkPermission from "@/utils/permission";
 import {
   getUserList,
   editUser,
-  editUserRole,
+  getUserRole,
+  changeUserRole,
   deleteUserById
 } from "@/api/user";
-import { getCustomerListByCondition } from "@/api/customer";
-import { getRoleListByUserId } from "@/api/role";
+import { getRoleList } from "@/api/role";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 export default {
   components: {
     "boiler-common-delete-validate-dialog": boilerCommonDeleteValidate
   },
-  directives: { permission },
   data() {
     return {
       userId: null,
       list: null,
-      loadAllList: [],
-      devEuiArr: [],
-      restaurants: [],
-      repairList: [
-      ],
-      repairuserid:"",
-      nameList:{},
-      deleteId:-1,
-      choiceRepairFormData: {
-        insertRepairArray: [],
-        deleteRepairArray: [],
-      },
-      insertRepairList:[],
-      tempList: [],
-      currentPage1:1,
+      currentPage1: 1,
       pageNum1: 1,
       pageSize1: 5,
-      productRepairDialogVisible: false,
-      newRepairDialogFlag: false,
       listQuery: {
         pageNum: 1,
-        pageSize: 5,
-        orgId: this.$store.state.user.orgId
-      },
-      repairUserFormData: {},
-      customerOption: [],
-      textMap: {
-        update: "编辑",
-        create: "新增"
+        pageSize: 5
       },
       roleManageShow: "inline",
-      dialogStatus: "",
       dialogFormVisible: false,
-      isAvailableArray: [
-        { value: 1, label: "审核通过" },
-        { value: 0, label: "待审核" }
-      ],
-      mobileIsShow: "inline",
       userFormData: {
-        id: '',
-        orgId: '',
-        employeeId: '',
-        userName: '',
-        roleName: '',
-        roleId: '',
-        mark: ''
+        id: null,
+        userName: null,
+        mark: null
       },
       rules: {
-
+        userForm: {
+          userName: [
+            { required: true, message: "请输员工姓名", trigger: "blur" }
+          ]
+        },
+        userRoleForm:{
+            id:[
+              { required: true, message: "职务不能为空", trigger: "blur" }
+            ]
+        }
       },
       dialogRoleFormVisible: false,
       roleFormData: {
-        id: '',
-        roleName: '',
-        roleDesc: ''
+        userName: null,
+        roles: [],
+        postData: {
+          userId: null,
+          id: null,
+          roleName: null
+        }
       },
       role: {
-        id: '',
-        roleName: '',
-        roleDesc: ''
+        id: "",
+        roleName: "",
+        roleDesc: ""
       },
-      employeeId: '',
       userList: [],
       listLoading: true,
       delId: -1,
       deleteValidateFormDialogVisible: false
     };
   },
-
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        1: "success",
-        0: "danger"
-      };
-      return statusMap[status];
-    },
-    statusFilterLabel(status, isAvailableArray) {
-      return isAvailableArray.filter(item => {
-        return item.value == status;
-      });
-    }
-  },
   created() {
     this.getList();
-   /* this.initCustomerList();*/
   },
   methods: {
-    handleSelectionChange(val){
-     this.role=val;
-},
+    handleSelectionChange(val) {
+      this.role = val;
+    },
     querySearchAsyncuser(queryString, callback) {
       getUserList(this.listQuery).then(response => {
         this.userList = [];
         var results = [];
         for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-          response.data.data.list[i].value = response.data.data.list[i].userName;
+          response.data.data.list[i].value =
+            response.data.data.list[i].userName;
         }
         this.userList = response.data.data.list;
-        results = queryString ? this.userList.filter(this.createFilteruser(queryString)) : this.userList;
+        results = queryString
+          ? this.userList.filter(this.createFilteruser(queryString))
+          : this.userList;
         callback(results);
       });
     },
 
     createFilteruser(queryString, queryArr) {
-      return (queryArr) => {
-        return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      return queryArr => {
+        return (
+          queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
       };
     },
-    handleSelectuser(item) {
-      this.employeeId = item.employeeId;
-    },
-    dateForma: function (row,column){
+    dateForma: function(row, column) {
       var date = row[column.property];
-      if (date == undefined){return ''};
-      return  moment (date).format("YYYY-MM-DD HH:mm:ss")
+      if (date == undefined) {
+        return "";
+      }
+      return moment(date).format("YYYY-MM-DD HH:mm:ss");
     },
     openTableMenu(row, event) {
       this.$refs.menuContext.openTableMenu(
@@ -257,22 +230,6 @@ export default {
         this.roleManageShow = "inline";
       }
     },
-    initCustomerList() {
-      let customerOption = [];
-      getCustomerListByCondition().then(data => {
-        data.data.data.forEach(item => {
-          customerOption.push({
-            value: item.id + "",
-            label: item.customerName
-          });
-        });
-        this.customerOption = customerOption;
-      });
-    },
-    handleFilter() {
-      this.listQuery.pageNum = 1;
-      this.getList();
-    },
     getList() {
       this.listLoading = true;
       getUserList(this.listQuery).then(response => {
@@ -284,107 +241,74 @@ export default {
         this.listLoading = false;
       });
     },
-    resetTemp() {
-      this.userFormData = {
-        mobile: "",
-        orgType: "",
-        orgId: "",
-        email: "",
-        weiXin: "",
-        qQ: "",
-        realName: "",
-        password: "",
-        status: 0,
-        mark: ""
-      };
-    },
-    handleCreate() {
-      this.resetTemp();
-      if (checkPermission(["3", "5"])) {
-        this.userFormData.orgType = this.$store.state.user.orgType;
-        this.userFormData.orgId = this.$store.state.user.orgId;
-      }
-      if (checkPermission(["6"])) {
-        this.userFormData.orgType = "3";
-        this.userFormData.orgId = "";
-        this.userFormData.status = 1;
-      }
-      this.dialogStatus = "create";
-      this.mobileIsShow = "inline";
-      this.dialogFormVisible = true;
-      this.$nextTick(() => {
-        this.$refs["userForm"].clearValidate();
-      });
-    },
     handleUpdate(row) {
       this.userFormData = Object.assign({}, row); // copy obj
-      this.dialogStatus = "update";
       this.dialogFormVisible = true;
-      this.$nextTick(() => {
-        this.$refs["userFormData"].clearValidate();
-      });
-    },
-    handleShenHe(row) {
-      row.status = 1;
-      editUser(row).then(data => {
-        this.$message({
-          message: "审核通过",
-          type: "success"
-        });
-      });
     },
     handleEditRole(row) {
-      this.roleFormData.userId = row.id;
-      getRoleListByUserId(this.userId)
+      this.roleFormData.userName = row.userName;
+      this.roleFormData.postData.userId = row.id;
+      getUserRole(this.roleFormData.postData.userId)
         .then(response => {
-          let roleOptions = [];
-          let roleList = response.data.data;
-          roleList.forEach(role => {
-            roleOptions.push({ value: role.roleId, label: role.roleName });
-          });
-          this.roleFormData.roleOptions = roleOptions;
-          return getRoleListByUserId(row.id);
+          let data = response.data;
+          if (data.code) {
+            throw data.msg;
+          } else {
+            this.roleFormData.postData.id = data.data.roleId;
+            this.roleFormData.postData.roleName = data.data.roleName;
+            return getRoleList(1, 10);
+          }
         })
         .then(response => {
-          let roleIdArray = [];
-          let roleList = response.data.data;
-          roleList.forEach(role => {
-            roleIdArray.push(role.roleId);
-          });
-          console.info(roleIdArray);
-          this.roleFormData.roleIdArray = roleIdArray;
-          this.dialogRoleFormVisible = true;
-          this.$nextTick(() => {
-            this.$refs["roleForm"].clearValidate();
-          });
+          let data = response.data;
+          if (data.code) {
+            throw data.msg;
+          } else {
+            this.roleFormData.roles = data.data.list;
+            this.dialogRoleFormVisible = true;
+            this.$nextTick(() => {
+              this.$refs["userRoleForm"].clearValidate();
+            });
+          }
+        })
+        .catch(resion => {
+          this.$message.error(resion);
         });
     },
+    selectChange(item){
+      for(let i = 0; i< this.roleFormData.roles.length;i++){
+        if(this.roleFormData.roles[i].id == item){
+          this.roleFormData.postData.roleName = this.roleFormData.roles[i].roleName
+          break
+        }
+      }
+    },
     editUserRole() {
-      let userRoleList = [];
-      this.roleFormData.roleIdArray.forEach(roleId => {
-        userRoleList.push({ roleId: roleId, userId: this.roleFormData.userId });
-      });
-      editUserRole({
-        id: this.roleFormData.userId,
-        userRoleList: userRoleList
-      }).then(response => {
-        this.dialogRoleFormVisible = false;
-        this.$message({
-          message: "添加成功",
-          type: "success"
+      changeUserRole(
+        this.roleFormData.postData.userId,
+        this.roleFormData.postData
+      )
+        .then(response => {
+          if (response.data.code) throw response.data.msg;
+
+          this.dialogRoleFormVisible = false;
+          this.$message({
+            message: "修改成功",
+            type: "success"
+          });
+          this.getList();
+        })
+        .catch(resion => {
+          this.$message.error(resion);
         });
-        this.getList();
-      });
     },
     editData() {
       this.$refs.userForm.validate(valid => {
         if (valid) {
           editUser(this.userFormData).then(data => {
-            if (data.data.code == 400) {
-              this.$message({
-                message: data.data.msg,
-                type: "error"
-              });
+            if (data.data.code) {
+              this.$message.error(data.data.msg);
+              return;
             } else {
               this.dialogFormVisible = false;
               let message = "成功";
@@ -421,13 +345,21 @@ export default {
       if (obj.flag) {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
-        deleteUserById(obj.id).then(data => {
-          this.$message({
-            message: "删除成功",
-            type: "success"
+        deleteUserById(obj.id)
+          .then(response => {
+            let data = response.data;
+            if (data.code) {
+              throw data.msg;
+            }
+            this.$message({
+              message: "删除成功",
+              type: "success"
+            });
+            this.getList();
+          })
+          .catch(resion => {
+            this.$message.error(resion);
           });
-          this.getList();
-        });
       }
     },
     confirmCancelValidate(obj) {
