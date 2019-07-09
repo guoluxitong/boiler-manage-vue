@@ -116,12 +116,6 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-import permission from "@/directive/permission/index.js";
-import { getBoilerModelListByCondition } from "@/api/boilerModel";
-import checkPermission from "@/utils/permission";
-=======
->>>>>>> tomcat
 import {
   getUserList,
   editUser,
@@ -139,36 +133,12 @@ export default {
     return {
       userId: null,
       list: null,
-<<<<<<< HEAD
-      loadAllList: [],
-      devEuiArr: [],
-      restaurants: [],
-      nameList:{},
-      deleteId:-1,
-      choiceRepairFormData: {
-        insertRepairArray: [],
-        deleteRepairArray: [],
-      },
-      tempList: [],
-      currentPage1:1,
-=======
       currentPage1: 1,
->>>>>>> tomcat
       pageNum1: 1,
       pageSize1: 5,
       listQuery: {
         pageNum: 1,
-<<<<<<< HEAD
-        pageSize: 5,
-        orgId: this.$store.state.user.orgId
-      },
-      customerOption: [],
-      textMap: {
-        update: "编辑",
-        create: "新增"
-=======
         pageSize: 5
->>>>>>> tomcat
       },
       roleManageShow: "inline",
       dialogFormVisible: false,

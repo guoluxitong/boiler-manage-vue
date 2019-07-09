@@ -16,10 +16,6 @@
       border
       fit
       highlight-current-row
-<<<<<<< HEAD
-
-=======
->>>>>>> tomcat
       @row-contextmenu="openTableMenu"
     >
       <el-table-column :show-overflow-tooltip="true" align="left" label="职务名称">
