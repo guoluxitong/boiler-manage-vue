@@ -7,13 +7,6 @@ export function getRoleList(pageNum,pageSize) {
     params:{pageNum,pageSize}
   })
 }
-export function getRoleListByUserId(userId) {
-  return request({
-    url: '/role/rolelistbyuserid',
-    method: 'get',
-    params: {userId}
-  })
-}
 
 export function createRole(data) {
   return request({
