@@ -19,6 +19,7 @@
       fit
       highlight-current-row
 
+
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" label="名称">
