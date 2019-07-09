@@ -1,16 +1,8 @@
 import request from '@/utils/request'
 import qs from 'qs'
-export function getBoilerCustomerListByConditionAndPage(query) {
+export function getList(query) {
   return request({
     url: '/webapi/boilermanage/customer/list',
-    method: 'get',
-    params: query
-  })
-}
-
-export function getBoilerCustomerListByCondition(query) {
-  return request({
-    url: '/boilercustomer/boilercustomerlistbycondition',
     method: 'get',
     params: query
   })

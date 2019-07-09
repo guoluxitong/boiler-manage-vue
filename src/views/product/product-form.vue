@@ -30,7 +30,7 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-button type="primary" @click="handleAddBoilerModel" v-permission="['3']">添加</el-button>
+              <el-button type="primary" @click="handleAddBoilerModel">添加</el-button>
             </el-form-item>
           </el-col>
         </el-row>

@@ -64,23 +64,6 @@ export default {
 
   methods: {
     handleLogin() {
-      // a().then(d1 => {
-      //     let i1 = d1.data.value
-      //     console.log('a='+i1)
-      //     return b(i1);
-      //   })
-      //   .then(d2 => {
-      //     let i2 = d2.data.value
-      //     console.log('b='+i2)
-      //     return c(i2);
-      //   })
-      //   .then(d3 => {
-      //     let i3 = d3.data.value
-      //     console.log('c='+i3)
-      //   })
-      //   .catch(ex => {
-      //     console.log("111111111111111111")
-      //   });
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;

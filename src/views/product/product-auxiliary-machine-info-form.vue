@@ -122,7 +122,6 @@
         this.$emit('auxiliaryMachineInfoDialogClose',{auxiliaryMachineInfoDialogVisible:false})
       },
       auxiliaryMachineInfoOpen(){
-        console.log(this.productAuxiliaryMachineInfo)
         Promise.all([this.initAuxiliaryMachineAbout()]).then(()=>{this.initFormData()})
       },
       initAuxiliaryMachineAbout(){
@@ -130,6 +129,12 @@
           this.largeClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
           this.largeClassArray=response.data.data
         })
+        if(this.productAuxiliaryMachineInfo.partCategoryId){
+          getAuxiliaryMachineSmallClassListByCondition(this.productAuxiliaryMachineInfo.partCategoryId).then(response=>{
+            this.smallClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
+            this.smallClassArray=response.data.data
+          })
+        }
       },
       getAuxiliaryMachineAboutOptions(dataList){
         let options=[]

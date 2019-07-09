@@ -1,6 +1,6 @@
 <template>
   <div class="app-container product-container">
-    <div v-if="!PartCategory">
+    <div v-if="PartCategory==0">
     <!--查询-->
     <el-row class="app-query">
       <el-autocomplete
@@ -51,15 +51,13 @@
       <el-button
         style="margin-left: 10px;"
         @click="handleCreate"
-        type="primary"
-        icon="el-icon-edit"
-        v-permission="['3','5']"
+        icon="el-icon-plus" type="success"
       >新增</el-button>
       <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
     </el-row>
     <!--数据展示-->
     <el-table
-      :data="list"
+      :data="list.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
       v-loading="listLoading"
       element-loading-text="给我一点时间"
       border
@@ -127,11 +125,10 @@
     <menu-context ref="menuContext">
       <menu-context-item
         @click="handleUpdate"
-        v-permission="['3','5']"
         :width="100"
         :fontSize="14"
       >编辑</menu-context-item>
-      <menu-context-item @click="handleCopy" v-permission="['3','5']" :width="100" :fontSize="14">复制</menu-context-item>
+      <menu-context-item @click="handleCopy"  :width="100" :fontSize="14">复制</menu-context-item>
       <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
       <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>
       <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item>
@@ -139,13 +136,11 @@
       <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
       <menu-context-item
         @click="handleChoiceUser"
-        v-permission="['3']"
         :width="100"
         :fontSize="14"
-      >分配</menu-context-item>
+      >负责员工</menu-context-item>
       <menu-context-item
         @click="handleDelete"
-        v-permission="['3','6']"
         :width="100"
         :fontSize="14"
       >删除</menu-context-item>
@@ -157,54 +152,28 @@
     <div class="pagination-container">
       <el-pagination
         background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="listQuery.pageNum"
-        :page-sizes="[5,10,15,20]"
-        :page-size="listQuery.pageSize"
+        @size-change="handleSizeChange1"
+        @current-change="handleCurrentChange1"
+        :current-page="currentPage1"
+        :page-sizes="[5]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="listQuery.total"
       ></el-pagination>
     </div>
-    <!--编辑-->
-    <product-form-dialog
-      :show.sync="productFromDialogVisible"
-      :productFormData="productFormData"
-      :title="titleName"
-      @confirmEditDialog="confirmEditDialog"
-      @productFormDialogClose="productFormDialogClose"
-    ></product-form-dialog>
     <!--分配用户dialog-->
     <div class="user-select">
-      <el-dialog title="分配用户" :visible.sync="dialogChoiceUserFormVisible" width="60%">
-        <el-table
-          :data="userlist"
-          v-loading="listLoading"
-          element-loading-text="给我一点时间"
-          ref="docTable"
-          border
-          fit
-          highlight-current-row
-          style="width: 120% ;height: 100%"
-          @row-contextmenu="openTableMenu"
-        >
-          <el-table-column type="selection" width="30"></el-table-column>
-          <el-table-column align="left" :show-overflow-tooltip="true" label="序号">
-            <template slot-scope="scope">
-              <span>{{scope.row.id}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="left" :show-overflow-tooltip="true" label="员工姓名">
-            <template slot-scope="scope">
-              <span>{{scope.row.userName}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="left" :show-overflow-tooltip="true" label="权限">
-            <template slot-scope="scope">
-              <span>{{scope.row.roleName}}</span>
-            </template>
-          </el-table-column>
-        </el-table>
+      <el-dialog title="负责员工" :visible.sync="dialogChoiceUserFormVisible" width="50%">
+        <el-form
+          ref="choiceUserForm"
+          :model="choiceUserFormData"
+          label-position="right"
+          label-width="80px">
+          <el-transfer
+            v-model="choiceUserFormData.checkedUsers"
+            :data="choiceUserFormData.sourceUsers"
+            :titles="['可分配', '已分配']"
+          ></el-transfer>
+        </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogChoiceUserFormVisible = false">取消</el-button>
           <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
@@ -235,20 +204,12 @@
       ></controller-run-info-dialog>
     </el-dialog>
 
-    <!--辅机信息-->
-   <!--<auxiliary-machine-dialog
-      :show.sync="auxiliaryMachineDialogVisible"
-      :productFormData="productFormData"
-      :title="titleName"
-      @auxiliaryMachineDialogClose="auxiliaryMachineDialogClose"
-      @confirmAuxiliaryMachineDialog="confirmAuxiliaryMachineDialog"
-    ></auxiliary-machine-dialog>-->
     <!--运行信息-->
     <el-dialog title="运行信息报表" :visible.sync="showEchartDialog" height="100%" width="100%">
       <device-chart></device-chart>
     </el-dialog>
     </div>
-    <div v-if="PartCategory">
+    <div v-if="PartCategory==1">
       <el-form
         ref="productForm"
         :model="formData"
@@ -257,8 +218,8 @@
         style="width: 96%; margin-left:15px;"
       >
         <div style="margin-top: 5px">
-          <el-button type="primary" @click="handleAdd">添加</el-button>
-          <el-button type="primary" @click="canelForm">取消</el-button>
+          <el-button style="margin-left: 85%" icon="el-icon-plus" type="success"  @click="handleAdd">添加</el-button>
+          <el-button type="warning" icon="el-icon-back" @click="canelForm">取消</el-button>
         </div>
         <el-table
           :data="formData.productAuxiliaryMachineInfoList"
@@ -312,36 +273,192 @@
       <auxiliary-machine-info-dialog
         :show.sync="auxiliaryMachineInfoDialogVisible"
         :title="titleName"
+        :productAuxiliaryMachineInfo="productAuxiliaryMachineInfo"
         @confirmAuxiliaryMachineInfoDialog="confirmAuxiliaryMachineInfoDialog"
         @auxiliaryMachineInfoDialogClose="auxiliaryMachineInfoDialogClose"
       ></auxiliary-machine-info-dialog>
+    </div>
+    <div v-if="PartCategory==2">
+      <el-form
+        :rules="rules"
+        ref="productForm"
+        :model="addFormData"
+        label-position="right"
+        label-width="100px"
+        style="width: 96%; margin-left:15px;margin-top:15px"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="锅炉编号" prop="boilerNo">
+              <el-input v-model="addFormData.boilerNo"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="锅炉型号">
+              <el-select
+                clearable
+                style="width: 150px"
+                v-model="addFormData.productCategoryId"
+                placeholder="锅炉型号"
+              >
+                <el-option
+                  v-for="item in boilerModelNumberArray"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+             <el-button icon="el-icon-plus" type="success" @click="handleAddBoilerModel" >添加</el-button>
+              <el-button style="margin-left: 40%" type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-show="!isEdit">
+          <el-col :span="24">
+            <el-alert
+              title="控制器编号输入警告"
+              type="warning"
+              description="错误的控制器编号会引发数据混乱，修正要先删除锅炉信息，后再执行添加。请核实输入是否正确！"
+              effect="dark" :closable="false"
+              show-icon></el-alert>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="控制器编号" prop="controllerNo">
+              <el-input v-model="addFormData.controllerNo" placeholder="控制器编号" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="吨位（T）" prop="tonnageNum">
+              <el-input v-model="addFormData.tonnageNum"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="燃料" prop="power">
+              <el-select clearable class="filter-item" v-model="addFormData.power" style="width: 100%">
+                <el-option
+                  v-for="item in fuelArray"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="介质" prop="media">
+              <el-select
+                clearable
+                class="filter-item"
+                v-model="addFormData.media"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in mediumArray"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item>
+              <el-button type="primary" @click="addsubmitForm">确认</el-button>
+              <el-button type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div >
+    <div v-if="PartCategory==3">
+      <el-row class="app-query">
+        <el-button
+          style="margin-left: 10px;"
+          @click="handleCreateType"
+          icon="el-icon-plus" type="success"
+        >新增</el-button>
+        <el-button
+          style="margin-left: 80%;"
+          @click="canealType"
+          type="warning" icon="el-icon-back"
+        >取消</el-button>
+      </el-row>
+
+      <el-table
+        :data="typeList"
+        v-loading="listLoading"
+        element-loading-text="给我一点时间"
+        border
+        fit
+        highlight-current-row
+
+        @row-contextmenu="openTableMenu"
+      >
+        <el-table-column align="left" :show-overflow-tooltip="true" label="名称">
+          <template slot-scope="scope">
+            <span>{{scope.row.name}}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination-container">
+        <el-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="listQuery4.pageNum"
+          :page-sizes="[5,10,15,20]"
+          :page-size="listQuery4.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="listQuery4.total"
+        ></el-pagination>
+      </div>
+      <el-dialog :title="titleName" :visible.sync="dialogFormVisible" >
+        <el-form
+          :rules="rules"
+          ref="boilerModelForm"
+          :model="boilerModelFormData"
+          label-position="right"
+          label-width="80px"
+        >
+          <el-form-item label="名称" prop="name">
+            <el-input v-model="boilerModelFormData.name" size="small"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button  type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="createType">确认</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import permission from "@/directive/permission/index.js";
-import checkPermission from "@/utils/permission";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getBoilerModelListByCondition } from "@/api/boilerModel";
-import { getUserListByCondition ,
-  getUserListByConditionAndPage} from "@/api/user";
 import contextmenu from "@/components/ContextMenu";
 import deviceChart from "@/components/deviceChart";
 import {
   getProductListByCondition,
   deleteProductById,
-  getProductUserListByProductCondition,
-  insertManyProductUser,
   insertProduct,
-  getUsers
+  getProductUsers,
+  modifyProductUser
 } from "@/api/product";
-import {getBoilerCustomerListByConditionAndPage} from "@/api/boilerCustomer";
+import {
+  getBoilerModelListByConditionAndPage,
+  createBoilerModel
+} from "@/api/boilerModel";
+import {getList} from "@/api/boilerCustomer";
 import { getProductAuxiliaryMachineInfoListByProductId, createProductAuxiliaryMachineInfoList,
   editProductAuxiliaryMachineInfoList, removeProductAuxiliaryMachineInfoList} from "@/api/ProductAuxiliaryMachineInfo";
 import { getAuxiliaryMachineLargeClassListByCondition } from "@/api/auxiliaryMachineLargeClass";
-import { getAuxiliaryMachineSmallClassListByCondition } from "@/api/auxiliaryMachineSmallClass";
-import { statusManage } from "@/views/common/statusManage";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 import { formatDateTime } from "@/utils/date";
 import { validatePositiveAndSmallAndFloatNum } from "@/utils/validate";
@@ -351,8 +468,8 @@ import productFormDialog from "./product-form";
 import auxiliaryMachineDialog from "./auxiliary-machine-form";
 import controllerRunInfoDialog from "@/components/controller-run-info/index";
 import { updateProductSellAbout } from "@/api/product";
-import { getControllerByteData, getControllerType } from "@/api/controller";
 import auxiliaryMachineInfoDialog from "./product-auxiliary-machine-info-form";
+import { getUserList } from "@/api/user";
 
 function dictionaryValueFilter(dictionaryValue, value) {
   const dictionaryValueItem = dictionaryValue.filter(item => {
@@ -371,7 +488,6 @@ export default {
     deviceChart,
     auxiliaryMachineInfoDialog
   },
-  directives: { permission },
   data() {
     const validatePositiveAndSmallAndFloatNumFun = (rule, value, callback) => {
       if (!validatePositiveAndSmallAndFloatNum(value)) {
@@ -404,7 +520,7 @@ export default {
       largeClassArray: [],
       smallClassArray: [],
       productAuxiliaryMachineInfoList: [],
-      list: null,
+      list: [],
       userlist: null,
       user: null,
       listQuery3: {
@@ -412,8 +528,11 @@ export default {
         pageSize: 5,
         orgId: this.$store.state.user.orgId
       },
+      isEdit: false,
       productAuxiliaryMachineInfo: {
-       /* id: '',
+        id: '',
+        partSubCategoryName: '',
+        partCategoryName: '',
         partCategoryId: null,
         partSubCategoryId: null,
         brandName: '',
@@ -421,7 +540,7 @@ export default {
         amountOfUser: '',
         supplier: '',
         remarks: '',
-        productId: ''*/
+        productId: ''
       },
       auxiliaryMachineInfoDialogVisible: false,
       formData: {
@@ -446,6 +565,24 @@ export default {
         isSell: 0,
         productAuxiliaryMachineInfoList: []
       },
+      addFormData: {
+        id: "",
+        roleIdArray: this.$store.state.user.role,
+        userId: this.$store.state.user.userId,
+        orgId: this.$store.state.user.orgId,
+        controllerNo: "",
+        boilerNo: "",
+        partSubCategoryName: '',
+        partCategoryName: null,
+        partCategoryId: null,
+        partSubCategoryId: null,
+        tonnageNum: null,
+        media: null,
+        power: null,
+        createDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
+        editDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
+        isSell: 0,
+      },
       listQuery: {
         total: 50,
         pageNum: 1,
@@ -462,7 +599,24 @@ export default {
         power: null,
         userId: null
       },
-      PartCategory: false,
+      boilerModelFormData: {
+        id: "",
+        name: "",
+        orgId: this.$store.state.user.orgId,
+        sort: 0
+      },
+      dialogFormVisible: false,
+      listQuery4: {
+        total: 50,
+        pageNum: 1,
+        pageSize: 5,
+        name: null,
+        orgId: null
+      },
+      currentPage1:1,
+      pageNum1: 1,
+      pageSize1: 5,
+      PartCategory: 0,
       total: 50,
       pageNum: 1,
       pageSize: 5,
@@ -490,10 +644,9 @@ export default {
       },
       dialogChoiceUserFormVisible: false,
       choiceUserFormData: {
-        userOptions: [],
-        userArray: [],
-        productUserArray: [], //设备原始分布用户Id列表
-        selectUserIdArray: [],
+        users: [],
+        sourceUsers: [],
+        checkedUsers: [], //设备原始分布用户Id列表
         productId: 0
       },
       productFormData: {},
@@ -513,6 +666,7 @@ export default {
           { required: true, trigger: "blur", validator: validateMediumFun }
         ]
       },
+      typeList: [],
       productId: '',
       productPartInfoId: '',
       largeClassOptions: [],
@@ -520,7 +674,7 @@ export default {
       customerList: [],
       listLoading: true,
       delId: -1,
-      delCtlNo:null,
+      delCtlNo: null,
       updateId: -1,
       deleteValidateFormDialogVisible: false,
       productFromDialogVisible: false,
@@ -545,28 +699,51 @@ export default {
     });
   },
   methods: {
-    // remove(tag) {
-    //   console.log("remove-" + tag);
-    // },
+    getTypeList() {
+      this.listLoading = true;
+      this.listQuery.orgId = this.$store.state.user.orgId;
+      getBoilerModelListByConditionAndPage(this.listQuery4).then(response => {
+        const data = response.data.data;
+        this.typeList = data.list;
+        this.listQuery4.total = data.total;
+        this.listQuery4.pageNum = data.pageNum;
+        this.listQuery4.pageSize = data.pageSize;
+        this.listLoading = false;
+      });
+    },
     confirmAuxiliaryMachineInfoDialog(obj) {
+      var productPartInfos = [];
       if (obj.flag) {
         this.auxiliaryMachineInfoDialogVisible =
           obj.auxiliaryMachineInfoDialogVisible;
         if (obj.title === "新增"||obj.title === "复制") {
-          createProductAuxiliaryMachineInfoList({productPartInfos: obj.auxiliaryMachineInfoFormData}).then(() => {
+          obj.auxiliaryMachineInfoFormData.productId = this.productId;
+          productPartInfos.push(obj.auxiliaryMachineInfoFormData);
+          createProductAuxiliaryMachineInfoList(productPartInfos).then(data => {
+            if(data.data.code==0){
             this.$message({
               message: "操作成功",
               type: "success"
             });
             this.getAuxiliaryList();
+            } else {
+              this.$message.error(data.data.msg);
+              return;
+            }
           });
         } else {
-          editProductAuxiliaryMachineInfoList(obj.auxiliaryMachineInfoFormData).then(() => {
+          obj.auxiliaryMachineInfoFormData.productId = this.productId;
+          editProductAuxiliaryMachineInfoList(obj.auxiliaryMachineInfoFormData).then(data => {
+            if(data.data.code==0){
             this.$message({
               message: "操作成功",
               type: "success"
             });
             this.getAuxiliaryList();
+            } else {
+              this.$message.error(data.data.msg);
+              return;
+            }
           });
         }
       }
@@ -580,25 +757,31 @@ export default {
       this.choiceUserFormData.selectUserIdArray = tag;
     },
     querySearchAsyncuser(queryString, callback) {
-      getBoilerCustomerListByConditionAndPage(this.listQuery2).then(response => {
-        this.customerList = [];
-        var results = [];
-        for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-          response.data.data.list[i].value = response.data.data.list[i].name;
+      getList(this.listQuery2).then(
+        response => {
+          this.customerList = [];
+          var results = [];
+          for (let i = 0, len = response.data.data.list.length; i < len; i++) {
+            response.data.data.list[i].value = response.data.data.list[i].name;
+          }
+          this.customerList = response.data.data.list;
+          results = queryString
+            ? this.customerList.filter(this.createFilteruser(queryString))
+            : this.customerList;
+          callback(results);
+
         }
-        this.customerList = response.data.data.list;
-        results = queryString ? this.customerList.filter(this.createFilteruser(queryString)) : this.customerList;
-        callback(results);
-      });
+      );
     },
 
     createFilteruser(queryString, queryArr) {
-      return (queryArr) => {
-        return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      return queryArr => {
+        return (
+          queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
       };
     },
-    handleSelectuser(item) {
-    },
+    handleSelectuser(item) {},
     initSelect() {
       getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
         this.boilerModelNumberArray = this.getAuxiliaryMachineAboutOptions(
@@ -621,7 +804,7 @@ export default {
           this.largeClassOptions = this.getAuxiliaryMachineAboutOptions(
             response.data.data
           );
-          this.largeClassArray= response.data.data
+          this.largeClassArray = response.data.data;
         });
         resolve();
       });
@@ -647,7 +830,6 @@ export default {
         window.event.clientX,
         window.event.clientY
       );
-      //this.$refs.cmenu.show()
     },
     handleFilter() {
       this.listQuery.pageNum = 1;
@@ -655,36 +837,49 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      //3->锅炉厂管理员 5->锅炉厂普通用户
-        this.product.userId = this.$store.state.user.userId;
+      this.product.userId = this.$store.state.user.userId;
       getProductListByCondition({
         product: this.product,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }).then(response => {
+        if(response.data.code==0){
         const data = response.data.data;
         this.list = data.list;
         this.listQuery.total = data.total;
-        this.listQuery.pageNum = data.pageNum;
-        this.listQuery.pageSize = data.pageSize;
         this.listLoading = false;
+        } else {
+          this.$message.error(response.data.msg);
+          return;
+        }
       });
+    },
+    handleAddBoilerModel() {
+      this.PartCategory = 3;
+      this.getTypeList()
+    },
+    handleCreateType(){
+      this.dialogFormVisible=true
+      this.titleName = "新增";
+    },
+    canealType(){
+      this.PartCategory = 2;
     },
     //产品新增
     handleCreate() {
-      this.productFromDialogVisible = true;
+      this.PartCategory = 2;
       this.titleName = "新增";
     },
     //产品编辑
     handleUpdate(row) {
-      this.productFromDialogVisible = true;
-      this.productFormData = row;
+      this.PartCategory = 2;
+      this.addFormData = row;
       this.titleName = "编辑";
     },
     //产品复制
     handleCopy(row) {
-      this.productFromDialogVisible = true;
-      this.productFormData = row;
+      this.PartCategory = 2;
+      this.addFormData = row;
       this.titleName = "复制";
     },
     //辅机编辑
@@ -692,7 +887,6 @@ export default {
       this.auxiliaryMachineInfoDialogVisible = true;
       this.titleName = "编辑";
       this.productAuxiliaryMachineInfo = row;
-
     },
     //辅机复制
     handleCopyPart(row) {
@@ -712,7 +906,7 @@ export default {
             productId: this.productId,
             productPartInfoId: this.productPartInfoId
           }).then(response => {
-            if (response.data.code == 200) {
+            if (response.data.code == 0) {
               this.$message({
                 message: "删除成功",
                 type: "success"
@@ -728,14 +922,6 @@ export default {
           });
         });
     },
-    /*showMap(){
-                let width= Math.round(document.body.clientWidth/2)+175
-                let height= Math.round(document.body.clientHeight/2)+175
-                // let newWindow=openCommonWindow("/map-complete-page",{width: width, height: height})
-                // newWindow.on('closed', () => {
-                //     newWindow = null
-                // })
-            },*/
     //产品售出
     sellProduct(row) {
       this.productMapDialogVisible = true;
@@ -745,14 +931,13 @@ export default {
     showControllerData(row) {
       this.controllerRunInfoDialogVisible = true;
       this.controllerNo = row.controllerNo;
-      //console.log(row);
       row.province
         ? (this.address = row.province + row.city + row.district + row.street)
         : (this.address = "");
     },
     // 辅机信息
     auxiliaryMachineInfo(row) {
-      this.PartCategory = true;
+      this.PartCategory = 1;
       this.productFormData = row;
       this.productId=row.id;
       this.titleName = "辅机信息";
@@ -763,14 +948,20 @@ export default {
       getProductAuxiliaryMachineInfoListByProductId({
         productId: this.productFormData.id
       }).then(response => {
+        if(response.data.code==0){
         let productAuxiliaryMachineInfoList = response.data.data;
         this.formData.productAuxiliaryMachineInfoList = productAuxiliaryMachineInfoList;
+        } else {
+          this.$message.error(response.data.msg)
+          return;
+        }
       });
     },
     canelForm(){
-      this.PartCategory = false;
+      this.PartCategory = 0;
     },
-    submitForm(){
+    cenalForm(){
+      this.PartCategory = 0;
     },
     baseInfoInfo(row) {
       let width = Math.round(document.body.clientWidth) - 200;
@@ -783,135 +974,84 @@ export default {
         newWindow = null;
       });
     },
+    initTransfer() {
+      let sourceUsers = [];
+      this.choiceUserFormData.users.forEach(u => {
+        sourceUsers.push({ key: u.key, label: u.label });
+      });
+      getProductUsers(this.choiceUserFormData.productId).then(response => {
+        let data = response.data;
+        if (data.code) {
+          this.$message.error(data.msg);
+          return;
+        } else {
+          let users = [];
+          data.data.forEach(d => {
+            if (1 != d.roleId) {
+              users.push(d.userId);
+            }
+          });
+          //组建source target
+          users.forEach(u => {
+            for (let i = 0; i < sourceUsers.length; i++) {
+              if (u.key == sourceUsers[i].key) {
+                u.label = sourceUsers[i].label;
+                sourceUsers.splice(i, 1);
+              }
+            }
+          });
+
+          this.choiceUserFormData.sourceUsers = sourceUsers;
+          this.choiceUserFormData.checkedUsers = users;
+          this.dialogChoiceUserFormVisible = true;
+        }
+      }).catch(resion=>{
+        this.$message.error(resion)
+      })
+    },
     handleChoiceUser(row) {
       this.dialogStatus = "update";
       this.dialogChoiceUserFormVisible = true;
       this.choiceUserFormData.productId = row.id;
-      this.choiceUserFormData.userOptions = [];
-      getUsers(this.choiceUserFormData.productId).then(response => {
-        this.user = response.data.data;
-
-      });
-      getUserListByConditionAndPage(this.listQuery3).then(response => {
-        const data = response.data.data;
-        this.userlist = data.list;
-        this.listQuery.total = data.total;
-        this.listQuery.pageNum = data.pageNum;
-        this.listQuery.pageSize = data.pageSize;
-        this.listLoading = false;
-      });
-      let arr = []
-      this.userlist.forEach(item => {
-        this.user.forEach(val => {
-          if (val.userId === item.id) {
-            arr.push(item)
-          }
-        })
-      })
-      this.toggleSelection(arr)
-      /*getUserListByCondition({
-        status: statusManage.STATUS_ENABLE,
-        orgId: this.$store.state.user.orgId,
-        orgType: this.$store.state.user.orgType
-      }).then(response => {
-        let userArray = response.data.data;
-        this.choiceUserFormData.userArray = userArray;
-        userArray.forEach(item => {
-          if (item.id != this.$store.state.user.userId)
-            this.choiceUserFormData.userOptions.push({
-              value: item.id,
-              label: item.realName
+      if (this.choiceUserFormData.users.length < 1) {
+        getUserList().then(response => {
+          let data = response.data;
+          if (data.code) {
+            this.$message.error(data.msg);
+            return;
+          } else {
+            let users = [];
+            data.data.forEach(d => {
+              if (1 != d.roleId) {
+                users.push({ key: d.id, label: d.userName });
+              }
             });
-        });
-      });
-
-      getProductUserListByProductCondition({ productId: row.id }).then(data => {
-        this.choiceUserFormData.productUserArray = [];
-            this.choiceUserFormData.selectUserIdArray = []
-        //let userIdArray = [];
-        data.data.data.forEach(item => {
-          if (item.userId != this.$store.state.user.userId){
-            this.choiceUserFormData.productUserArray.push(item.userId);
-            this.choiceUserFormData.selectUserIdArray.push(item.userId)
+            this.choiceUserFormData.users = users;
+            this.initTransfer()
           }
         });
-        //this.choiceUserFormData.deleteUserIdArray = userIdArray;
-        //this.choiceUserFormData.selectUserIdArray = userIdArray;
-      });
-      this.dialogStatus = "update";
-      this.dialogChoiceUserFormVisible = true;
-      this.$nextTick(() => {
-        this.$refs["choiceUserForm"].clearValidate();
-      });*/
-    },
-    toggleSelection (rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.docTable.toggleRowSelection(row)
-        })
-      } else {
-        this.$refs.docTable.clearSelection()
+      }else{
+        this.initTransfer()
       }
-    },
-    checkArrayContains(v, dataArray) {
-      let flag = false;
-      for (let i = 0; i < dataArray.length; i++) {
-        if (v == dataArray[i]) {
-          flag = true;
-          break;
-        }
-      }
-      return flag;
     },
     confirmSubmitChoiceUser() {
-      let insertProductUserList = [];
-
-     /* for (
-        let i = 0;
-        i < this.choiceUserFormData.productUserArray.length;
-        i++
-      ) {
-        if (
-          !this.checkArrayContains(
-            this.choiceUserFormData.productUserArray[i],
-            this.choiceUserFormData.selectUserIdArray
-          )
-        ) {
-          deleteProductUserList.push({
-            userId: this.choiceUserFormData.productUserArray[i],
-            productId: this.choiceUserFormData.productId
-          });
+      let productId = this.choiceUserFormData.productId
+      let checkedUsers = this.choiceUserFormData.checkedUsers
+      let data = []
+      checkedUsers.forEach(u=>{
+        data.push({"productId":productId,"userId":u})
+      })
+      modifyProductUser(productId,data).then(response=>{
+        if(response.data.code){
+          this.$message.error(response.data.msg)
+          return
         }
-      }
-      let insertProductUserList = [];
-      for (
-        let i = 0;
-        i < this.choiceUserFormData.selectUserIdArray.length;
-        i++
-      ) {
-        if (
-          !this.checkArrayContains(
-            this.choiceUserFormData.selectUserIdArray[i],
-            this.choiceUserFormData.productUserArray
-          )
-        ) {
-          insertProductUserList.push({
-            userId: this.choiceUserFormData.selectUserIdArray[i],
-            productId: this.choiceUserFormData.productId
-          });
-        }
-      }*/
-      insertManyProductUser({
-        productId: this.choiceUserFormData.productId,
-        productUsers: insertProductUserList
-      }).then(data => {
-        this.dialogChoiceUserFormVisible = false;
-        this.$message({
-          message: "分配成功",
-          type: "success"
-        });
-        //this.getList();
-      });
+        this.choiceUserFormData.sourceUsers=[]
+        this.choiceUserFormData.checkedUsers=[]
+        this.dialogChoiceUserFormVisible = false
+      }).catch(resion=>{
+        this.$message.error(resion)
+      })
     },
     handleDelete(row) {
       this.$confirm("确认删除?", "提示", {
@@ -922,7 +1062,7 @@ export default {
         .then(() => {
           this.deleteValidateFormDialogVisible = true;
           this.delId = row.id;
-          this.delCtlNo = row.controllerNo
+          this.delCtlNo = row.controllerNo;
         })
         .catch(() => {
           this.$message({
@@ -936,30 +1076,52 @@ export default {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
         deleteProductById(obj.id,obj.controllerNo).then(response => {
+          if (response.data.code==0){
           this.$message({
             message: "删除成功",
             type: "success"
           });
           this.getList();
+          } else {
+            this.$message.error(response.data.msg)
+            return;
+          }
         });
       }
     },
-    confirmEditDialog(obj) {
-      if (obj.flag) {
-        this.productFromDialogVisible = obj.productFromDialogVisible;
-        if (obj.title === "编辑") {
-          editProduct(obj.productFormData).then(response => {
-            if (obj.title === "编辑") {
+    createType(){
+      createBoilerModel(this.boilerModelFormData).then(data => {
+        this.dialogFormVisible = false;
+        this.$message({
+          message: "成功",
+          type: "success"
+        });
+        this.getTypeList();
+      });
+    },
+    addsubmitForm() {
+        this.PartCategory = 0;
+        if (this.titleName === "编辑") {
+          editProduct(this.addFormData).then(response => {
+            if (response.data.code==0){
               this.$message({
                 message: "编辑成功",
                 type: "success"
               });
-            };
             this.getList();
+            } else {
+              this.$message.error(response.data.msg)
+              return;
+            }
           });
         } else {
-          insertProduct(obj.productFormData).then(response => {
-            if (obj.title === "复制") {
+          if(this.titleName === "复制"){
+            this.addFormData.boilerNo = "";
+            this.addFormData.controllerNo = "";
+          }
+          insertProduct(this.addFormData).then(response => {
+            if (response.data.code==0){
+            if (this.titleName === "复制") {
               this.$message({
                 message: "复制成功",
                 type: "success"
@@ -971,31 +1133,45 @@ export default {
               });
             }
             this.getList();
+            } else {
+              this.$message.error(response.data.msg)
+              return;
+            }
           })
         }
-      }
+
     },
     confirmSellDialog(obj) {
       if (obj.flag) {
         this.productMapDialogVisible = obj.productMapDialogVisible;
         updateProductSellAbout(obj.productFormData).then(response => {
+          if (response.data.code==0){
           this.$message({
             message: "出售成功",
             type: "success"
           });
           this.getList();
+          } else {
+            this.$message.error(response.data.msg)
+            return;
+          }
         });
       }
     },
     confirmAuxiliaryMachineDialog(obj) {
       if (obj.flag) {
         this.auxiliaryMachineDialogVisible = obj.auxiliaryMachineDialogVisible;
-        editProduct(obj.productFormData).then(() => {
+        editProduct(obj.productFormData).then(response => {
+          if (response.data.code==0){
           this.$message({
             message: "操作成功",
             type: "success"
           });
           this.getList();
+          } else {
+            this.$message.error(response.data.msg)
+            return;
+          }
         });
       }
     },
@@ -1163,13 +1339,20 @@ export default {
       this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible;
     },
     handleSizeChange(val) {
-      this.listQuery.pageSize = val;
-      this.getList();
+      this.listQuery4.pageSize = val;
+      this.getTypeList();
     },
     handleCurrentChange(val) {
-      this.listQuery.pageNum = val;
-      this.getList();
-    }
+      this.listQuery4.pageNum = val;
+      this.getTypeList();
+    },
+    handleSizeChange1: function (pageSize) {
+      this.pageSize1 = pageSize;
+      this.handleCurrentChange1(this.currentPage);
+    },
+    handleCurrentChange1: function (currentPage) {//页码切换
+      this.currentPage1 = currentPage;
+    },
   }
 };
 </script>

@@ -1,8 +1,8 @@
 import request from '@/utils/request'
-export function loginout() {
+export function loginout(query) {
   return request({
-    url: '/account/loginout',
-    method: 'post',
-    params:{ }
+    url: '/webapi/boilermanage/logout/out',
+    method: 'get',
+    params: query
   })
 }

@@ -8,16 +8,9 @@ export function getUserInfo(employeeId) {
     params:{employeeId}
   })
 }
-export function getUserListByConditionAndPage(query) {
+export function getUserList(query) {
   return request({
     url: '/webapi/boilermanage/user/list',
-    method: 'get',
-    params: query
-  })
-}
-export function getUserListByCondition(query) {
-  return request({
-    url: '/user/userlistbycondition',
     method: 'get',
     params: query
   })
@@ -47,9 +40,9 @@ export function editUser(user) {
 }
 export function editUserPass(data) {
   return request({
-    url: '/user/editUserPass',
+    url: '/webapi/user/change/password',
     method: 'post',
-    data: data
+    data: qs.stringify(data)
   })
 }
 

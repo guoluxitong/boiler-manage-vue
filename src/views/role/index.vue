@@ -4,7 +4,7 @@
       <el-button
         style="margin-left: 10px"
         @click="handleCreate"
-        type="primary"
+        type="success"
         icon="el-icon-plus"
       >新增</el-button>
     </el-row>
@@ -16,7 +16,7 @@
       border
       fit
       highlight-current-row
-      style="width: 120%"
+
       @row-contextmenu="openTableMenu"
     >
       <el-table-column :show-overflow-tooltip="true" align="left" label="职务名称">

@@ -28,7 +28,7 @@
            </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-button @click="productMapOpen">搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="productMapOpen">搜索</el-button>
           </el-col>
         </el-row>
         <el-form-item label="售出地址" prop="saleAddress">
@@ -45,7 +45,7 @@
 
 <script>
   import {formatDateTime} from '@/utils/date'
-  import {getBoilerCustomerListByConditionAndPage} from '@/api/boilerCustomer'
+  import {getList} from '@/api/boilerCustomer'
   export default {
     name: 'product-map',
     data(){
@@ -143,7 +143,7 @@
         this.$emit('productMapDialogClose',{productMapDialogVisible:false})
       },
       initBoilerCustomerSelect(){
-        getBoilerCustomerListByConditionAndPage(this.listQuery).then(data=>{
+        getList(this.listQuery).then(data=>{
           data.data.data.list.forEach(item=>{
             let optionItem={}
             optionItem.value=item.id

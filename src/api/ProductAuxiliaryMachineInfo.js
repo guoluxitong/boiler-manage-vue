@@ -14,15 +14,14 @@ export function createProductAuxiliaryMachineInfoList(data) {
     data: data
   })
 }
-export function editProductAuxiliaryMachineInfoList(productPartInfos) {
+export function editProductAuxiliaryMachineInfoList(productPartInfo) {
   return request({
     url: '/webapi/boilermanage/productpartinfo/modify',
     method: 'post',
-    data: {productPartInfos: productPartInfos}
+    data: productPartInfo
   })
 }
 export function removeProductAuxiliaryMachineInfoList(data) {
-  console.log(data.productId)
   return request({
     url: '/webapi/boilermanage/productpartinfo/remove',
     method: 'post',

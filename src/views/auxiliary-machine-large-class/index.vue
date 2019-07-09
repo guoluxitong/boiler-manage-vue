@@ -18,7 +18,7 @@
       border
       fit
       highlight-current-row
-      style="width: 120%"
+
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" label="名称">
@@ -74,7 +74,7 @@
 
 <script>
 import {
-  getAuxiliaryMachineLargeClassListByConditionAndPage,
+  getAuxiliaryMachineLargeClassListByCondition,
   editAuxiliaryMachineLargeClass,
   deleteAuxiliaryMachineLargeClassById
 } from "@/api/auxiliaryMachineLargeClass";
@@ -124,7 +124,7 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      getAuxiliaryMachineLargeClassListByConditionAndPage(this.listQuery).then(
+      getAuxiliaryMachineLargeClassListByCondition(this.listQuery).then(
         response => {
           const data = response.data.data;
           this.list = data.list;
