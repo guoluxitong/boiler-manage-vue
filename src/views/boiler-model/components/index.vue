@@ -16,7 +16,7 @@
       border
       fit
       highlight-current-row
-      style="width: 120%"
+
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" :show-overflow-tooltip="true" label="名称">
@@ -55,8 +55,8 @@
           </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
         <el-button type="primary" @click="editData">确认</el-button>
+        <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <boiler-common-delete-validate-dialog
