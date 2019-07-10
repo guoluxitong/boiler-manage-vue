@@ -74,9 +74,6 @@ export default {
         series: this.series,
         legend: { icon: "rect", data: legend }
       };
-      console.log("--------------------");
-      console.log(option);
-      console.log("--------------------");
       if (option && typeof option === "object") {
         myChart.clear();
         myChart.setOption(option, true);

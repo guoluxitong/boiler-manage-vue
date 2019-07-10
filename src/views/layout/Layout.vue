@@ -34,3 +34,9 @@
         }
     }
 </script>
+<style lang="scss">
+.main-table{
+margin: 10px auto
+}
+</style>
+

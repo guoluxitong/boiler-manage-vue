@@ -1,6 +1,6 @@
 <template>
   <div class="app-container user-container">
-    <el-table
+    <el-table class="main-table"
       :data="list"
       v-loading="listLoading"
       element-loading-text="给我一点时间"

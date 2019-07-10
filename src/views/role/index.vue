@@ -9,7 +9,7 @@
       >新增</el-button>
     </el-row>
 
-    <el-table
+    <el-table class="main-table"
       :data="list"
       v-loading="listLoading"
       element-loading-text="给我一点时间"
@@ -67,7 +67,7 @@
         <el-button @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="分配权限" :visible.sync="dialogResourceFormVisible" width="15%">
+    <el-dialog title="分配权限" :visible.sync="dialogResourceFormVisible" width="30%">
       <el-form
         :rules="rules"
         ref="resourceForm"
