@@ -27,8 +27,6 @@ export default {
   },
   methods: {
     getBreadcrumb() {
-      console.log(this.$route)
-      console.log(this.$store.state.user.menus)
       let path = []
       let menus = this.$store.state.user.menus
       for(let i = 0; i< menus.length;i++){

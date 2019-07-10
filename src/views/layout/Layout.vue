@@ -35,8 +35,8 @@
     }
 </script>
 <style lang="scss">
-.main-table{
-margin: 10px auto
+.app-query{
+margin: auto auto 10px auto
 }
 </style>
 

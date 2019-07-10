@@ -9,7 +9,7 @@
       >新增</el-button>
     </el-row>
 
-    <el-table class="main-table"
+    <el-table
       :data="list"
       v-loading="listLoading"
       element-loading-text="给我一点时间"
