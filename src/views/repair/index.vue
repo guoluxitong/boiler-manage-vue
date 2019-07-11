@@ -26,7 +26,6 @@
         element-loading-text="给我一点时间"
         border
         @open="handleClick"
-
         @row-contextmenu="openTableMenu"
       >
         <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉编号">
@@ -187,7 +186,7 @@
           </el-form-item>
           <el-form-item  v-if="inputno" label="产品编号">
             <el-autocomplete
-              v-model="repairform.boilerNo"
+              v-model="repairform.controllerNo"
               :fetch-suggestions="querySearchAsyncuser"
               placeholder="请输入内容"
               @select="((item)=>{handleSelectuser(item)})"
@@ -296,6 +295,18 @@
         userListArry: [],
         userArry: [],
         product: {
+          boilerNo: "",
+          saleDate: null,
+          controllerNo: "",
+          customerName: null,
+          productCategoryId: null,
+          tonnageNum: null,
+          media: null,
+          power: null,
+          userId: null,
+          isSell: null,
+        },
+        product1: {
           boilerNo: "",
           saleDate: null,
           controllerNo: "",
@@ -434,6 +445,7 @@
       },
       canceluser() {
         this.productRepairDialogVisibleuser = false;
+        this.repairuserList = [];
         this.titleName = "维保信息";
       },
       repairAdd() {
@@ -554,16 +566,12 @@
         });
       },
       querySearchAsync(queryString, callback) {
-        getUserList(this.userlistQuery2).then(response => {
-          this.repairform.userList = [];
           var results = [];
-          for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-            response.data.data.list[i].value = response.data.data.list[i].userName;
+          for (let i = 0, len = this.repairform.userList.length; i < len; i++) {
+            this.repairform.userList[i].value = this.repairform.userList[i].userName;
           }
-          this.repairform.userList = response.data.data.list;
           results = queryString ? this.repairform.userList.filter(this.createFilter(queryString)) : this.repairform.userList;
           callback(results);
-        });
       },
       createFilter(queryString, queryArr) {
         return (queryArr) => {
@@ -574,20 +582,13 @@
         this.repairform.userId = item;
       },
       querySearchAsyncuser(queryString, callback) {
-        getProductListByCondition({
-          product: this.product,
-          pageNum: this.pageNum,
-          pageSize: this.pageSize
-        }).then(response => {
-          this.repairform.boilerNoList = [];
+
           var results = [];
-          for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-            response.data.data.list[i].value = response.data.data.list[i].controllerNo;
+          for (let i = 0, len = this.repairform.boilerNoList.length; i < len; i++) {
+            this.repairform.boilerNoList[i].value = this.repairform.boilerNoList[i].controllerNo;
           }
-          this.repairform.boilerNoList = response.data.data.list;
           results = queryString ? this.repairform.boilerNoList.filter(this.createFilteruser(queryString)) : this.repairform.boilerNoList;
           callback(results);
-        });
       },
 
       createFilteruser(queryString, queryArr) {
@@ -782,6 +783,9 @@
         if (val == 0) {
           this.initSelect();
           this.userlist = [];
+          getUserList(this.userlistQuery2).then(response => {
+            this.repairform.userList = response.data.data.list;
+          })
         /*  getProductListByCondition({
             product: this.product,
             pageNum: this.pageNum,
@@ -802,6 +806,13 @@
         if (val == 1) {
           this.inintUserSelect();
           this.productList = [];
+          getProductListByCondition({
+            product: this.product1,
+            pageNum: this.pageNum,
+            pageSize: this.pageSize
+          }).then(response => {
+            this.repairform.boilerNoList = response.data.data.list;
+          })
          /* getUserList(this.userlistQuery).then(response => {
             if(response.data.code==0){
             let userInfoList = response.data.data;

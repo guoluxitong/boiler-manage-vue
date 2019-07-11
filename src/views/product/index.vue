@@ -182,8 +182,8 @@
           ></el-transfer>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
           <el-button @click="dialogChoiceUserFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
         </div>
       </el-dialog>
     </div>
@@ -230,6 +230,7 @@
         </div>
         <el-table
           :data="formData.productAuxiliaryMachineInfoList"
+          v-loading="listLoading"
           element-loading-text="给我一点时间"
           border
           style="margin-top:10px"
@@ -305,7 +306,7 @@
             <el-form-item label="锅炉型号">
               <el-select
                 clearable
-                style="width: 150px"
+                style="width: 140px"
                 v-model="addFormData.productCategoryId"
                 placeholder="锅炉型号"
               >
@@ -443,8 +444,8 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="createType">确认</el-button>
           <el-button  type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="primary" @click="createType">确认</el-button>
         </div>
       </el-dialog>
     </div>
@@ -964,12 +965,14 @@ export default {
       this.initAuxiliaryMachineAbout()
     },
     getAuxiliaryList(){
+      this.listLoading = true;
       getProductAuxiliaryMachineInfoListByProductId({
         productId: this.productFormData.id
       }).then(response => {
         if(response.data.code==0){
         let productAuxiliaryMachineInfoList = response.data.data;
         this.formData.productAuxiliaryMachineInfoList = productAuxiliaryMachineInfoList;
+          this.listLoading = false;
         } else {
           this.$message.error(response.data.msg)
           return;
