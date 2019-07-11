@@ -59,11 +59,13 @@
     <div class="pagination-container">
       <el-pagination
         background
-        @size-change="handleSizeChange1"
-        @current-change="handleCurrentChange1" :current-page="currentPage1"
-        :page-sizes="[5]"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="listQuery.pageNum"
+        :page-sizes="[5,10,15,20]"
+        :page-size="listQuery.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="this.total"
+        :total="total"
       ></el-pagination>
     </div>
 
@@ -102,12 +104,14 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form-item label="区">
               <el-input v-model="boilerCustomerFormData.district"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+        </el-row>
+        <el-row>
+          <el-col :span="24">
             <el-form-item label="详细地址" prop="weiXin">
               <el-input v-model="boilerCustomerFormData.address"></el-input>
             </el-form-item>
@@ -239,6 +243,7 @@ export default {
         this.list = data.list;
         this.total = data.total;
         this.listQuery.pageNum = data.pageNum;
+        this.listQuery.pageSize = data.pageSize;
         this.listLoading = false;
       } else {
           this.$message.error(response.data.msg);
@@ -348,14 +353,14 @@ export default {
       this.deleteValidateFormDialogVisible =
         obj.deleteValidateFormDialogVisible;
     },
-    //分页
-    handleSizeChange1: function (pageSize) {
-      this.pageSize1 = pageSize;
-      this.handleCurrentChange1(this.currentPage);
+    handleSizeChange(val) {
+      this.listQuery.pageSize = val;
+      this.getList();
     },
-    handleCurrentChange1: function (currentPage) {//页码切换
-      this.currentPage1 = currentPage;
-    },
+    handleCurrentChange(val) {
+      this.listQuery.pageNum = val;
+      this.getList();
+    }
   }
 };
 </script>

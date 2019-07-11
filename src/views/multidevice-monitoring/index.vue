@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-      mapHeight: document.documentElement.clientHeight / 3,
+      mapHeight: document.documentElement.clientHeight-140,
       cardHeight: document.documentElement.clientHeight,
       controllerNoArray: [],
       device: {},

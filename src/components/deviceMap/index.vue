@@ -1,12 +1,19 @@
 <template>
   <div>
     <el-row class="app-query">
-      <el-autocomplete
+      <el-select
+        clearable
+        style="width: 150px"
         v-model="product.customerName"
-        :fetch-suggestions="querySearchAsyncuser"
         placeholder="客户名称"
-        @select="((item)=>{handleSelectuser(item)})"
-      ></el-autocomplete>
+      >
+        <el-option
+          v-for="item in customerList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
       <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
       <el-select
         clearable
@@ -174,7 +181,14 @@ export default {
   methods: {
     initSelect() {
       getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
-        this.boilerModelNumberArray = data.data.data;
+        this.boilerModelNumberArray = this.getAuxiliaryMachineAboutOptions(
+          data.data.data
+        );
+      });
+      getList(this.listQuery2).then(response => {
+        this.customerList = this.getcustomerListOptions(
+          response.data.data.list
+        );
       });
       initMedium().then(data => {
         this.mediumArray = data;
@@ -189,6 +203,26 @@ export default {
     handleFilter() {
       this.listQuery.pageNum = 1;
       this.loadMapData();
+    },
+    getcustomerListOptions(dataList) {
+      let options = [];
+      dataList.forEach(item => {
+        let optionItem = {};
+        optionItem.value = item.name;
+        optionItem.label = item.name;
+        options.push(optionItem);
+      });
+      return options;
+    },
+    getAuxiliaryMachineAboutOptions(dataList) {
+      let options = [];
+      dataList.forEach(item => {
+        let optionItem = {};
+        optionItem.value = item.id;
+        optionItem.label = item.name;
+        options.push(optionItem);
+      });
+      return options;
     },
     loadMapData() {
       let map = new BMap.Map("map");
@@ -206,26 +240,6 @@ export default {
       }).then(res => {
         this.showMapData(map, res.data.data.list);
       });
-    },
-    querySearchAsyncuser(queryString, callback) {
-      getList(this.listQuery2).then(response => {
-        this.customerList = [];
-        var results = [];
-        for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-          response.data.data.list[i].value = response.data.data.list[i].name;
-        }
-        this.customerList = response.data.data.list;
-        results = queryString ? this.customerList.filter(this.createFilteruser(queryString)) : this.customerList;
-        callback(results);
-      });
-    },
-
-    createFilteruser(queryString, queryArr) {
-      return (queryArr) => {
-        return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-      };
-    },
-    handleSelectuser(item) {
     },
     showMapData(map, data) {
       this.mapPoints = data;

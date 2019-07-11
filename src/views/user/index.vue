@@ -69,7 +69,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="editData">确认</el-button>
-          <el-button @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
@@ -102,7 +102,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="editUserRole">确认</el-button>
-        <el-button @click="dialogRoleFormVisible = false">取消</el-button>
+        <el-button type="warning" icon="el-icon-back" @click="dialogRoleFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <boiler-common-delete-validate-dialog

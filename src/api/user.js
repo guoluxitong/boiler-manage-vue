@@ -16,7 +16,7 @@ export function getUserList(query) {
   })
 }
 
-export function getUserListByOrganizationTypeAndId(query) {
+export function getUserListByName(query) {
     return request({
         url: '/user/getuserlistbyorganizationtypeandid',
         method: 'get',

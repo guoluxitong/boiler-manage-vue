@@ -5,8 +5,24 @@
             v-if="!productRepairDialogVisibleuser">
     <el-tab-pane label="设备维保信息" name="repairdevice">
       <div>
+          <el-select
+            clearable
+            style="width: 150px"
+            v-model="product.customerName"
+            placeholder="客户名称"
+          >
+            <el-option
+              v-for="item in customerList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <el-input v-model="product.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
       <el-table
         :data="productList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+        v-loading="listLoading"
         element-loading-text="给我一点时间"
         border
         @open="handleClick"
@@ -30,7 +46,7 @@
         </el-table-column>
         <el-table-column  align='center' label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" type="success" @click="repairinfo(scope.$index, scope.row)">查看维保信息</el-button>
+            <el-button circle icon="el-icon-view" type="success" @click="repairinfo(scope.$index, scope.row)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -41,15 +57,23 @@
           @current-change="handleCurrentChange1" :current-page="currentPage1"
           :page-sizes="[5]"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="listQuery.total"
+          :total="productList.length"
         ></el-pagination>
       </div>
       </div>
     </el-tab-pane>
     <el-tab-pane label="用户维保信息" name="repairuser">
       <div >
+        <el-autocomplete
+          v-model="userlist.userName"
+          :fetch-suggestions="querySearchAsyncuser3"
+          placeholder="请输入内容"
+          @select="((item)=>{handleSelectuser3(item)})"
+        ></el-autocomplete>
+        <el-button type="primary" icon="el-icon-search" @click="handleUserFilter">查询</el-button>
       <el-table
         :data="userlist.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+        v-loading="listLoading"
         element-loading-text="给我一点时间"
         border
         fit
@@ -68,7 +92,7 @@
         </el-table-column>
         <el-table-column  align='center' label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" type="success" @click="repairinfouser(scope.$index, scope.row)">查看维保信息</el-button>
+            <el-button circle icon="el-icon-view" type="success" @click="repairinfouser(scope.$index, scope.row)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -79,7 +103,7 @@
             @current-change="handleCurrentChange1" :current-page="currentPage1"
             :page-sizes="[5]"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="userlistQuery.total"
+            :total="userlist.length"
           ></el-pagination>
         </div>
       </div>
@@ -96,19 +120,20 @@
           <el-date-picker   type="date" placeholder="选择查询结束日期" v-model="endtime" style="width: 100%;"></el-date-picker>
         </el-col>
         <el-button style="margin-left:20px" icon="el-icon-search"  type="primary" @click="queryByTimeuser"  >查询</el-button>
-        <el-button style="margin-left:25%"   icon="el-icon-plus" type="success"   @click="repairAdduser">添加</el-button>
-        <el-button type="warning" icon="el-icon-back" style="margin-left: 20px" @click="canceluser">取消</el-button>
+        <el-button style="margin-left:20px"   icon="el-icon-plus" type="success"   @click="repairAdduser">添加</el-button>
+        <el-button style="margin-left:25%" type="warning" icon="el-icon-back"  @click="canceluser">取消</el-button>
       </div>
       <el-row>
         <el-table
           :data="repairuserList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
-          align='center' style="width: 100%" max-height="600"  @selection-change="getDetails">
+          align='center'  v-loading="listLoading"
+          element-loading-text="给我一点时间" style="width: 100%" max-height="600"  @selection-change="getDetails">
           <el-table-column  align='center' label="序号" width="150" v-if="false">
             <template slot-scope="scope">
               <span style="margin-left: 10px">{{ scope.row.id }}</span>
             </template>
           </el-table-column>
-          <el-table-column  align='center' label="设备编号" width="130">
+          <el-table-column  v-if="titleName=='用户维保信息'" align='center' label="设备编号" width="130">
             <template slot-scope="scope">
               <span style="margin-left: 10px">{{ scope.row.controllerNo }}</span>
             </template>
@@ -140,7 +165,7 @@
           </el-table-column>
           <el-table-column  align='center' label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" icon="el-icon-delete" type="danger" @click="repairdeleteuser(scope.$index, scope.row)">删除</el-button>
+              <el-button circle icon="el-icon-delete" type="danger" @click="repairdeleteuser(scope.$index, scope.row)"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -201,6 +226,7 @@
 </template>
 <script>
   import {getProductListByCondition} from '@/api/product';
+  import {getList} from "@/api/boilerCustomer";
   import { formatDateTime } from "@/utils/date";
   import {getRepairInfoListByDate,
     insertRepairInfo,
@@ -208,7 +234,7 @@
     getRepairInfoListBydate,
     getRepairInfoListByUserId,
     deleteRepairInfoByProductId} from '@/api/RepairInfo';
-  import {getUserList} from "@/api/user";
+  import {getUserList,getUserListByName} from "@/api/user";
   export default {
     name: 'repair',
     data() {
@@ -233,6 +259,7 @@
           boilerNo: "",
           userList: [],
         }],
+        listLoading: false,
         repairUserName:'',
         productId:'',
         repairUserId:'',
@@ -266,6 +293,8 @@
           orgType: this.$store.state.user.orgType,
           orgId: this.$store.state.user.orgId
         },
+        userListArry: [],
+        userArry: [],
         product: {
           boilerNo: "",
           saleDate: null,
@@ -278,6 +307,7 @@
           userId: null,
           isSell: null,
         },
+        customerList: [],
         listQuery2: {
           total: 500,
           pageNum: 1,
@@ -296,6 +326,7 @@
           total: 50,
           pageNum: 1,
           pageSize: 5,
+          userName: '',
           orgId: this.$store.state.user.orgId
         },
       };
@@ -337,10 +368,46 @@
         var val = tab.index;//
         this.getWaterDetails(val);
       },
+      inintUserSelect(){
+        getUserList(this.userlistQuery).then(response => {
+          if(response.data.code==0){
+           this.userListArry = response.data.data.list
+          } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
+        });
+      },
+      querySearchAsyncuser3(queryString, callback) {
+          this.userArry = [];
+          var results = [];
+          for (let i = 0, len = this.userListArry.length; i < len; i++) {
+            this.userListArry[i].value = this.userListArry[i].userName;
+          }
+          this.userArry = this.userListArry;
+          results = queryString ? this.userArry.filter(this.createFilteruser3(queryString)) : this.userArry;
+          callback(results);
+
+      },
+      createFilteruser3(queryString, queryArr) {
+        return (queryArr) => {
+          return (queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        };
+      },
+      handleSelectuser3(item) {
+        this.userArry.roleName = item.roleName;
+      },
+      initSelect(){
+        getList(this.listQuery2).then(response => {
+          this.customerList = this.getcustomerListOptions(
+            response.data.data.list
+          );
+        });
+      },
       repairinfo(index, row) {
         this.productRepairDialogVisibleuser = true;
         this.productFormData = row;
-        this.titleName = "维保信息";
+        this.titleName = "设备维保信息";
         this.inputname = true;
         this.inputno = false;
         this.getrepairList();
@@ -348,7 +415,7 @@
       repairinfouser(index, row) {
         this.productRepairDialogVisibleuser = true;
         this.userFormData = row;
-        this.titleName = "维保信息";
+        this.titleName = "用户维保信息";
         this.inputname = false;
         this.inputno = true;
         this.getrepairListuser();
@@ -408,8 +475,19 @@
             });
           });
       },
+      getcustomerListOptions(dataList) {
+        let options = [];
+        dataList.forEach(item => {
+          let optionItem = {};
+          optionItem.value = item.name;
+          optionItem.label = item.name;
+          options.push(optionItem);
+        });
+        return options;
+      },
       repairOpen() {
         this.getrepairList();
+
       },
       openTableMenu(row, event) {
         this.$refs.menuContext.openTableMenu(
@@ -419,17 +497,40 @@
           window.event.clientY
         );
       },
+      handleUserFilter(){
+        listLoading: true;
+        this.userlist = this.userArry;
+        listLoading: false;
+      },
       handleFilter() {
+        this.listLoading = true;
         this.listQuery.pageNum = 1;
-        this.getrepairListuser();
+        getProductListByCondition({
+          product: this.product,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }).then(response => {
+          if(response.data.code==0){
+            let productInfoList = response.data.data;
+            this.productList = productInfoList.list;
+            this.listQuery.total = productInfoList.total;
+            this.listQuery.pageNum = productInfoList.pageNum;
+            this.listLoading = false;
+          } else {
+            this.$message.error(response.data.msg);
+            return;
+          }
+        })
       },
       getrepairList() {
+        this.listLoading = true;
         getRepairInfoListByProductId({
           productId: this.productFormData.id
         }).then(response => {
           if (response.data.code ==0){
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
+            this.listLoading = false;
         } else {
             this.$message.error(response.data.msg);
             return;
@@ -440,10 +541,12 @@
         this.getrepairListuser();
       },
       getrepairListuser() {
+        this.listLoading = true;
         getRepairInfoListByUserId(this.userFormData.id).then(response => {
           if (response.data.code ==0){
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
+            this.listLoading = false;
           } else {
             this.$message.error(response.data.msg);
             return;
@@ -555,6 +658,7 @@
         this.currentPage1 = currentPage;
       },
       getrepairListBydate() {
+        this.listLoading = true;
         var starttime = formatDateTime(new Date(this.starttime), "yyyy-MM-dd hh:mm:ss");
         var endtime = formatDateTime(new Date(this.endtime), "yyyy-MM-dd hh:mm:ss");
         getRepairInfoListByDate({
@@ -565,6 +669,7 @@
           if(response.data.code==0){
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
+            this.listLoading = false;
           } else {
             this.$message.error(response.data.msg);
             return;
@@ -572,6 +677,7 @@
         });
       },
       getrepairListBydateuser() {
+        this.listLoading = true;
         var starttime = formatDateTime(new Date(this.starttime), "yyyy-MM-dd hh:mm:ss");
         var endtime = formatDateTime(new Date(this.endtime), "yyyy-MM-dd hh:mm:ss");
         getRepairInfoListBydate({
@@ -582,6 +688,7 @@
           if(response.data.code==0){
           let repairInfoList = response.data.data;
           this.repairuserList = repairInfoList;
+            this.listLoading = false;
           } else {
             this.$message.error(response.data.msg);
             return;
@@ -605,15 +712,18 @@
         this.deleteId = row.id;
       },
       handleSizeChange(val) {
+        this.listLoading = true;
         this.userlistQuery.pageSize = val;
         getUserList(this.userlistQuery).then(response => {
           let userInfoList = response.data.data;
           this.userlist = userInfoList.list;
           this.userlistQuery.total = userInfoList.total;
           this.userlistQuery.pageNum = userInfoList.pageNum;
+          this.listLoading = false;
         });
       },
       handleCurrentChange(val) {
+        this.listLoading = true;
         this.userlistQuery.pageNum = val;
         getUserList(this.userlistQuery).then(response => {
           if(response.data.code==0){
@@ -621,6 +731,7 @@
           this.userlist = userInfoList.list;
           this.userlistQuery.total = userInfoList.total;
           this.userlistQuery.pageNum = userInfoList.pageNum;
+            this.listLoading = false;
           } else {
             this.$message.error(response.data.msg);
             return;
@@ -628,6 +739,7 @@
         });
       },
       handleSizeChange2(val) {
+        this.listLoading = true;
         this.listQuery.pageSize = val;
         getProductListByCondition({
           product: this.product,
@@ -639,6 +751,7 @@
           this.productList = productInfoList.list;
           this.listQuery.total = productInfoList.total;
           this.listQuery.pageNum = productInfoList.pageNum;
+            this.listLoading = false;
           } else {
             this.$message.error(response.data.msg);
             return;
@@ -646,6 +759,7 @@
         })
       },
       handleCurrentChange2(val) {
+        this.listLoading = true;
         this.listQuery.pageNum = val;
         getProductListByCondition({
           product: this.product,
@@ -657,6 +771,7 @@
           this.productList = productInfoList.list;
           this.listQuery.total = productInfoList.total;
           this.listQuery.pageNum = productInfoList.pageNum;
+            this.listLoading = false;
           } else {
             this.$message.error(response.data.msg);
             return;
@@ -665,7 +780,9 @@
       },
       getWaterDetails(val) {
         if (val == 0) {
-          getProductListByCondition({
+          this.initSelect();
+          this.userlist = [];
+        /*  getProductListByCondition({
             product: this.product,
             pageNum: this.pageNum,
             pageSize: this.pageSize
@@ -679,11 +796,13 @@
               this.$message.error(response.data.msg);
               return;
             }
-          })
+          })*/
         }
         ;
         if (val == 1) {
-          getUserList(this.userlistQuery).then(response => {
+          this.inintUserSelect();
+          this.productList = [];
+         /* getUserList(this.userlistQuery).then(response => {
             if(response.data.code==0){
             let userInfoList = response.data.data;
             this.userlist = userInfoList.list;
@@ -693,7 +812,7 @@
               this.$message.error(response.data.msg);
               return;
             }
-          });
+          });*/
         }
       },
     }

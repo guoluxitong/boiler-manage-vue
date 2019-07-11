@@ -3,12 +3,19 @@
     <div v-if="PartCategory==0">
     <!--查询-->
     <el-row class="app-query">
-      <el-autocomplete
+      <el-select
+        clearable
+        style="width: 150px"
         v-model="product.customerName"
-        :fetch-suggestions="querySearchAsyncuser"
         placeholder="客户名称"
-        @select="((item)=>{handleSelectuser(item)})"
-      ></el-autocomplete>
+      >
+        <el-option
+          v-for="item in customerList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
       <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
       <el-select
         clearable
@@ -279,13 +286,14 @@
       ></auxiliary-machine-info-dialog>
     </div>
     <div v-if="PartCategory==2">
+      <el-button style="margin-left: 92%" type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
       <el-form
         :rules="rules"
         ref="productForm"
         :model="addFormData"
         label-position="right"
         label-width="100px"
-        style="width: 96%; margin-left:15px;margin-top:15px"
+        style="width: 50%; margin-left:25%;margin-top:15px"
       >
         <el-row>
           <el-col :span="12">
@@ -309,7 +317,6 @@
                 ></el-option>
               </el-select>
              <el-button icon="el-icon-plus" type="success" @click="handleAddBoilerModel" >添加</el-button>
-              <el-button style="margin-left: 40%" type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -324,9 +331,14 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col v-if="this.titleName=='新增'" :span="12">
             <el-form-item label="控制器编号" prop="controllerNo">
               <el-input v-model="addFormData.controllerNo" placeholder="控制器编号" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col v-if="this.titleName!='新增'" :span="12">
+            <el-form-item label="控制器编号" prop="controllerNo">
+              <el-input v-model="addFormData.controllerNo" placeholder="控制器编号" disabled></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -367,10 +379,10 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item>
-              <el-button type="primary" @click="addsubmitForm">确认</el-button>
-              <el-button type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
+          <el-col :span="24">
+            <el-form-item >
+              <el-button style="margin-left: 35%" type="primary" @click="addsubmitForm">确认</el-button>
+              <el-button  type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -384,7 +396,7 @@
           icon="el-icon-plus" type="success"
         >新增</el-button>
         <el-button
-          style="margin-left: 80%;"
+          style="margin-left: 85%;"
           @click="canealType"
           type="warning" icon="el-icon-back"
         >取消</el-button>
@@ -756,36 +768,25 @@ export default {
     change(tag) {
       this.choiceUserFormData.selectUserIdArray = tag;
     },
-    querySearchAsyncuser(queryString, callback) {
-      getList(this.listQuery2).then(
-        response => {
-          this.customerList = [];
-          var results = [];
-          for (let i = 0, len = response.data.data.list.length; i < len; i++) {
-            response.data.data.list[i].value = response.data.data.list[i].name;
-          }
-          this.customerList = response.data.data.list;
-          results = queryString
-            ? this.customerList.filter(this.createFilteruser(queryString))
-            : this.customerList;
-          callback(results);
-
-        }
-      );
+    getcustomerListOptions(dataList) {
+      let options = [];
+      dataList.forEach(item => {
+        let optionItem = {};
+        optionItem.value = item.name;
+        optionItem.label = item.name;
+        options.push(optionItem);
+      });
+      return options;
     },
-
-    createFilteruser(queryString, queryArr) {
-      return queryArr => {
-        return (
-          queryArr.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-        );
-      };
-    },
-    handleSelectuser(item) {},
     initSelect() {
       getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
         this.boilerModelNumberArray = this.getAuxiliaryMachineAboutOptions(
           data.data.data
+        );
+      });
+      getList(this.listQuery2).then(response => {
+        this.customerList = this.getcustomerListOptions(
+          response.data.data.list
         );
       });
       initMedium().then(data => {
@@ -869,6 +870,24 @@ export default {
     handleCreate() {
       this.PartCategory = 2;
       this.titleName = "新增";
+      this.addFormData = {
+        id: "",
+        roleIdArray: this.$store.state.user.role,
+        userId: this.$store.state.user.userId,
+        orgId: this.$store.state.user.orgId,
+        controllerNo: "",
+        boilerNo: "",
+        partSubCategoryName: '',
+        partCategoryName: null,
+        partCategoryId: null,
+        partSubCategoryId: null,
+        tonnageNum: null,
+        media: null,
+        power: null,
+        createDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
+        editDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
+        isSell: 0
+      }
     },
     //产品编辑
     handleUpdate(row) {
@@ -1100,7 +1119,6 @@ export default {
       });
     },
     addsubmitForm() {
-        this.PartCategory = 0;
         if (this.titleName === "编辑") {
           editProduct(this.addFormData).then(response => {
             if (response.data.code==0){
@@ -1108,6 +1126,7 @@ export default {
                 message: "编辑成功",
                 type: "success"
               });
+              this.PartCategory = 0;
             this.getList();
             } else {
               this.$message.error(response.data.msg)
@@ -1126,11 +1145,13 @@ export default {
                 message: "复制成功",
                 type: "success"
               });
+              this.PartCategory = 0;
             } else {
               this.$message({
                 message: "新增成功",
                 type: "success"
               });
+              this.PartCategory = 0;
             }
             this.getList();
             } else {
