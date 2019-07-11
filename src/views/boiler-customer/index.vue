@@ -8,17 +8,17 @@
         @click="handleCreate"
         type="success"
         icon="el-icon-plus"
-      >新增</el-button>
+      >添加</el-button>
     </el-row>
 
     <el-table
-      :data="list.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+      :data="list"
       v-loading="listLoading"
       element-loading-text="给我一点时间"
       border
       fit
       highlight-current-row
-      
+
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" :show-overflow-tooltip="true" label="客户名称">
@@ -178,7 +178,7 @@ export default {
       total: 50,
       textMap: {
         update: "编辑",
-        create: "新增"
+        create: "添加"
       },
       dialogStatus: "",
       dialogFormVisible: false,
@@ -345,6 +345,7 @@ export default {
             message: "删除成功",
             type: "success"
           });
+            this.listQuery.pageNum =  1;
           this.getList();
         });
       }

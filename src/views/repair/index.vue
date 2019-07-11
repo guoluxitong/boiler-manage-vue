@@ -214,17 +214,24 @@
             <el-input type="textarea" v-model="repairform.repairContent"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button icon="el-icon-plus" type="success" @click="submitRepairuser">立即添加</el-button>
+            <el-button  type="primary" @click="submitRepairuser">确定</el-button>
             <el-button type="warning" icon="el-icon-back" @click="cancelbuuser">取消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
     </el-form>
   </div>
+    <boiler-common-delete-validate-dialog
+      @confirmDeleteValidate="confirmDeleteValidate"
+      @confirmCancelValidate="confirmCancelValidate"
+      :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
+      :id="delId"
+    ></boiler-common-delete-validate-dialog>
   </div>
 </template>
 <script>
   import {getProductListByCondition} from '@/api/product';
+  import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
   import {getList} from "@/api/boilerCustomer";
   import { formatDateTime } from "@/utils/date";
   import {getRepairInfoListByDate,
@@ -236,6 +243,9 @@
   import {getUserList,getUserListByName} from "@/api/user";
   export default {
     name: 'repair',
+    components: {
+      "boiler-common-delete-validate-dialog": boilerCommonDeleteValidate
+    },
     data() {
       return {
         activeName: 'repairdevice',
@@ -306,6 +316,7 @@
           userId: null,
           isSell: null,
         },
+        deleteValidateFormDialogVisible: false,
         product1: {
           boilerNo: "",
           saleDate: null,
@@ -318,6 +329,7 @@
           userId: null,
           isSell: null,
         },
+        delId: -1,
         customerList: [],
         listQuery2: {
           total: 500,
@@ -457,28 +469,14 @@
         this.titleName = "添加维保信息";
       },
       repairdeleteuser(index, row) {
-        var id = row.id;
         this.$confirm("确认删除?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         })
           .then(() => {
-            deleteRepairInfoByProductId(id).then(response => {
-              if (response.data.code == 0) {
-                this.repairList.splice(index, 1)
-                this.$message({
-                  message: "删除成功",
-                  type: "success"
-                });
-              }
-              if (this.inputname) {
-                this.getrepairList();
-              } else {
-                this.getrepairListuser();
-              }
-
-            });
+            this.deleteValidateFormDialogVisible = true;
+            this.delId = row.id;
           })
           .catch(() => {
             this.$message({
@@ -486,6 +484,30 @@
               message: "已取消删除"
             });
           });
+      },
+      confirmDeleteValidate(obj) {
+        if (obj.flag) {
+          this.deleteValidateFormDialogVisible =
+            obj.deleteValidateFormDialogVisible;
+          deleteRepairInfoByProductId(obj.id).then(response => {
+            if (response.data.code == 0) {
+              this.currentPage1 = 1;
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+            }
+            if (this.inputname) {
+              this.getrepairList();
+            } else {
+              this.getrepairListuser();
+            }
+          });
+        }
+      },
+      confirmCancelValidate(obj) {
+        this.deleteValidateFormDialogVisible =
+          obj.deleteValidateFormDialogVisible;
       },
       getcustomerListOptions(dataList) {
         let options = [];

@@ -6,7 +6,7 @@
         @click="handleCreate"
         type="success"
         icon="el-icon-plus"
-      >新增</el-button>
+      >添加</el-button>
     </el-row>
 
     <el-table
@@ -47,7 +47,7 @@
         :total="listQuery.total"
       ></el-pagination>
     </div>
-    <el-dialog :title="dialogIsCreate?'新增':'编辑'" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog :title="dialogIsCreate?'添加':'编辑'" :visible.sync="dialogFormVisible" width="30%">
       <el-form
         :rules="rules"
         ref="roleForm"
@@ -68,7 +68,7 @@
         <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="分配权限" :visible.sync="dialogResourceFormVisible" width="30%">
+    <el-dialog title="分配权限" :visible.sync="dialogResourceFormVisible" width="20%">
       <el-form
         :rules="rules"
         ref="resourceForm"
@@ -163,7 +163,7 @@ export default {
           this.listLoading = false;
           let data = response.data.data;
           if (data.code) {
-            this.$message.error(data.msg);
+            throw response.data.msg
           } else {
             this.list = data.list;
             this.listQuery.total = data.total;
@@ -171,7 +171,9 @@ export default {
             this.listQuery.pageSize = data.pageSize;
           }
         }
-      );
+      ).catch(resion=>{
+        this.$message.error(resion)
+      });
     },
     resetTemp() {
       this.roleFormData = {
@@ -218,7 +220,7 @@ export default {
           let checkIds = [];
           let data = response.data;
           if (data.code) {
-            this.$message.error(data.msg);
+            throw data.msg;
           } else {
             data.data.forEach(r => {
               if (r.pId) {
@@ -278,8 +280,8 @@ export default {
       editRoleResources(this.resourceFormData.roleId, map)
         .then(response => {
           if (response.data.code) {
-            this.$message.error(response.data.msg);
             this.resourceFormData.roleId = null;
+            throw response.data.msg;
           } else {
             this.$message({
               message: "设置成功",
@@ -294,23 +296,27 @@ export default {
     },
     createOrEditRole() {
       if (this.dialogIsCreate) {
-        createRole(this.roleFormData).then(data => {
-          this.dialogFormVisible = false;
-          if (data.data.code) {
-            this.$message.error(data.data.msg);
-          } else {
-            this.$message({
-              message: "成功",
-              type: "success"
-            });
-            this.getList();
-          }
-        });
+        createRole(this.roleFormData)
+          .then(data => {
+            this.dialogFormVisible = false;
+            if (data.data.code) {
+              throw data.data.msg;
+            } else {
+              this.$message({
+                message: "成功",
+                type: "success"
+              });
+              this.getList();
+            }
+          })
+          .catch(resion => {
+            this.$message.error(resion);
+          });
       } else {
         editRole(this.roleFormData).then(data => {
           this.dialogFormVisible = false;
           if (data.data.code) {
-            this.$message.error(data.data.msg);
+            throw data.data.msg
           } else {
             this.$message({
               message: "成功",
@@ -318,7 +324,9 @@ export default {
             });
             this.getList();
           }
-        });
+        }).catch(resion => {
+            this.$message.error(resion);
+          });
       }
     },
     handleDelete(row) {
@@ -329,9 +337,8 @@ export default {
       })
         .then(() => {
           deleteRole(row.id).then(response => {
-            if(response.data.code){
-              this.$message.error(response.data.msg)
-              return;
+            if (response.data.code) {
+              throw response.data.msg
             }
             this.$message({
               message: "删除成功",

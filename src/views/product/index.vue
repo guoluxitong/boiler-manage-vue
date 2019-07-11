@@ -59,7 +59,7 @@
         style="margin-left: 10px;"
         @click="handleCreate"
         icon="el-icon-plus" type="success"
-      >新增</el-button>
+      >添加</el-button>
       <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
     </el-row>
     <!--数据展示-->
@@ -135,9 +135,9 @@
         :width="100"
         :fontSize="14"
       >编辑</menu-context-item>
-      <menu-context-item @click="handleCopy"  :width="100" :fontSize="14">复制</menu-context-item>
+    <!--  <menu-context-item @click="handleCopy"  :width="100" :fontSize="14">复制</menu-context-item>-->
       <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
-      <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>
+     <!-- <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>-->
       <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item>
       <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="14">辅机信息</menu-context-item>
       <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
@@ -182,8 +182,8 @@
           ></el-transfer>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogChoiceUserFormVisible = false">取消</el-button>
           <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
+          <el-button @click="dialogChoiceUserFormVisible = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
@@ -321,7 +321,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-show="!isEdit">
+        <el-row  v-if="this.titleName=='添加'">
           <el-col :span="24">
             <el-alert
               title="控制器编号输入警告"
@@ -332,13 +332,13 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col v-if="this.titleName=='新增'" :span="12">
+          <el-col v-if="this.titleName=='添加'" :span="12">
             <el-form-item label="控制器编号" prop="controllerNo">
               <el-input v-model="addFormData.controllerNo" placeholder="控制器编号" ></el-input>
             </el-form-item>
           </el-col>
-          <el-col v-if="this.titleName!='新增'" :span="12">
-            <el-form-item label="控制器编号" prop="controllerNo">
+          <el-col v-if="this.titleName!='添加'" :span="12">
+            <el-form-item label="控制器编号" >
               <el-input v-model="addFormData.controllerNo" placeholder="控制器编号" disabled></el-input>
             </el-form-item>
           </el-col>
@@ -395,7 +395,7 @@
           style="margin-left: 10px;"
           @click="handleCreateType"
           icon="el-icon-plus" type="success"
-        >新增</el-button>
+        >添加</el-button>
         <el-button
           style="margin-left: 85%;"
           @click="canealType"
@@ -444,8 +444,8 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button  type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
           <el-button type="primary" @click="createType">确认</el-button>
+          <el-button  type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
@@ -729,7 +729,7 @@ export default {
       if (obj.flag) {
         this.auxiliaryMachineInfoDialogVisible =
           obj.auxiliaryMachineInfoDialogVisible;
-        if (obj.title === "新增"||obj.title === "复制") {
+        if (obj.title === "添加"||obj.title === "复制") {
           obj.auxiliaryMachineInfoFormData.productId = this.productId;
           productPartInfos.push(obj.auxiliaryMachineInfoFormData);
           createProductAuxiliaryMachineInfoList(productPartInfos).then(data => {
@@ -823,7 +823,7 @@ export default {
     },
     handleAdd() {
       this.auxiliaryMachineInfoDialogVisible = true;
-      this.titleName = "新增";
+      this.titleName = "添加";
     },
     openTableMenu(row, event) {
       this.$refs.menuContext.openTableMenu(
@@ -862,7 +862,7 @@ export default {
     },
     handleCreateType(){
       this.dialogFormVisible=true
-      this.titleName = "新增";
+      this.titleName = "添加";
     },
     canealType(){
       this.PartCategory = 2;
@@ -870,7 +870,7 @@ export default {
     //产品新增
     handleCreate() {
       this.PartCategory = 2;
-      this.titleName = "新增";
+      this.titleName = "添加";
       this.addFormData = {
         id: "",
         roleIdArray: this.$store.state.user.role,
@@ -1099,6 +1099,7 @@ export default {
           obj.deleteValidateFormDialogVisible;
         deleteProductById(obj.id,obj.controllerNo).then(response => {
           if (response.data.code==0){
+            this.currentPage1 = 1;
           this.$message({
             message: "删除成功",
             type: "success"
@@ -1151,7 +1152,7 @@ export default {
               this.PartCategory = 0;
             } else {
               this.$message({
-                message: "新增成功",
+                message: "添加成功",
                 type: "success"
               });
               this.PartCategory = 0;

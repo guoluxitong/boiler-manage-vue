@@ -203,7 +203,7 @@ export default {
       if (this.title === "编辑") {
         this.formData = this.productFormData;
         this.isEdit = true;
-      } else if (this.title === "新增") {
+      } else if (this.title === "添加") {
         this.isEdit = false;
         this.formData = {};
         this.formData.isSell = 0;
