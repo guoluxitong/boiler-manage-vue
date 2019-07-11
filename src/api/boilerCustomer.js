@@ -22,7 +22,6 @@ export function createCustomer(data) {
   })
 }
 export function editBoilerCustomer(data) {
-  console.log(data)
   return request({
     url: '/webapi/boilermanage/customer/modify',
     method: 'post',

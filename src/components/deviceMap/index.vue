@@ -47,7 +47,6 @@
   </div>
 </template>
 <script>
-import checkPermission from "@/utils/permission";
 import { getProductListByCondition } from "@/api/product";
 import {getList} from "@/api/boilerCustomer";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";

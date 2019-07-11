@@ -23,19 +23,26 @@ export function getUserListByOrganizationTypeAndId(query) {
         params: query
     })
 }
-
-export function editUserRole(data) {
+export function getUserRole(userId) {
   return request({
-    url: '/user/edituserrole',
+    url: '/webapi/boilermanage/user/find',
+    method: 'get',
+    params:{userId}
+  })
+}
+export function changeUserRole(userId,role) {
+  return request({
+    url: '/webapi/boilermanage/user/role/modify',
     method: 'post',
-    data:data
+    params:{userId},
+    data:role
   })
 }
 export function editUser(user) {
   return request({
     url: '/webapi/boilermanage/user/modify',
     method: 'post',
-    data:{"user": user}
+    data:user
   })
 }
 export function editUserPass(data) {
