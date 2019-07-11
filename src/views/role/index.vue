@@ -68,7 +68,7 @@
         <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="分配权限" :visible.sync="dialogResourceFormVisible" width="15%">
+    <el-dialog title="分配权限" :visible.sync="dialogResourceFormVisible" width="30%">
       <el-form
         :rules="rules"
         ref="resourceForm"

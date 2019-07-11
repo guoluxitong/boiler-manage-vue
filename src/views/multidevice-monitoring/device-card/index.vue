@@ -71,7 +71,6 @@ export default {
   methods: {
     sendDeleteCardToParent() {
       this.$emit("listenToControllerRunInfo", this.arrayIndex);
-      console.log(this.addressArray);
     }
   }
 };
