@@ -34,3 +34,9 @@
         }
     }
 </script>
+<style lang="scss">
+.app-query{
+margin: auto auto 10px auto
+}
+</style>
+

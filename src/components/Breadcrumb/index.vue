@@ -1,9 +1,9 @@
 <template>
-  <div class="breadcrumb" v-if="levelList&&levelList[0]&&levelList[0].name!='home'">
+  <div class="breadcrumb" v-if="levelList.length>0">
     <el-breadcrumb class="app-breadcrumb" separator="/">
       <transition-group name="breadcrumb">
-        <el-breadcrumb-item v-for="(item)  in levelList" :key="item.path">
-          <span v-if="item.meta.title" style="font-weight: 600;">{{item.meta.title}}</span>
+        <el-breadcrumb-item v-for="(item)  in levelList" :key="item">
+          <span v-if="item" style="font-weight: 600;">{{item}}</span>
         </el-breadcrumb-item>
       </transition-group>
     </el-breadcrumb>
@@ -27,10 +27,28 @@ export default {
   },
   methods: {
     getBreadcrumb() {
-      let matched = this.$route.matched.filter((item, index, arr) => {
-        return item.path;
-      });
-      this.levelList = matched;
+      let path = []
+      let menus = this.$store.state.user.menus
+      for(let i = 0; i< menus.length;i++){
+        path.push(menus[i].title)
+        if(menus[i].title == this.$route.meta.title){
+          break;
+        }
+        else{
+          for(let j = 0 ;j < menus[i].childs.length; j++){
+            if(menus[i].childs[j].title == this.$route.meta.title)
+            {
+              path.push(menus[i].childs[j].title)
+              break
+            }
+          }
+          if(path.length > 1){
+            break
+          }
+        }
+        path = []
+      }
+      this.levelList = path;
     }
   }
 };

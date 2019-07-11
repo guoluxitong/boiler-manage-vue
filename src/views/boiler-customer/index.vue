@@ -115,8 +115,8 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
         <el-button type="primary" @click="editData">确认</el-button>
+        <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <boiler-common-delete-validate-dialog
@@ -252,7 +252,7 @@ export default {
         customerNo: "",
         name: "",
         phone: "",
-        weiXin: "",
+        address: "",
         province: "",
         city: "",
         district: "",

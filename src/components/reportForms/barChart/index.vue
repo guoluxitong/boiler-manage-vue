@@ -53,7 +53,6 @@ export default {
           seriesObj = {};
         }
       }
-      console.log(this.barChartData);
       optionBar = {
         title: {
           text: that.barChartData.title
