@@ -8,7 +8,7 @@
         @click="handleCreate"
         type="success"
         icon="el-icon-plus"
-      >新增</el-button>
+      >添加</el-button>
     </el-row>
 
     <el-table
@@ -174,7 +174,7 @@ export default {
       total: 50,
       textMap: {
         update: "编辑",
-        create: "新增"
+        create: "添加"
       },
       dialogStatus: "",
       dialogFormVisible: false,

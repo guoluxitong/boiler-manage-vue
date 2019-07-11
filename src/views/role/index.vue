@@ -6,7 +6,7 @@
         @click="handleCreate"
         type="success"
         icon="el-icon-plus"
-      >新增</el-button>
+      >添加</el-button>
     </el-row>
 
     <el-table
@@ -47,7 +47,7 @@
         :total="listQuery.total"
       ></el-pagination>
     </div>
-    <el-dialog :title="dialogIsCreate?'新增':'编辑'" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog :title="dialogIsCreate?'添加':'编辑'" :visible.sync="dialogFormVisible" width="30%">
       <el-form
         :rules="rules"
         ref="roleForm"

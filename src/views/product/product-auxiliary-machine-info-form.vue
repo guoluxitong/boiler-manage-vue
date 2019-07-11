@@ -58,7 +58,7 @@
           <el-row>
             <el-col :span="24">
               <el-form-item>
-                <el-button style="margin-left: 70%" type="primary" @click="submitForm">确认</el-button>
+                <el-button style="margin-left: 60%" type="primary" @click="submitForm">确认</el-button>
                 <el-button type="warning" icon="el-icon-back" @click="visible=false">取消</el-button>
               </el-form-item>
             </el-col>

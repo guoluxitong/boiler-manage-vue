@@ -6,7 +6,7 @@
         @click="handleCreate"
         icon="el-icon-plus"
         type="success"
-      >新增</el-button>
+      >添加</el-button>
     </el-row>
 
     <el-table
@@ -100,7 +100,7 @@ export default {
       },
       textMap: {
         update: "编辑",
-        create: "新增"
+        create: "添加"
       },
       dialogStatus: "",
       dialogFormVisible: false,

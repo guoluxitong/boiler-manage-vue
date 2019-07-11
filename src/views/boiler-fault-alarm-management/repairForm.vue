@@ -1,6 +1,6 @@
 <template>
   <el-dialog :visible.sync="repairDialogFlag" width="50%" title="维修记录">
-    <el-button type="primary" style="float:right" @click="newRepairSubmit">新增维修记录</el-button>
+    <el-button type="primary" style="float:right" @click="newRepairSubmit">添加维修记录</el-button>
     <el-table :data="tableData" style="width: 100%" max-height="400">
       <el-table-column prop="date" label="日期" width="150"></el-table-column>
       <el-table-column prop="name" label="设备编号" width="120"></el-table-column>

@@ -52,7 +52,7 @@
         style="margin-left: 10px;"
         @click="handleCreate"
         icon="el-icon-plus" type="success"
-      >新增</el-button>
+      >添加</el-button>
       <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
     </el-row>
     <!--数据展示-->
@@ -223,6 +223,7 @@
         </div>
         <el-table
           :data="formData.productAuxiliaryMachineInfoList"
+          v-loading="listLoading"
           element-loading-text="给我一点时间"
           border
           style="margin-top:10px"
@@ -297,7 +298,7 @@
             <el-form-item label="锅炉型号">
               <el-select
                 clearable
-                style="width: 150px"
+                style="width: 140px"
                 v-model="addFormData.productCategoryId"
                 placeholder="锅炉型号"
               >
@@ -382,7 +383,7 @@
           style="margin-left: 10px;"
           @click="handleCreateType"
           icon="el-icon-plus" type="success"
-        >新增</el-button>
+        >添加</el-button>
         <el-button
           style="margin-left: 80%;"
           @click="canealType"
@@ -716,7 +717,7 @@ export default {
       if (obj.flag) {
         this.auxiliaryMachineInfoDialogVisible =
           obj.auxiliaryMachineInfoDialogVisible;
-        if (obj.title === "新增"||obj.title === "复制") {
+        if (obj.title === "添加"||obj.title === "复制") {
           obj.auxiliaryMachineInfoFormData.productId = this.productId;
           productPartInfos.push(obj.auxiliaryMachineInfoFormData);
           createProductAuxiliaryMachineInfoList(productPartInfos).then(data => {
@@ -821,7 +822,7 @@ export default {
     },
     handleAdd() {
       this.auxiliaryMachineInfoDialogVisible = true;
-      this.titleName = "新增";
+      this.titleName = "添加";
     },
     openTableMenu(row, event) {
       this.$refs.menuContext.openTableMenu(
@@ -860,7 +861,7 @@ export default {
     },
     handleCreateType(){
       this.dialogFormVisible=true
-      this.titleName = "新增";
+      this.titleName = "添加";
     },
     canealType(){
       this.PartCategory = 2;
@@ -868,7 +869,7 @@ export default {
     //产品新增
     handleCreate() {
       this.PartCategory = 2;
-      this.titleName = "新增";
+      this.titleName = "添加";
     },
     //产品编辑
     handleUpdate(row) {
@@ -945,12 +946,14 @@ export default {
       this.initAuxiliaryMachineAbout()
     },
     getAuxiliaryList(){
+      this.listLoading = true;
       getProductAuxiliaryMachineInfoListByProductId({
         productId: this.productFormData.id
       }).then(response => {
         if(response.data.code==0){
         let productAuxiliaryMachineInfoList = response.data.data;
         this.formData.productAuxiliaryMachineInfoList = productAuxiliaryMachineInfoList;
+          this.listLoading = false;
         } else {
           this.$message.error(response.data.msg)
           return;
@@ -1128,7 +1131,7 @@ export default {
               });
             } else {
               this.$message({
-                message: "新增成功",
+                message: "添加成功",
                 type: "success"
               });
             }

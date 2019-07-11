@@ -8,7 +8,7 @@
         @click="handleCreate"
         type="primary"
         icon="el-icon-edit"
-      >新增</el-button>
+      >添加</el-button>
     </el-row>
 
     <el-table
@@ -19,7 +19,7 @@
       border
       fit
       highlight-current-row
-      
+
       @row-contextmenu="openTableMenu"
     >
       <el-table-column :show-overflow-tooltip="true" align="left" label="名称">
@@ -99,7 +99,7 @@ export default {
       },
       textMap: {
         update: "编辑",
-        create: "新增"
+        create: "添加"
       },
       dialogStatus: "",
       dialogFormVisible: false,

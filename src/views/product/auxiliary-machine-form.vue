@@ -270,7 +270,7 @@ export default {
       }).then(response => {
         let productAuxiliaryMachineInfoList = response.data.data;
         if (this.title === "编辑") {
-        } else if (this.title === "新增") {
+        } else if (this.title === "添加") {
         } else if (this.title === "复制") {
           let newProductAuxiliaryMachineInfoList = [];
           productAuxiliaryMachineInfoList.forEach(item => {
@@ -303,7 +303,7 @@ export default {
       },*/
     handleAdd() {
       this.auxiliaryMachineInfoDialogVisible = true;
-      this.titleName = "新增";
+      this.titleName = "添加";
     },
     handleUpdate(row) {
       this.auxiliaryMachineInfoDialogVisible = true;
