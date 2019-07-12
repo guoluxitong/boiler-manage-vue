@@ -4,6 +4,8 @@
       <el-tabs v-model="activeName" @tab-click="handleClick" v-if="!productRepairDialogVisibleuser">
         <el-tab-pane label="设备维保信息" name="repairdevice">
           <div>
+            <el-row>
+              <el-col :span="3">
             <el-select
               clearable
               style="width: 150px"
@@ -17,8 +19,14 @@
                 :value="item.value"
               ></el-option>
             </el-select>
+              </el-col>
+              <el-col :span="3">
             <el-input v-model="product.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
+              </el-col>
+              <el-col :span="3">
             <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+              </el-col>
+            </el-row>
             <el-table
               :data="productList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
               v-loading="listLoading"
@@ -68,13 +76,19 @@
         </el-tab-pane>
         <el-tab-pane label="用户维保信息" name="repairuser">
           <div>
+            <el-row>
+              <el-col :span="4">
             <el-autocomplete
               v-model="userlist.userName"
               :fetch-suggestions="querySearchAsyncuser3"
               placeholder="请输入内容"
               @select="((item)=>{handleSelectuser3(item)})"
             ></el-autocomplete>
+              </el-col>
+              <el-col :span="4">
             <el-button type="primary" icon="el-icon-search" @click="handleUserFilter">查询</el-button>
+              </el-col>
+            </el-row>
             <el-table
               :data="userlist.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
               v-loading="listLoading"

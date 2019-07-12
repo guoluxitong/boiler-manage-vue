@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-row class="app-query">
+      <el-col :span="3">
       <el-select
         clearable
         style="width: 150px"
@@ -14,7 +15,11 @@
           :value="item.value"
         ></el-option>
       </el-select>
+      </el-col>
+      <el-col :span="3">
       <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
+      </el-col>
+      <el-col :span="3">
       <el-select
         clearable
         style="width: 150px"
@@ -28,7 +33,11 @@
           :value="item.value"
         ></el-option>
       </el-select>
+      </el-col>
+      <el-col :span="3">
       <el-input v-model="listQuery.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
+      </el-col>
+      <el-col :span="3">
       <el-select clearable style="width: 150px" v-model="product.power" placeholder="燃料">
         <el-option
           v-for="item in fuelArray"
@@ -37,6 +46,8 @@
           :value="item.value"
         ></el-option>
       </el-select>
+      </el-col>
+      <el-col :span="3">
       <el-select clearable style="width: 150px" v-model="product.media" placeholder="介质">
         <el-option
           v-for="item in mediumArray"
@@ -45,7 +56,10 @@
           :value="item.value"
         ></el-option>
       </el-select>
+      </el-col>
+      <el-col :span="3">
       <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+      </el-col>
       <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
     </el-row>
   <div class="map-container">

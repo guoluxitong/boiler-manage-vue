@@ -1,14 +1,19 @@
 <template>
   <div class="app-container boilerCustomer-container">
     <el-row class="app-query">
-      <el-input v-model="listQuery.name" placeholder="客户名称" style="width: 150px;"></el-input>
+      <el-col :span="4">
+      <el-input v-model="listQuery.name" placeholder="客户名称" ></el-input>
+      </el-col>
+      <el-col :span="2">
       <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+      </el-col>
+      <el-col :span="3">
       <el-button
-        style="margin-left: 10px;"
         @click="handleCreate"
         type="success"
         icon="el-icon-plus"
       >添加</el-button>
+      </el-col>
     </el-row>
 
     <el-table
