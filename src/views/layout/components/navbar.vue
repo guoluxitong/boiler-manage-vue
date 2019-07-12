@@ -271,13 +271,18 @@ export default {
       editUserPass({
         password: this.passWordChangeFormData.newPassWord
       })
-        .then(() => {
-          this.$store.state.user.password = this.passWordChangeFormData.newPassWord
-          this.dialogFormVisible = false;
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
+        .then(response => {
+          if(response.data.code==0){
+            this.$store.state.user.password = this.passWordChangeFormData.newPassWord
+            this.dialogFormVisible = false;
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            });
+          } else {
+            this.$message.error(response.data.msg)
+            return
+          }
         })
         .catch(() => {
           this.$message({
