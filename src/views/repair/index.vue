@@ -456,6 +456,7 @@
         this.titleName = "维保信息";
       },
       canceluser() {
+        this.currentPage1 = 1;
         this.productRepairDialogVisibleuser = false;
         this.repairuserList = [];
         this.titleName = "维保信息";
