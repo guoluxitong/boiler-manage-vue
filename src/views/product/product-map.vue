@@ -9,32 +9,25 @@
       @open="productMapOpen"
       class="product-map-container">
       <el-form :rules="rules" ref="productMap" :model="formData" label-position="right" label-width="100px">
-        <el-row style="margin-top: 10px">
-          <el-col :span="7">
+        <el-row >
+          <el-col :span="12">
             <el-form-item label="客户" prop="customerId">
               <el-select clearable class="filter-item" v-model="formData.customerId" style="width: 100%" @change="changeBoilerCustomerGetLabel">
                 <el-option v-for="item in boilerCustomerArray" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="12">
             <el-form-item clearable label="售出时间" prop="saleDate">
               <el-date-picker v-model="formData.saleDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="7">
-           <el-form-item label="地址">
-             <el-input id="suggestId" v-model="address"></el-input>
-           </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-button type="primary" icon="el-icon-search" @click="productMapOpen">搜索</el-button>
-          </el-col>
         </el-row>
         <el-form-item label="售出地址" prop="saleAddress">
-          <el-input v-model="formData.saleAddress" readonly></el-input>
+          <el-input id="suggestId" v-model="formData.saleAddress" ></el-input>
         </el-form-item>
-        <el-button  type="primary" @click="confirmSubmit"  style=" width: 100% ">确定</el-button>
+        <el-button style="margin-left: 40%" type="primary" @click="confirmSubmit" >确定</el-button>
+        <el-button  icon="el-icon-search"  type="primary" @click="productMapOpen">查询</el-button>
       </el-form>
       <el-row style=" overflow-x: hidden;">
         <div id="product_map" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="product_map"></div>
@@ -59,7 +52,7 @@
       return{
         visible: this.show,
         mapWidth:document.body.clientWidth/2-30,
-        mapHeight:document.body.clientHeight-88,
+        mapHeight:document.body.clientHeight-30,
         boilerCustomerArray:[],
         address: '',
         formData:{
@@ -111,7 +104,7 @@
       productMapOpen(){
         if (this.visible === true) {
           this.mapWidth=document.body.clientWidth/2-30;
-          this.mapHeight=document.body.clientHeight-88;
+          this.mapHeight=document.body.clientHeight-30;
           this.$nextTick(function () {
             // 百度地图API功能
             let map = new BMap.Map("product_map");
@@ -260,6 +253,5 @@
 
 <style scoped>
   .product-map-container {
-    padding-top:20px;
   }
 </style>
