@@ -74,7 +74,7 @@
                 if (flag) {
                         this.$emit('confirmDeleteValidate', {deleteValidateFormDialogVisible:false,flag:true,id:this.id,controllerNo:this.controllerNo})
                     } else {
-                        this.$emit('confirmDeleteValidate', {deleteValidateFormDialogVisible:true,flag:false})                        
+                        this.$emit('confirmDeleteValidate', {deleteValidateFormDialogVisible:true,flag:false})
                     }
             },
             confirmCancel(){

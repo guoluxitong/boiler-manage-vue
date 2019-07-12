@@ -154,12 +154,13 @@
 import { validateURL } from "@/utils/validate";
 import sidebarItem from "./sidebar/sidebarItem";
 import { editUserPass } from "@/api/user";
+import { login } from "@/api/login";
 import { deleteFile } from "@/api/upload";
 import { loginout } from "@/api/loginout";
 import { config } from "@/config/index";
 
 export default {
-  components: { sidebarItem },
+  components: {sidebarItem},
   data() {
     let validateOldPassWord = (rule, value, callback) => {
       if (value === "") {
@@ -206,6 +207,7 @@ export default {
         newPassWord: "",
         checkNewPassWord: ""
       },
+      deleteValidateFormDialogVisible: false,
       rules: {
         oldPassWord: [{ trigger: "blur", validator: validateOldPassWord }],
         newPassWord: [{ trigger: "blur", validator: validateNewPassWord }],
@@ -213,6 +215,7 @@ export default {
           { trigger: "blur", validator: validateCheckNewPassWord }
         ]
       },
+      editpassword: '222',
       dialogHomeFormVisible: false,
       homeFormData: {
         homeUrl: "",
@@ -269,6 +272,7 @@ export default {
         password: this.passWordChangeFormData.newPassWord
       })
         .then(() => {
+          this.$store.state.user.password = this.passWordChangeFormData.newPassWord
           this.dialogFormVisible = false;
           this.$message({
             message: "修改成功",
