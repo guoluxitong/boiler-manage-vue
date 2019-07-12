@@ -18,7 +18,6 @@
       border
       fit
       highlight-current-row
-
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" :show-overflow-tooltip="true" label="客户名称">
@@ -91,7 +90,6 @@
           </el-col>
         </el-row>
         <el-row>
-
           <el-col :span="12">
             <el-form-item label="省">
               <el-input v-model="boilerCustomerFormData.province"></el-input>
@@ -140,10 +138,7 @@ import {
   createCustomer,
   getBoilerCustomerListByName
 } from "@/api/boilerCustomer";
-import {
-  validateRealName,
-  validatePhone,
-} from "@/utils/validate";
+import { validateRealName, validatePhone } from "@/utils/validate";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 export default {
   components: {
@@ -172,7 +167,7 @@ export default {
         pageNum: 1,
         pageSize: 5
       },
-      currentPage1:1,
+      currentPage1: 1,
       pageNum1: 1,
       pageSize1: 5,
       total: 50,
@@ -238,14 +233,14 @@ export default {
     getList() {
       this.listLoading = true;
       getList(this.listQuery).then(response => {
-        if (response.data.code==0){
-        const data = response.data.data;
-        this.list = data.list;
-        this.total = data.total;
-        this.listQuery.pageNum = data.pageNum;
-        this.listQuery.pageSize = data.pageSize;
-        this.listLoading = false;
-      } else {
+        if (response.data.code == 0) {
+          const data = response.data.data;
+          this.list = data.list;
+          this.total = data.total;
+          this.listQuery.pageNum = data.pageNum;
+          this.listQuery.pageSize = data.pageSize;
+          this.listLoading = false;
+        } else {
           this.$message.error(response.data.msg);
           return;
         }
@@ -316,21 +311,8 @@ export default {
       });
     },
     handleDelete(row) {
-      this.$confirm("确认删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.deleteValidateFormDialogVisible = true;
-          this.delId = row.id;
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
+      this.deleteValidateFormDialogVisible = true;
+      this.delId = row.id;
     },
     confirmDeleteValidate(obj) {
       if (obj.flag) {
@@ -345,9 +327,14 @@ export default {
             message: "删除成功",
             type: "success"
           });
-            this.listQuery.pageNum =  1;
+          this.listQuery.pageNum = 1;
           this.getList();
         });
+      }
+      else{
+        this.deleteValidateFormDialogVisible = false
+        this.delId = null
+        this.$message.error("输入密码错误，无法完成删除操作！")
       }
     },
     confirmCancelValidate(obj) {
