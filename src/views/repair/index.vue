@@ -298,8 +298,14 @@
               <el-input type="textarea" v-model="repairform.repairContent"></el-input>
             </el-form-item>
             <el-form-item>
+              <el-row>
+                <el-col :offset="15" :span="4">
               <el-button type="primary" @click="submitRepairuser">确定</el-button>
+                </el-col>
+                <el-col :span="3">
               <el-button type="warning" icon="el-icon-back" @click="cancelbuuser">取消</el-button>
+                </el-col>
+              </el-row>
             </el-form-item>
           </el-form>
         </el-dialog>
@@ -559,7 +565,12 @@ export default {
       this.titleName = "维保信息";
     },
     cancelbuuser() {
-      this.newRepairDialogFlaguser = false;
+      this.repairform.repairDatetime = ''
+      this.repairform.createDatetime = ''
+      this.repairform.repairContent = ''
+      this.repairform.controllerNo = ''
+      this.repairform.realName=''
+      this.newRepairDialogFlaguser = false
       this.titleName = "维保信息";
     },
     canceluser() {
@@ -751,6 +762,11 @@ export default {
               message: "添加成功",
               type: "success"
             });
+            this.repairform.repairDatetime = ''
+            this.repairform.createDatetime = ''
+            this.repairform.repairContent = ''
+            this.repairform.controllerNo = ''
+            this.repairform.realName=''
             this.getrepairList();
           } else {
             this.$message.error(data.data.msg);
@@ -775,6 +791,11 @@ export default {
               message: "添加成功",
               type: "success"
             });
+            this.repairform.repairDatetime = ''
+            this.repairform.createDatetime = ''
+            this.repairform.repairContent = ''
+            this.repairform.controllerNo = ''
+            this.repairform.realName=''
             this.getrepairListuser();
           } else {
             this.$message.error(data.data.msg);

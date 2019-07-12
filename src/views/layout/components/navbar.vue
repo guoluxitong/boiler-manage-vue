@@ -68,7 +68,14 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm">提交</el-button>
+          <el-row>
+            <el-col :offset="7" :span="8">
+              <el-button type="primary" @click="submitForm">确定</el-button>
+            </el-col>
+            <el-col :span="8">
+              <el-button type="warning" icon="el-icon-back" @click="cancel">取消</el-button>
+            </el-col>
+          </el-row>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -251,6 +258,12 @@ export default {
     }
   },
   methods: {
+    cancel(){
+      this.dialogFormVisible=false
+      this.$nextTick(() => {
+        this.$refs["passWordChangeForm"].resetFields();
+      });
+    },
     handleSubmit() {
       editUserPass({
         password: this.passWordChangeFormData.newPassWord

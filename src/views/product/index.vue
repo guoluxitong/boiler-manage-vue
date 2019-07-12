@@ -202,7 +202,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
-          <el-button @click="dialogChoiceUserFormVisible = false">取消</el-button>
+          <el-button type="warning" icon="el-icon-back" @click="dialogChoiceUserFormVisible = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
