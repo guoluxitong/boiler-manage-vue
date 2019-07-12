@@ -285,6 +285,14 @@
         @confirmAuxiliaryMachineInfoDialog="confirmAuxiliaryMachineInfoDialog"
         @auxiliaryMachineInfoDialogClose="auxiliaryMachineInfoDialogClose"
       ></auxiliary-machine-info-dialog>
+
+      <boiler-common-delete-validate-dialog
+        @confirmDeleteValidate="confirmDeleteValidate"
+        @confirmCancelValidate="confirmCancelValidate"
+        :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
+        :id="delId"
+        :controllerNo="delCtlNo"
+      ></boiler-common-delete-validate-dialog>
     </div>
     <div v-if="PartCategory==2">
       <el-button style="margin-left: 92%" type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
@@ -646,6 +654,7 @@ export default {
         isSell: null,
         productCategoryName: ''
       },
+      delete: false,
       listQuery2: {
         total: 500,
         pageNum: 1,
@@ -915,32 +924,9 @@ export default {
       this.productAuxiliaryMachineInfo = row;
     },
     handleDeletepart(row){
+      this.deleteValidateFormDialogVisible = true;
       this.productPartInfoId=row.id;
-      this.$confirm("确认删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          removeProductAuxiliaryMachineInfoList({
-            productId: this.productId,
-            productPartInfoId: this.productPartInfoId
-          }).then(response => {
-            if (response.data.code == 0) {
-              this.$message({
-                message: "删除成功",
-                type: "success"
-              });
-            }
-            this.getAuxiliaryList();
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
+      this.delete=false;
     },
     //产品售出
     sellProduct(row) {
@@ -981,6 +967,7 @@ export default {
     },
     canelForm(){
       this.PartCategory = 0;
+      this.deleteValidateFormDialogVisible=false
     },
     cenalForm(){
       this.PartCategory = 0;
@@ -1076,40 +1063,48 @@ export default {
       })
     },
     handleDelete(row) {
-      this.$confirm("确认删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.deleteValidateFormDialogVisible = true;
-          this.delId = row.id;
-          this.delCtlNo = row.controllerNo;
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
+      this.deleteValidateFormDialogVisible = true;
+      this.delete=true;
+      this.delId = row.id;
+      this.delCtlNo = row.controllerNo;
     },
     confirmDeleteValidate(obj) {
       if (obj.flag) {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
-        deleteProductById(obj.id,obj.controllerNo).then(response => {
-          if (response.data.code==0){
-            this.currentPage1 = 1;
-          this.$message({
-            message: "删除成功",
-            type: "success"
+        if (this.delete==true){
+          deleteProductById(obj.id,obj.controllerNo).then(response => {
+            if (response.data.code==0){
+              this.currentPage1 = 1;
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+              this.getList();
+            } else {
+              this.$message.error(response.data.msg)
+              return;
+            }
           });
-          this.getList();
-          } else {
-            this.$message.error(response.data.msg)
-            return;
-          }
-        });
+        } else {
+          removeProductAuxiliaryMachineInfoList({
+            productId: this.productId,
+            productPartInfoId: this.productPartInfoId
+          }).then(response => {
+            if (response.data.code == 0) {
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+            }
+            this.getAuxiliaryList();
+          });
+        }
+      }
+      else{
+        this.deleteValidateFormDialogVisible = false
+        this.delId = null
+        this.$message.error("输入密码错误，无法完成删除操作！")
       }
     },
     createType(){

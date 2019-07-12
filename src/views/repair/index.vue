@@ -470,21 +470,8 @@
         this.titleName = "添加维保信息";
       },
       repairdeleteuser(index, row) {
-        this.$confirm("确认删除?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-          .then(() => {
-            this.deleteValidateFormDialogVisible = true;
-            this.delId = row.id;
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消删除"
-            });
-          });
+        this.deleteValidateFormDialogVisible = true;
+        this.delId = row.id;
       },
       confirmDeleteValidate(obj) {
         if (obj.flag) {
@@ -504,6 +491,10 @@
               this.getrepairListuser();
             }
           });
+        } else{
+          this.deleteValidateFormDialogVisible = false
+          this.delId = null
+          this.$message.error("输入密码错误，无法完成删除操作！")
         }
       },
       confirmCancelValidate(obj) {
