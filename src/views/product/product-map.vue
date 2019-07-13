@@ -1,5 +1,4 @@
 <template>
-  <div v-if="">
     <el-dialog
       id="dlog"
       title="售出"
@@ -26,14 +25,30 @@
         <el-form-item label="售出地址" prop="saleAddress">
           <el-input id="suggestId" v-model="formData.saleAddress" ></el-input>
         </el-form-item>
-        <el-button style="margin-left: 35%" type="primary" @click="confirmSubmit" >确定</el-button>
-        <el-button  icon="el-icon-search"  type="primary" @click="productMapOpen">查询</el-button>
+        <el-row>
+          <el-col :span="5">
+            &nbsp;
+          </el-col>
+            <el-col :span="6">
+            <el-button type="primary" @click="confirmSubmit" >确定</el-button>
+          </el-col>
+          <el-col :span="2">
+            &nbsp;
+          </el-col>
+          <el-col :span="5">
+            &nbsp;
+          </el-col>
+            <el-col :span="6">
+            <el-button  icon="el-icon-search"  type="primary" @click="productMapOpen">查询</el-button>
+          </el-col>
+        </el-row>
+        
+        
       </el-form>
       <el-row style=" overflow-x: hidden;">
-        <div id="product_map" :style="{width:mapWidth+'px',height:mapHeight+'px'}" class="product_map"></div>
+        <div id="product_map" style="width:100%;min-height:300px;mix-heigth:400px"></div>
       </el-row>
     </el-dialog>
-  </div>
 </template>
 
 <script>
@@ -51,8 +66,6 @@
       }
       return{
         visible: this.show,
-        mapWidth:document.body.clientWidth/2-30,
-        mapHeight:document.body.clientHeight-30,
         boilerCustomerArray:[],
         address: '',
         formData:{
@@ -102,9 +115,8 @@
     },
     methods:{
       productMapOpen(){
+        this.formData.id = this.productFormData.id
         if (this.visible === true) {
-          this.mapWidth=document.body.clientWidth/2-30;
-          this.mapHeight=document.body.clientHeight-30;
           this.$nextTick(function () {
             // 百度地图API功能
             let map = new BMap.Map("product_map");
@@ -147,31 +159,9 @@
 
       },
       loadMap(map){
-        let str = this.productFormData
-        this.formData.id=this.productFormData.id
-        this.formData.controllerNo=this.productFormData.controllerNo
-        this.formData.saleDate=this.productFormData.saleDate
-        this.formData.customerId=this.productFormData.customerId
-        this.formData.boilerCustomerName=this.productFormData.boilerCustomerName
-        this.formData.longitude=this.productFormData.longitude
-        this.formData.latitude=this.productFormData.latitude
-        this.formData.province=this.productFormData.province
-        this.formData.city=this.productFormData.city
-        this.formData.district=this.productFormData.district
-        this.formData.street=this.productFormData.street
-        let province=this.productFormData.province||"";
-        let city=this.productFormData.city||"";
-        let district=this.productFormData.district||"";
-        let street=this.productFormData.street||"";
-        let saleAddrss=province+city+district+street
-        this.formData.saleAddress=saleAddrss==0?"":saleAddrss
         let selectPoint = new BMap.Point(this.formData.longitude, this.formData.latitude);
         let marker = new BMap.Marker(selectPoint);
         marker.addEventListener("click",()=>{
-          // let newWindow=openElectronWindow("/controller-run-info?controllerNo="+this.productMapData.controllerNo,{width: 600, height: 500})
-          // newWindow.on('closed', () => {
-          //     newWindow = null
-          // })
         })
         map.addOverlay(marker);
       },
@@ -250,8 +240,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .product-map-container {
-  }
-</style>

@@ -65,6 +65,7 @@ export default {
   methods: {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
+        let org = 0
         if (valid) {
           this.loading = true;
           let baseInfo,resources;
@@ -73,13 +74,14 @@ export default {
               let data = response.data;
               baseInfo = data.data;
               if (data.code == 0) {
+                org = baseInfo.orgId
                 return getUserInfo(baseInfo.id);
               } else {
                 return Promise.reject(data.msg);
               }
             })
             .then(response => {
-              let data = response.data;
+              let data = response.data
               if (data.code == 0) {
                 return this.$store.dispatch("saveUserState", {
                   "baseInfo": baseInfo,
@@ -89,6 +91,8 @@ export default {
               }
             })
             .then(() => {
+              //记录orgid
+               window.localStorage["logoUrl"] = '/files/'+org+'/logo.jpg'
               this.loading = false
               this.$router.push({ path: this.redirect || "/index" });
             })
@@ -110,8 +114,9 @@ export default {
       if (copyrightInfo2) {
         this.copyrightInfo2 = window.localStorage["copyrightInfo2"];
       }
-      let bgUrl = window.localStorage["bgUrl"];
+      
       let logoUrl = window.localStorage["logoUrl"];
+      let bgUrl = window.localStorage["bgUrl"];
       if (logoUrl) {
         this.logoUrl = window.localStorage["logoUrl"];
       }

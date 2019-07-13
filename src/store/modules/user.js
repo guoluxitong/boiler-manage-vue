@@ -12,8 +12,9 @@ const user = {
         weiXin: '',
         qQ: '',
         realName: '',
+        userName: '',
         organizationName: '',
-        role: null,
+        role: {roleId:0},
         websock: null,
         menus: null
     },
@@ -47,6 +48,9 @@ const user = {
         },
         SET_REALNAME: (state, realName) => {
             state.realName = realName
+        },
+        SET_USERNAME: (state, userName) => {
+            state.userName = userName
         },
         SET_ORGANIZATIONNAME: (state, organizationName) => {
             state.organizationName = organizationName
@@ -82,12 +86,16 @@ const user = {
                 commit('SET_QQ', baseInfo.qQ)
                 commit('SET_REALNAME', baseInfo.realName)
                 commit('SET_ORGANIZATIONNAME', baseInfo.orgName)
+                commit('SET_USERNAME', sysInfo.userName)
                 commit('SET_ROLE', { "roleId": sysInfo.roleId, "roleName": sysInfo.roleName })
                 let menus = generateMenusFromResources(sysInfo.listResource);
                 commit('SET_MENUS', menus)
                 router.addRoutes(generateRoutesFromMenus(menus))
                 resolve()
             })
+        },
+        changePassword({commit}, newPassword){
+            commit('SET_PASSWORD', newPassword)
         }
     },
 }
