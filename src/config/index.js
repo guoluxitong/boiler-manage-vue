@@ -3,8 +3,8 @@ export const config = {
   development_base_ip: '127.0.0.1',
   development_base_port: '8080',
   //正式环境当中使用  boilermanage.sdcsoft.com.cn
-  product_base_ip: 'boilermanage.sdcsoft.com.cn',
-  product_base_port: '',
+  product_base_ip: 'kuaixin.picp.net',
+  product_base_port: '14335',
   //设备相关url（1）、获得字节数据 （2）、获得设备信息
   device_about_url: 'http://output.sdcsoft.com.cn',
   //测试环境-数据报表url
