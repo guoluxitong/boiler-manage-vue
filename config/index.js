@@ -19,7 +19,7 @@ module.exports = {
             }
         },
       '/api': {
-        target: "http://kuaixin.picp.net:14335",//设置你调用的接口域名和端口号 别忘了加http
+        target: "http://sdcsoft.xicp.io:14409",//设置你调用的接口域名和端口号 别忘了加http
         changeOrigin: true,
         pathRewrite: {
           '^/api': '',
@@ -48,7 +48,7 @@ module.exports = {
      */
 
     // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'source-map',//'cheap-module-eval-source-map',
+    devtool: 'source-map',//'cheap-module-eval-source-map'
 
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help
@@ -71,7 +71,7 @@ module.exports = {
      * Source Maps
      */
 
-    productionSourceMap: true,
+    productionSourceMap: false,
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
 

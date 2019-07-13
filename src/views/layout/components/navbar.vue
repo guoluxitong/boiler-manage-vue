@@ -105,7 +105,7 @@
         <el-form-item label="企业logo" prop>
           <el-upload
             ref="upload"
-            action="/api/webapi/file/upload/boiler?type=logo"
+            action="/webapi/file/upload/boiler?type=logo"
             name="picture"
             list-type="picture-card"
             :limit="1"
@@ -122,7 +122,7 @@
           <!--              <el-input  v-model="homeFormData.bgPic" auto-complete="off" placeholder="说明：以http或者https开头"></el-input>-->
           <el-upload
             ref="upload"
-            action="/api/webapi/file/upload/boiler?type=bg"
+            action="/webapi/file/upload/boiler?type=bg"
             name="picture"
             list-type="picture-card"
             :limit="1"
@@ -256,6 +256,7 @@ export default {
         password: this.passWordChangeFormData.newPassWord
       })
         .then(() => {
+          console.log(this.$store.user.commit)
           this.dialogFormVisible = false;
           this.$message({
             message: "修改成功",
@@ -274,7 +275,6 @@ export default {
         if (valid) {
           this.handleSubmit();
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
