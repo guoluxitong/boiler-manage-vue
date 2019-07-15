@@ -3,63 +3,82 @@
     <div v-if="PartCategory==0">
     <!--查询-->
     <el-row class="app-query">
+      <el-col :span="3">
       <el-select
         clearable
-        style="width: 150px"
         v-model="product.customerName"
         placeholder="客户名称"
       >
         <el-option
+          style="width: 130px"
           v-for="item in customerList"
           :key="item.value"
           :label="item.label"
           :value="item.value"
         ></el-option>
       </el-select>
-      <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
+      </el-col>
+      <el-col :span="2.5">
+      <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 130px"></el-input>
+      </el-col>
+      <el-col :span="3">
       <el-select
         clearable
-        style="width: 150px"
         v-model="product.productCategoryId"
         placeholder="锅炉型号"
       >
         <el-option
+          style="width: 130px"
           v-for="item in boilerModelNumberArray"
           :key="item.value"
           :label="item.label"
           :value="item.value"
         ></el-option>
       </el-select>
-      <el-input v-model="product.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
+      </el-col>
+      <el-col :span="2.5">
+      <el-input v-model="product.controllerNo" placeholder="控制器编号" style="width: 130px"></el-input>
+      </el-col>
+      <el-col :span="2.5">
       <el-select clearable style="width: 150px" v-model="product.power" placeholder="燃料">
         <el-option
+          style="width: 130px"
           v-for="item in fuelArray"
           :key="item.value"
           :label="item.label"
           :value="item.value"
         ></el-option>
       </el-select>
+      </el-col>
+      <el-col :span="2.5">
       <el-select clearable style="width: 150px" v-model="product.media" placeholder="介质">
         <el-option
+          style="width: 130px"
           v-for="item in mediumArray"
           :key="item.value"
           :label="item.label"
           :value="item.value"
         ></el-option>
       </el-select>
+      </el-col>
+      <el-col :span="3">
       <el-date-picker
         v-model="product.saleDate"
+        style="width: 150px"
         type="date"
         value-format="yyyy-MM-dd"
         placeholder="售出时间"
-        style="width: 150px;"
       ></el-date-picker>
+      </el-col>
+      <el-col :span="2">
       <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+      </el-col>
+      <el-col :span="2">
       <el-button
-        style="margin-left: 10px;"
         @click="handleCreate"
         icon="el-icon-plus" type="success"
       >添加</el-button>
+      </el-col>
       <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
     </el-row>
     <!--数据展示-->
@@ -183,7 +202,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
-          <el-button @click="dialogChoiceUserFormVisible = false">取消</el-button>
+          <el-button type="warning" icon="el-icon-back" @click="dialogChoiceUserFormVisible = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
@@ -225,8 +244,14 @@
         style="width: 96%; margin-left:15px;"
       >
         <div style="margin-top: 5px">
-          <el-button style="margin-left: 85%" icon="el-icon-plus" type="success"  @click="handleAdd">添加</el-button>
+          <el-row>
+            <el-col :offset="20" :span="2">
+          <el-button  icon="el-icon-plus" type="success"  @click="handleAdd">添加</el-button>
+            </el-col>
+            <el-col :span="2">
           <el-button type="warning" icon="el-icon-back" @click="canelForm">取消</el-button>
+            </el-col>
+          </el-row>
         </div>
         <el-table
           :data="formData.productAuxiliaryMachineInfoList"
@@ -285,9 +310,21 @@
         @confirmAuxiliaryMachineInfoDialog="confirmAuxiliaryMachineInfoDialog"
         @auxiliaryMachineInfoDialogClose="auxiliaryMachineInfoDialogClose"
       ></auxiliary-machine-info-dialog>
+
+      <boiler-common-delete-validate-dialog
+        @confirmDeleteValidate="confirmDeleteValidate"
+        @confirmCancelValidate="confirmCancelValidate"
+        :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
+        :id="delId"
+        :controllerNo="delCtlNo"
+      ></boiler-common-delete-validate-dialog>
     </div>
     <div v-if="PartCategory==2">
-      <el-button style="margin-left: 92%" type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
+      <el-row >
+        <el-col :span="3" :offset="21">
+        <el-button   type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
+        </el-col>
+      </el-row>
       <el-form
         :rules="rules"
         ref="productForm"
@@ -391,16 +428,20 @@
     </div >
     <div v-if="PartCategory==3">
       <el-row class="app-query">
+        <el-col :span="19">
         <el-button
           style="margin-left: 10px;"
           @click="handleCreateType"
           icon="el-icon-plus" type="success"
         >添加</el-button>
+        </el-col>
+        <el-col :span="3">
         <el-button
           style="margin-left: 85%;"
           @click="canealType"
           type="warning" icon="el-icon-back"
         >取消</el-button>
+        </el-col>
       </el-row>
 
       <el-table
@@ -646,6 +687,7 @@ export default {
         isSell: null,
         productCategoryName: ''
       },
+      delete: false,
       listQuery2: {
         total: 500,
         pageNum: 1,
@@ -866,6 +908,7 @@ export default {
     },
     canealType(){
       this.PartCategory = 2;
+      this.initSelect();
     },
     //产品新增
     handleCreate() {
@@ -915,32 +958,9 @@ export default {
       this.productAuxiliaryMachineInfo = row;
     },
     handleDeletepart(row){
+      this.deleteValidateFormDialogVisible = true;
       this.productPartInfoId=row.id;
-      this.$confirm("确认删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          removeProductAuxiliaryMachineInfoList({
-            productId: this.productId,
-            productPartInfoId: this.productPartInfoId
-          }).then(response => {
-            if (response.data.code == 0) {
-              this.$message({
-                message: "删除成功",
-                type: "success"
-              });
-            }
-            this.getAuxiliaryList();
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
+      this.delete=false;
     },
     //产品售出
     sellProduct(row) {
@@ -981,6 +1001,7 @@ export default {
     },
     canelForm(){
       this.PartCategory = 0;
+      this.deleteValidateFormDialogVisible=false
     },
     cenalForm(){
       this.PartCategory = 0;
@@ -1076,40 +1097,48 @@ export default {
       })
     },
     handleDelete(row) {
-      this.$confirm("确认删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.deleteValidateFormDialogVisible = true;
-          this.delId = row.id;
-          this.delCtlNo = row.controllerNo;
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
+      this.deleteValidateFormDialogVisible = true;
+      this.delete=true;
+      this.delId = row.id;
+      this.delCtlNo = row.controllerNo;
     },
     confirmDeleteValidate(obj) {
       if (obj.flag) {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
-        deleteProductById(obj.id,obj.controllerNo).then(response => {
-          if (response.data.code==0){
-            this.currentPage1 = 1;
-          this.$message({
-            message: "删除成功",
-            type: "success"
+        if (this.delete==true){
+          deleteProductById(obj.id,obj.controllerNo).then(response => {
+            if (response.data.code==0){
+              this.currentPage1 = 1;
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+              this.getList();
+            } else {
+              this.$message.error(response.data.msg)
+              return;
+            }
           });
-          this.getList();
-          } else {
-            this.$message.error(response.data.msg)
-            return;
-          }
-        });
+        } else {
+          removeProductAuxiliaryMachineInfoList({
+            productId: this.productId,
+            productPartInfoId: this.productPartInfoId
+          }).then(response => {
+            if (response.data.code == 0) {
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+            }
+            this.getAuxiliaryList();
+          });
+        }
+      }
+      else{
+        this.deleteValidateFormDialogVisible = false
+        this.delId = null
+        this.$message.error("输入密码错误，无法完成删除操作！")
       }
     },
     createType(){

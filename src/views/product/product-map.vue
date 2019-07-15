@@ -26,7 +26,7 @@
         <el-form-item label="售出地址" prop="saleAddress">
           <el-input id="suggestId" v-model="formData.saleAddress" ></el-input>
         </el-form-item>
-        <el-button style="margin-left: 40%" type="primary" @click="confirmSubmit" >确定</el-button>
+        <el-button style="margin-left: 35%" type="primary" @click="confirmSubmit" >确定</el-button>
         <el-button  icon="el-icon-search"  type="primary" @click="productMapOpen">查询</el-button>
       </el-form>
       <el-row style=" overflow-x: hidden;">

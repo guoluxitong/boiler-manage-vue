@@ -2,40 +2,40 @@
   <div style="background-color:#23262E">
     <el-row>
       <el-col :span="17">
-      <sidebar-item></sidebar-item>
+        <sidebar-item></sidebar-item>
       </el-col>
       <el-col :span="7">
-       <el-row class="right-menu">
-         <el-col :span="19">
-           <p class="user-info">
-          <span>山东简洁软件有限公司</span>
-          </p>
-          <p class="user-info">
-          <span v-if="organizationName">组织：{{organizationName}}</span>
-          <span v-if="realName">{{realName}}</span>
-          </p>
-         </el-col>
-         <el-col :span="5">
-          <el-dropdown class="avatar-container right-menu-item" trigger="click">
-            <div class="avatar-wrapper">
-              <img class="user-avatar" src="static/common/avator.png">
-              <i class="el-icon-caret-bottom"></i>
-            </div>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item divided>
-                <span @click="dialogHomeFormVisible = true" style="display:block;">软件设置</span>
-              </el-dropdown-item>
-              <el-dropdown-item divided>
-                <span @click="dialogFormVisible = true" style="display:block;">修改密码</span>
-              </el-dropdown-item>
-              <el-dropdown-item divided>
-                <span @click="logout" style="display:block;">退出</span>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-         </el-col>
-      </el-row>
-    </el-col>
+        <el-row class="right-menu">
+          <el-col :span="19">
+            <p class="user-info">
+              <span>山东简洁软件有限公司</span>
+            </p>
+            <p class="user-info">
+              <span v-if="organizationName">组织：{{organizationName}}</span>
+              <span v-if="realName">{{realName}}</span>
+            </p>
+          </el-col>
+          <el-col :span="5">
+            <el-dropdown class="avatar-container right-menu-item" trigger="click">
+              <div class="avatar-wrapper">
+                <img class="user-avatar" src="static/common/avator.png" />
+                <i class="el-icon-caret-bottom"></i>
+              </div>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item divided>
+                  <span @click="dialogHomeFormVisible = true" style="display:block;">软件设置</span>
+                </el-dropdown-item>
+                <el-dropdown-item divided>
+                  <span @click="dialogFormVisible = true" style="display:block;">修改密码</span>
+                </el-dropdown-item>
+                <el-dropdown-item divided>
+                  <span @click="logout" style="display:block;">退出</span>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-col>
+        </el-row>
+      </el-col>
     </el-row>
     <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
       <el-form
@@ -68,7 +68,14 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm">提交</el-button>
+          <el-row>
+            <el-col :offset="7" :span="8">
+              <el-button type="primary" @click="submitForm">确定</el-button>
+            </el-col>
+            <el-col :span="8">
+              <el-button type="warning" icon="el-icon-back" @click="cancel">取消</el-button>
+            </el-col>
+          </el-row>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -105,7 +112,7 @@
         <el-form-item label="企业logo" prop>
           <el-upload
             ref="upload"
-            :action="logoUploadPath"
+            action="/api/webapi/file/upload/boiler?type=logo"
             name="picture"
             list-type="picture-card"
             :limit="1"
@@ -122,7 +129,7 @@
           <!--              <el-input  v-model="homeFormData.bgPic" auto-complete="off" placeholder="说明：以http或者https开头"></el-input>-->
           <el-upload
             ref="upload"
-            :action="bgUploadPath"
+            action="/api/webapi/file/upload/boiler?type=bg"
             name="picture"
             list-type="picture-card"
             :limit="1"
@@ -147,21 +154,13 @@
 import { validateURL } from "@/utils/validate";
 import sidebarItem from "./sidebar/sidebarItem";
 import { editUserPass } from "@/api/user";
+import { login } from "@/api/login";
 import { deleteFile } from "@/api/upload";
 import { loginout } from "@/api/loginout";
-
-import axios from "axios";
 import { config } from "@/config/index";
 
-const baseURL =
-  process.env.NODE_ENV === "development"
-    ? "http://" +
-      config.development_base_ip +
-      ":" +
-      config.development_base_port
-    : "http://" + config.product_base_ip + ":" + config.product_base_port;
 export default {
-  components: { sidebarItem },
+  components: {sidebarItem},
   data() {
     let validateOldPassWord = (rule, value, callback) => {
       if (value === "") {
@@ -208,6 +207,7 @@ export default {
         newPassWord: "",
         checkNewPassWord: ""
       },
+      deleteValidateFormDialogVisible: false,
       rules: {
         oldPassWord: [{ trigger: "blur", validator: validateOldPassWord }],
         newPassWord: [{ trigger: "blur", validator: validateNewPassWord }],
@@ -215,6 +215,7 @@ export default {
           { trigger: "blur", validator: validateCheckNewPassWord }
         ]
       },
+      editpassword: '222',
       dialogHomeFormVisible: false,
       homeFormData: {
         homeUrl: "",
@@ -226,33 +227,28 @@ export default {
       homeRules: {
         homeUrl: [{ trigger: "blur", validator: validateHomeUrl }]
       },
-      //文件上传路径
-      logoUploadPath:
-        baseURL +
-        "/upload/uploadFile?orgId=" +
-        this.$store.state.user.orgId +
-        "&type=logo",
-      bgUploadPath:
-        baseURL +
-        "/upload/uploadFile?orgId=" +
-        this.$store.state.user.orgId +
-        "&type=background",
       //图片列表（用于在上传组件中回显图片）
       logoFile: [{ name: "logo", url: "/static/common/defaultLogo.png" }],
-      backgroundFile: [
-        { name: "background", url: "/static/common/loginBackground.jpg" }
-      ]
+      backgroundFile: [{ name: "bg", url: "/static/common/loginBackground.jpg" }]
     };
   },
   created() {
     let homeUrl = window.localStorage["homeUrl"];
     let copyrightInfo1 = window.localStorage["copyrightInfo1"];
     let copyrightInfo2 = window.localStorage["copyrightInfo2"];
-    if (homeUrl) this.homeFormData.homeUrl = window.localStorage["homeUrl"];
-    if (copyrightInfo1)
+
+    if (homeUrl) {
+      this.homeFormData.homeUrl = window.localStorage["homeUrl"];
+    }
+
+    if (copyrightInfo1) {
       this.homeFormData.copyrightInfo1 = window.localStorage["copyrightInfo1"];
-    if (copyrightInfo2)
+    }
+
+    if (copyrightInfo2) {
       this.homeFormData.copyrightInfo2 = window.localStorage["copyrightInfo2"];
+    }
+
     let logoUrl = window.localStorage["logoUrl"];
     if (logoUrl) {
       this.homeFormData.logoUrl = window.localStorage["logoUrl"];
@@ -261,22 +257,32 @@ export default {
     let bgUrl = window.localStorage["bgUrl"];
     if (bgUrl) {
       this.homeFormData.bgUrl = window.localStorage["bgUrl"];
-      this.backgroundFile = [
-        { name: "background", url: this.homeFormData.bgUrl }
-      ];
+      this.backgroundFile = [{ name: "bg", url: this.homeFormData.bgUrl }];
     }
   },
   methods: {
+    cancel(){
+      this.dialogFormVisible=false
+      this.$nextTick(() => {
+        this.$refs["passWordChangeForm"].resetFields();
+      });
+    },
     handleSubmit() {
       editUserPass({
         password: this.passWordChangeFormData.newPassWord
       })
-        .then(() => {
-          this.dialogFormVisible = false;
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
+        .then(response => {
+          if(response.data.code==0){
+            this.$store.state.user.password = this.passWordChangeFormData.newPassWord
+            this.dialogFormVisible = false;
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            });
+          } else {
+            this.$message.error(response.data.msg)
+            return
+          }
         })
         .catch(() => {
           this.$message({
@@ -322,7 +328,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          window.close()
+          window.close();
         })
         .catch(err => {
           this.$message({
@@ -339,10 +345,10 @@ export default {
         message: "图片上传成功",
         duration: 6000
       });
-      if (file.response.code == 200) {
-        //this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
-        window.localStorage["logoUrl"] = baseURL + res.data;
-        window.localStorage["logoPath"] = res.data;
+      if (res.code) {
+        this.$message.error(res.msg);
+      } else {
+        window.localStorage["logoUrl"] = res.data+'?id='+Math.random()
       }
     },
     handleBgSuccess(res, file) {
@@ -351,72 +357,19 @@ export default {
         message: "图片上传成功",
         duration: 6000
       });
-      if (file.response.code == 200) {
-        //this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
-        window.localStorage["bgUrl"] = baseURL + res.data;
-        window.localStorage["bgPath"] = res.data;
+      if (res.code) {
+        this.$message.error(res.msg);
+      } else {
+        window.localStorage["bgUrl"] = res.data+'?id='+Math.random()
       }
     },
     //删除文件之前的钩子函数
     handleLogoRemove(file, fileList) {
-      let path = window.localStorage["logoPath"];
-      if (path) {
-        deleteFile(path)
-          .then(() => {
-            this.$message({
-              type: "info",
-              message: "已删除原有图片",
-              duration: 6000
-            });
-            window.localStorage.removeItem("logoPath");
-            window.localStorage.removeItem("logoUrl");
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "删除失败",
-              duration: 6000
-            });
-          });
-      } else {
-        this.$message({
-          type: "info",
-          message: "已删除原有图片",
-          duration: 6000
-        });
-      }
+      //window.localStorage["logoUrl"] = "/api/boiler/logo.png";
     },
     handleBgRemove(file, fileList) {
-      let path = window.localStorage["bgPath"];
-      if (path) {
-        deleteFile(path)
-          .then(() => {
-            this.$message({
-              type: "info",
-              message: "已删除原有图片",
-              duration: 6000
-            });
-            window.localStorage.removeItem("bgPath");
-            window.localStorage.removeItem("bgUrl");
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "删除失败",
-              duration: 6000
-            });
-          });
-      } else {
-        this.$message({
-          type: "info",
-          message: "已删除原有图片",
-          duration: 6000
-        });
-      }
+     // window.localStorage["bgUrl"] = "/api/boiler/bg.jpg";
     },
-    //点击列表中已上传的文件事的钩子函数
-    /*handlePreview(file) {
-          },*/
     //上传的文件个数超出设定时触发的函数
     onExceed(files, fileList) {
       this.$message({
@@ -444,14 +397,16 @@ export default {
 };
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
-.el-menu.el-menu--horizontal{ border-bottom: none}
+.el-menu.el-menu--horizontal {
+  border-bottom: none;
+}
 .right-menu {
-  font-size:14px;
+  font-size: 14px;
   height: 100%;
   line-height: 100%;
   .user-info {
     color: white;
-    text-align:right;
+    text-align: right;
     margin: 10px 0px;
   }
   &:focus {
@@ -459,7 +414,7 @@ export default {
   }
   .right-menu-item {
     display: inline-block;
-    color:#fff;
+    color: #fff;
     margin: 0 8px;
   }
   .screenfull {

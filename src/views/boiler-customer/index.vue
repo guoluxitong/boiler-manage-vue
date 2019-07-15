@@ -1,24 +1,28 @@
 <template>
   <div class="app-container boilerCustomer-container">
     <el-row class="app-query">
-      <el-input v-model="listQuery.name" placeholder="客户名称" style="width: 150px;"></el-input>
+      <el-col :span="4">
+      <el-input v-model="listQuery.name" placeholder="客户名称" ></el-input>
+      </el-col>
+      <el-col :span="2">
       <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+      </el-col>
+      <el-col :span="3">
       <el-button
-        style="margin-left: 10px;"
         @click="handleCreate"
         type="success"
         icon="el-icon-plus"
       >添加</el-button>
+      </el-col>
     </el-row>
 
     <el-table
-      :data="list.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+      :data="list"
       v-loading="listLoading"
       element-loading-text="给我一点时间"
       border
       fit
       highlight-current-row
-      style="width: 120%"
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" :show-overflow-tooltip="true" label="客户名称">
@@ -59,11 +63,13 @@
     <div class="pagination-container">
       <el-pagination
         background
-        @size-change="handleSizeChange1"
-        @current-change="handleCurrentChange1" :current-page="currentPage1"
-        :page-sizes="[5]"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="listQuery.pageNum"
+        :page-sizes="[5,10,15,20]"
+        :page-size="listQuery.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="this.total"
+        :total="total"
       ></el-pagination>
     </div>
 
@@ -89,7 +95,6 @@
           </el-col>
         </el-row>
         <el-row>
-
           <el-col :span="12">
             <el-form-item label="省">
               <el-input v-model="boilerCustomerFormData.province"></el-input>
@@ -102,12 +107,14 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form-item label="区">
               <el-input v-model="boilerCustomerFormData.district"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+        </el-row>
+        <el-row>
+          <el-col :span="24">
             <el-form-item label="详细地址" prop="weiXin">
               <el-input v-model="boilerCustomerFormData.address"></el-input>
             </el-form-item>
@@ -136,10 +143,7 @@ import {
   createCustomer,
   getBoilerCustomerListByName
 } from "@/api/boilerCustomer";
-import {
-  validateRealName,
-  validatePhone,
-} from "@/utils/validate";
+import { validateRealName, validatePhone } from "@/utils/validate";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 export default {
   components: {
@@ -168,7 +172,7 @@ export default {
         pageNum: 1,
         pageSize: 5
       },
-      currentPage1:1,
+      currentPage1: 1,
       pageNum1: 1,
       pageSize1: 5,
       total: 50,
@@ -234,13 +238,14 @@ export default {
     getList() {
       this.listLoading = true;
       getList(this.listQuery).then(response => {
-        if (response.data.code==0){
-        const data = response.data.data;
-        this.list = data.list;
-        this.total = data.total;
-        this.listQuery.pageNum = data.pageNum;
-        this.listLoading = false;
-      } else {
+        if (response.data.code == 0) {
+          const data = response.data.data;
+          this.list = data.list;
+          this.total = data.total;
+          this.listQuery.pageNum = data.pageNum;
+          this.listQuery.pageSize = data.pageSize;
+          this.listLoading = false;
+        } else {
           this.$message.error(response.data.msg);
           return;
         }
@@ -311,21 +316,8 @@ export default {
       });
     },
     handleDelete(row) {
-      this.$confirm("确认删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.deleteValidateFormDialogVisible = true;
-          this.delId = row.id;
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
+      this.deleteValidateFormDialogVisible = true;
+      this.delId = row.id;
     },
     confirmDeleteValidate(obj) {
       if (obj.flag) {
@@ -340,22 +332,28 @@ export default {
             message: "删除成功",
             type: "success"
           });
+          this.listQuery.pageNum = 1;
           this.getList();
         });
+      }
+      else{
+        this.deleteValidateFormDialogVisible = false
+        this.delId = null
+        this.$message.error("输入密码错误，无法完成删除操作！")
       }
     },
     confirmCancelValidate(obj) {
       this.deleteValidateFormDialogVisible =
         obj.deleteValidateFormDialogVisible;
     },
-    //分页
-    handleSizeChange1: function (pageSize) {
-      this.pageSize1 = pageSize;
-      this.handleCurrentChange1(this.currentPage);
+    handleSizeChange(val) {
+      this.listQuery.pageSize = val;
+      this.getList();
     },
-    handleCurrentChange1: function (currentPage) {//页码切换
-      this.currentPage1 = currentPage;
-    },
+    handleCurrentChange(val) {
+      this.listQuery.pageNum = val;
+      this.getList();
+    }
   }
 };
 </script>

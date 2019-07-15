@@ -93,6 +93,12 @@
         <el-button type="warning" icon="el-icon-back" @click="dialogResourceFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
+    <boiler-common-delete-validate-dialog
+      @confirmDeleteValidate="confirmDeleteValidate"
+      @confirmCancelValidate="confirmCancelValidate"
+      :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
+      :id="delId"
+    ></boiler-common-delete-validate-dialog>
   </div>
 </template>
 
@@ -105,9 +111,13 @@ import {
   deleteRole
 } from "@/api/role";
 import { getUserResources, getRoleResources } from "@/api/resource";
+import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 import { fail } from "assert";
 import { truncate } from "fs";
 export default {
+  components: {
+    "boiler-common-delete-validate-dialog": boilerCommonDeleteValidate
+  },
   data() {
     return {
       list: null,
@@ -125,6 +135,8 @@ export default {
         roleName: "",
         roleDesc: ""
       },
+      deleteValidateFormDialogVisible: false,
+      delId: -1,
       rules: {},
       dialogResourceFormVisible: false,
       resourceFormData: {
@@ -330,33 +342,36 @@ export default {
       }
     },
     handleDelete(row) {
-      this.$confirm("确认删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          deleteRole(row.id).then(response => {
-            if (response.data.code) {
-              throw response.data.msg
-            }
-            this.$message({
-              message: "删除成功",
-              type: "success"
-            });
-            this.list.splice(this.list.indexOf(row), 1);
-            if (this.list.length == 0) {
-              this.listQuery.pageNum = this.pageNum > 1 ? this.pageNum - 1 : 1;
-            }
-            this.getList();
-          });
-        })
-        .catch(() => {
+      this.deleteValidateFormDialogVisible = true;
+      this.delId = row.id;
+    },
+    confirmDeleteValidate(obj) {
+      if (obj.flag) {
+        this.deleteValidateFormDialogVisible =
+          obj.deleteValidateFormDialogVisible;
+        deleteRole(obj.id).then(data => {
+          if (data.data.code) {
+            this.$message.error(data.data.msg);
+            return;
+          }
           this.$message({
-            type: "info",
-            message: "已取消删除"
+            message: "删除成功",
+            type: "success"
           });
+
+            this.listQuery.pageNum =  1;
+          this.getList();
         });
+      }
+      else{
+        this.deleteValidateFormDialogVisible = false
+        this.delId = null
+        this.$message.error("输入密码错误，无法完成删除操作！")
+      }
+    },
+    confirmCancelValidate(obj) {
+      this.deleteValidateFormDialogVisible =
+        obj.deleteValidateFormDialogVisible;
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val;
