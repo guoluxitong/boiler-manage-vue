@@ -1109,11 +1109,11 @@ export default {
         if (this.delete==true){
           deleteProductById(obj.id,obj.controllerNo).then(response => {
             if (response.data.code==0){
-              this.currentPage1 = 1;
               this.$message({
                 message: "删除成功",
                 type: "success"
               });
+              this.currentPage1 =(this.list.length-1)%this.pageSize1 == 0 ? this.currentPage1-1 : this.currentPage1
               this.getList();
             } else {
               this.$message.error(response.data.msg)

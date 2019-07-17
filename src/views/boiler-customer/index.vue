@@ -172,6 +172,7 @@ export default {
         pageNum: 1,
         pageSize: 5
       },
+      size: '',
       currentPage1: 1,
       pageNum1: 1,
       pageSize1: 5,
@@ -244,6 +245,7 @@ export default {
           this.total = data.total;
           this.listQuery.pageNum = data.pageNum;
           this.listQuery.pageSize = data.pageSize;
+          this.size=data.size;
           this.listLoading = false;
         } else {
           this.$message.error(response.data.msg);
@@ -332,7 +334,9 @@ export default {
             message: "删除成功",
             type: "success"
           });
-          this.listQuery.pageNum = 1;
+          if (this.size == 1) {
+            this.listQuery.pageNum = this.pageNum > 1 ? this.pageNum - 1 : 1;
+          }
           this.getList();
         });
       }

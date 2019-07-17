@@ -85,9 +85,6 @@
               @select="((item)=>{handleSelectuser3(item)})"
             ></el-autocomplete>
               </el-col>
-              <el-col :span="4">
-            <el-button type="primary" icon="el-icon-search" @click="handleUserFilter">查询</el-button>
-              </el-col>
             </el-row>
             <el-table
               :data="userlist.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
@@ -531,7 +528,8 @@ export default {
       };
     },
     handleSelectuser3(item) {
-      this.userArry.roleName = item.roleName;
+      this.userlist = [];
+      this.userlist.push(item)
     },
     initSelect() {
       getList(this.listQuery2).then(response => {
@@ -597,16 +595,19 @@ export default {
           obj.deleteValidateFormDialogVisible;
         deleteRepairInfoByProductId(obj.id).then(response => {
           if (response.data.code == 0) {
-            this.currentPage1 = 1;
             this.$message({
               message: "删除成功",
               type: "success"
             });
-          }
+            this.currentPage1 =(this.repairuserList.length-1)%this.pageSize1 == 0 ? this.currentPage1-1 : this.currentPage1
           if (this.inputname) {
             this.getrepairList();
           } else {
             this.getrepairListuser();
+          }
+          } else {
+            this.$message.error(response.data.msg)
+            return;
           }
         });
       } else {
@@ -639,9 +640,6 @@ export default {
         window.event.clientX,
         window.event.clientY
       );
-    },
-    handleUserFilter() {
-      this.userlist = this.userArry;
     },
     handleFilter() {
       this.listLoading = true;

@@ -140,6 +140,7 @@ export default {
         pageNum: 1,
         pageSize: 5
       },
+      size: '',
       roleManageShow: "inline",
       dialogFormVisible: false,
       userFormData: {
@@ -238,6 +239,7 @@ export default {
         this.listQuery.total = data.total;
         this.listQuery.pageNum = data.pageNum;
         this.listQuery.pageSize = data.pageSize;
+        this.size=data.size;
         this.listLoading = false;
       });
     },
@@ -342,7 +344,9 @@ export default {
               message: "删除成功",
               type: "success"
             });
-            this.listQuery.pageNum = 1;
+            if (this.size == 1) {
+              this.listQuery.pageNum = this.pageNum > 1 ? this.pageNum - 1 : 1;
+            }
             this.getList();
           })
           .catch(resion => {

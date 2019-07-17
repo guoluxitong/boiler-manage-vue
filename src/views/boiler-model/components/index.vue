@@ -102,6 +102,7 @@ export default {
         update: "编辑",
         create: "添加"
       },
+      size: '',
       dialogStatus: "",
       dialogFormVisible: false,
       boilerModelFormData: {
@@ -146,6 +147,7 @@ export default {
         this.listQuery.total = data.total;
         this.listQuery.pageNum = data.pageNum;
         this.listQuery.pageSize = data.pageSize;
+        this.size=data.size;
         this.listLoading = false;
         } else {
           this.$message.error(response.data.msg);
@@ -230,6 +232,9 @@ export default {
             message: "删除成功",
             type: "success"
           });
+            if (this.size == 1) {
+              this.listQuery.pageNum = this.pageNum > 1 ? this.pageNum - 1 : 1;
+            }
           this.getList();
           } else {
             this.$message.error(data.data.msg);

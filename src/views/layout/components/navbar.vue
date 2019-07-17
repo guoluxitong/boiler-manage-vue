@@ -143,7 +143,14 @@
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitHomeForm">提交</el-button>
+          <el-row>
+            <el-col :offset="10" :span="5">
+              <el-button type="primary" @click="submitHomeForm">确定</el-button>
+            </el-col>
+            <el-col :span="5">
+              <el-button type="warning" icon="el-icon-back" @click="cancelHome">取消</el-button>
+            </el-col>
+          </el-row>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -261,6 +268,12 @@ export default {
     }
   },
   methods: {
+    cancelHome(){
+      this.dialogHomeFormVisible=false
+      this.$nextTick(() => {
+        this.$refs["homeForm"].resetFields();
+      });
+    },
     cancel(){
       this.dialogFormVisible=false
       this.$nextTick(() => {

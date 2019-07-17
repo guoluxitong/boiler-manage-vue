@@ -135,6 +135,7 @@ export default {
         roleName: "",
         roleDesc: ""
       },
+      size: '',
       deleteValidateFormDialogVisible: false,
       delId: -1,
       rules: {},
@@ -181,6 +182,7 @@ export default {
             this.listQuery.total = data.total;
             this.listQuery.pageNum = data.pageNum;
             this.listQuery.pageSize = data.pageSize;
+            this.size=data.size;
           }
         }
       ).catch(resion=>{
@@ -358,8 +360,9 @@ export default {
             message: "删除成功",
             type: "success"
           });
-
-            this.listQuery.pageNum =  1;
+          if (this.size == 1) {
+            this.listQuery.pageNum = this.pageNum > 1 ? this.pageNum - 1 : 1;
+          }
           this.getList();
         });
       }
