@@ -16,18 +16,3 @@ export function getUserInfo(employeeId) {
     params:{ "employeeId": employeeId}
   })
 }
-
-export function loginByCAS () {
-    return request({
-        url:'/test/signIn',
-        method:'get'
-    })
-}
-export function logoutByCAS () {
-    window.location.href="http://127.0.0.1:8091/logout/out"
-    /*return request({
-        url:'/logout/out',
-        method:'get',
-        aasync:false
-    })*/
-}

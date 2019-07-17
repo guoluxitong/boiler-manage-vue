@@ -641,9 +641,7 @@ export default {
       );
     },
     handleUserFilter() {
-      listLoading: true;
       this.userlist = this.userArry;
-      listLoading: false;
     },
     handleFilter() {
       this.listLoading = true;
