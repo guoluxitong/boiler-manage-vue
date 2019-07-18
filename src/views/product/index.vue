@@ -204,9 +204,9 @@
       <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%" @close="close">
         <controller-run-info-dialog
           ref="deviceRunInfo"
-          :boiler-no="this.boilerNo"
-          :controller-no="this.controllerNo"
-          :address="this.address"
+          :boiler-no="this.boiler.boilerNo"
+          :controller-no="this.boiler.controllerNo"
+          :address="this.boiler.address"
           :visible="controllerRunInfoDialogVisible"
         ></controller-run-info-dialog>
       </el-dialog>
@@ -692,7 +692,7 @@ export default {
         productId: 0
       },
       productFormData: {},
-      controllerNo: "",
+   
       rules: {
         tonnageNum: [
           { trigger: "blur", validator: validatePositiveAndSmallAndFloatNumFun }
@@ -727,7 +727,12 @@ export default {
       controllerRunInfoDialogVisible: false,
       mapCompleteDialogVisible: false,
       titleName: "",
-      address: ""
+      boiler:{
+        address: null,
+        controllerNo: null,
+        boilerNo:null,
+        
+      }
     };
   },
   filters: {
@@ -962,10 +967,9 @@ export default {
     //监控
     showControllerData(row) {
       this.controllerRunInfoDialogVisible = true;
-      this.controllerNo = row.controllerNo;
-      row.province
-        ? (this.address = row.province + row.city + row.district + row.street)
-        : (this.address = "");
+      this.boiler.controllerNo = row.controllerNo;
+      this.boiler.boilerNo = row.boilerNo
+      this.boiler.address = row.street
     },
     // 辅机信息
     auxiliaryMachineInfo(row) {
