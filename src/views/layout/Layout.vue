@@ -1,7 +1,9 @@
 <template>
     <div>
+        <template v-if="!fullMap">
         <navbar></navbar>
         <breadcrumb class="breadcrumb-container"></breadcrumb>
+        </template>
         <app-main :style="{'height':appMainHeight+'px'}"></app-main>
     </div>
 </template>
@@ -19,7 +21,12 @@
         },
         data() {
             return {
-                appMainHeight:document.body.clientHeight-88
+                appMainHeight:document.body.clientHeight-90
+            }
+        },
+        computed:{
+            fullMap(){
+                return this.$store.state.app.fullMap
             }
         },
         created () {

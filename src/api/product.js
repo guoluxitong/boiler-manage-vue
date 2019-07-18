@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import qs from 'qs'
-export function getProductListByCondition(data) {
+export function productSearch(data) {
   return request({
     url: '/webapi/boilermanage/product/search',
     method: 'post',
@@ -38,7 +38,7 @@ export function editProduct(data) {
   })
 }
 
-export function updateProductSellAbout(data) {
+export function productSell(data) {
     return request({
         url: '/webapi/boilermanage/product/sell',
         method: 'post',

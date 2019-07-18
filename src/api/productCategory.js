@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import qs from 'qs'
-export function getBoilerModelListByConditionAndPage(query) {
+export function getProductCategoryListAndPage(query) {
   return request({
     url: '/webapi/boilermanage/productcategory/pagelist',
     method: 'get',
@@ -8,11 +8,10 @@ export function getBoilerModelListByConditionAndPage(query) {
   })
 }
 
-export function getBoilerModelListByCondition(orgId) {
+export function getProductCategoryList() {
   return request({
     url: '/webapi/boilermanage/productcategory/list',
-    method: 'get',
-    params: {orgId}
+    method: 'get'
   })
 }
 

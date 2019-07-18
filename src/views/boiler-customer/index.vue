@@ -138,11 +138,11 @@
 <script>
 import {
   getList,
-  editBoilerCustomer,
-  deleteBoilerCustomerById,
+  editCustomer,
+  deleteCustomer,
   createCustomer,
-  getBoilerCustomerListByName
-} from "@/api/boilerCustomer";
+  customerSearch
+} from "@/api/customer";
 import { validateRealName, validatePhone } from "@/utils/validate";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 export default {
@@ -227,7 +227,7 @@ export default {
     },
     getListByName() {
       this.listLoading = true;
-      getBoilerCustomerListByName(this.listQuery.name).then(response => {
+      customerSearch(this.listQuery.name).then(response => {
         const data = response.data.data;
         this.list = data;
         this.total = 1;
@@ -299,7 +299,7 @@ export default {
               this.getList();
             });
           } else {
-            editBoilerCustomer(this.boilerCustomerFormData).then(data => {
+            editCustomer(this.boilerCustomerFormData).then(data => {
               if (data.data.code) {
                 this.$message.error(data.data.msg);
                 return;
@@ -325,7 +325,7 @@ export default {
       if (obj.flag) {
         this.deleteValidateFormDialogVisible =
           obj.deleteValidateFormDialogVisible;
-        deleteBoilerCustomerById(obj.id).then(data => {
+        deleteCustomer(obj.id).then(data => {
           if (data.data.code) {
             this.$message.error(data.data.msg);
             return;

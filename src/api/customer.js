@@ -1,46 +1,38 @@
 import request from '@/utils/request'
+import qs from 'qs'
 
-export function getCustomerListByCondition(query) {
-    return request({
-        url: '/customer/customerlistbycondition',
-        method: 'get',
-        params: query
-    })
+export function getList(query) {
+  return request({
+    url: '/webapi/boilermanage/customer/list',
+    method: 'get',
+    params: query
+  })
 }
-
-export function getCustomerListByConditionAndPage(query) {
-    return request({
-        url: '/webapi/boilermanage/user/list',
-        method: 'get',
-        params: query
-    })
+export function customerSearch(name) {
+  return request({
+    url: '/webapi/boilermanage/customer/search',
+    method: 'get',
+    params: {name: name}
+  })
 }
-
+export function createCustomer(data) {
+  return request({
+    url: '/webapi/boilermanage/customer/create',
+    method: 'post',
+    data: data
+  })
+}
 export function editCustomer(data) {
-    return request({
-        url: '/customer/editcustomer',
-        method: 'post',
-        data:data
-    })
+  return request({
+    url: '/webapi/boilermanage/customer/modify',
+    method: 'post',
+    data: data
+  })
 }
-export function insertManyCustomerResource(data) {
-    return request({
-        url: '/customer/insertmanycustomerresource',
-        method: 'post',
-        data:data
-    })
-}
-export function insertManyCustomerUser(data) {
-    return request({
-        url: '/customer/insertmanycustomeruser',
-        method: 'post',
-        data:data
-    })
-}
-export function deleteCustomerById(id) {
-    return request({
-        url: '/customer/deletecustomerbyid',
-        method: 'post',
-        params:{id}
-    })
+export function deleteCustomer(id) {
+  return request({
+    url: '/webapi/boilermanage/customer/remove',
+    method: 'post',
+    data: qs.stringify({id: id})
+  })
 }

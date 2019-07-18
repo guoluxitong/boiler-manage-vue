@@ -71,11 +71,11 @@
 
 <script>
 import {
-  getBoilerModelListByConditionAndPage,
+  getProductCategoryListAndPage,
   editBoilerModel,
   createBoilerModel,
   deleteBoilerModelById
-} from "@/api/boilerModel";
+} from "@/api/productCategory";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 export default {
   name: "boiler-model",
@@ -140,7 +140,7 @@ export default {
     getList() {
       this.listLoading = true;
         this.listQuery.orgId = this.$store.state.user.orgId;
-      getBoilerModelListByConditionAndPage(this.listQuery).then(response => {
+      getProductCategoryListAndPage(this.listQuery).then(response => {
         if ( response.data.code==0){
         const data = response.data.data;
         this.list = data.list;

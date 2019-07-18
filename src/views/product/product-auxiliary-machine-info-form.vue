@@ -69,8 +69,8 @@
 </template>
 
 <script>
-  import {getAuxiliaryMachineLargeClassListByCondition} from '@/api/auxiliaryMachineLargeClass'
-  import {getAuxiliaryMachineSmallClassListByCondition} from '@/api/auxiliaryMachineSmallClass'
+  import {partCategoryList} from '@/api/partCategory'
+  import {partSubCategoryList} from '@/api/partSubCategory'
 
   export default {
     name: 'product-auxiliary-machine-info-form',
@@ -126,12 +126,12 @@
         Promise.all([this.initAuxiliaryMachineAbout()]).then(()=>{this.initFormData()})
       },
       initAuxiliaryMachineAbout(){
-        getAuxiliaryMachineLargeClassListByCondition({}).then(response=>{
+        partCategoryList({}).then(response=>{
           this.largeClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
           this.largeClassArray=response.data.data
         })
         if(this.productAuxiliaryMachineInfo.partCategoryId){
-          getAuxiliaryMachineSmallClassListByCondition(this.productAuxiliaryMachineInfo.partCategoryId).then(response=>{
+          partSubCategoryList(this.productAuxiliaryMachineInfo.partCategoryId).then(response=>{
             this.smallClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
             this.smallClassArray=response.data.data
           })
@@ -154,7 +154,7 @@
       },
       largeClassChange(val){
         this.partCategoryId=val;
-        getAuxiliaryMachineSmallClassListByCondition(this.partCategoryId).then(response=>{
+        partSubCategoryList(this.partCategoryId).then(response=>{
           this.smallClassOptions=this.getAuxiliaryMachineAboutOptions(response.data.data)
           this.smallClassArray=response.data.data
         })

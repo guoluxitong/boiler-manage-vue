@@ -82,10 +82,10 @@
 import { formatDateTime } from "@/utils/date";
 import permission from "@/directive/permission/index.js";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
-import { getBoilerModelListByCondition } from "@/api/boilerModel";
-import { getAuxiliaryMachineLargeClassListByCondition } from "@/api/auxiliaryMachineLargeClass";
-import { getAuxiliaryMachineSmallClassListByCondition } from "@/api/auxiliaryMachineSmallClass";
-import { getProductAuxiliaryMachineInfoListByProductId } from "@/api/ProductAuxiliaryMachineInfo";
+import { getProductCategoryList } from "@/api/productCategory";
+import { partCategoryList } from "@/api/partCategory";
+import { partSubCategoryList } from "@/api/partSubCategory";
+import { partlist } from "@/api/productPartInfo";
 import { editProduct } from "@/api/product";
 import auxiliaryMachineInfoDialog from "./product-auxiliary-machine-info-form";
 
@@ -213,19 +213,17 @@ export default {
       });
     },
     initBoilerModel() {
-      getBoilerModelListByCondition({
-        orgId: this.$store.state.user.orgId,
-      }).then(data => {
+      getProductCategoryList().then(data => {
         this.boilerModelNumberArray = data.data.data;
       });
     },
     initAuxiliaryMachineAbout() {
-      getAuxiliaryMachineLargeClassListByCondition({}).then(response => {
+      partCategoryList({}).then(response => {
         this.largeClassOptions = this.getAuxiliaryMachineAboutOptions(
           response.data.data
         );
       });
-      getAuxiliaryMachineSmallClassListByCondition(41).then(response => {
+      partSubCategoryList(41).then(response => {
         this.smallClassOptions = this.getAuxiliaryMachineAboutOptions(
           response.data.data
         );
@@ -265,7 +263,7 @@ export default {
       }
     },
     getList() {
-      getProductAuxiliaryMachineInfoListByProductId({
+      partlist({
         productId: this.productFormData.id
       }).then(response => {
         let productAuxiliaryMachineInfoList = response.data.data;
