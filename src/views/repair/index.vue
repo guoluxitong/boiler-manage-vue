@@ -269,17 +269,6 @@
                 @select="((item)=>{handleSelect1(item)})"
               ></el-autocomplete>
             </el-form-item>
-            <el-form-item label="录入时间">
-              <el-col :span="24">
-                <el-date-picker
-                  value-format="yyyy-MM-dd hh:mm:ss"
-                  type="datetime"
-                  placeholder="选择日期"
-                  v-model="repairform.createDatetime"
-                  style="width: 100%;"
-                ></el-date-picker>
-              </el-col>
-            </el-form-item>
             <el-form-item label="维保时间">
               <el-col :span="24">
                 <el-date-picker
@@ -740,11 +729,15 @@ export default {
       this.repairform.productId = item;
     },
     submitRepairuser() {
+      var createDatetime = formatDateTime(
+        new Date(),
+        "yyyy-MM-dd hh:mm:ss"
+      );
       if (this.inputname) {
         insertRepairInfo({
           userName: this.repairform.realName,
           repairDatetime: this.repairform.repairDatetime,
-          createDatetime: this.repairform.createDatetime,
+          createDatetime: createDatetime,
           createUserName: this.$store.getters.realName,
           createUserId: this.$store.getters.userId,
           repairContent: this.repairform.repairContent,
@@ -773,7 +766,7 @@ export default {
         insertRepairInfo({
           userName: this.userFormData.userName,
           repairDatetime: this.repairform.repairDatetime,
-          createDatetime: this.repairform.createDatetime,
+          createDatetime: createDatetime,
           createUserName: this.$store.getters.realName,
           createUserId: this.$store.getters.userId,
           repairContent: this.repairform.repairContent,
