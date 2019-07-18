@@ -1,27 +1,28 @@
 import request from '@/utils/request'
 import qs from 'qs'
-export function getProductAuxiliaryMachineInfoListByProductId(query) {
+
+export function partlist(query) {
   return request({
     url: '/webapi/boilermanage/productpartinfo/list',
     method: 'get',
     params: query
   })
 }
-export function createProductAuxiliaryMachineInfoList(data) {
+export function addPart(data) {
   return request({
     url: '/webapi/boilermanage/productpartinfo/create',
     method: 'post',
     data: data
   })
 }
-export function editProductAuxiliaryMachineInfoList(productPartInfo) {
+export function editPart(productPartInfo) {
   return request({
     url: '/webapi/boilermanage/productpartinfo/modify',
     method: 'post',
     data: productPartInfo
   })
 }
-export function removeProductAuxiliaryMachineInfoList(data) {
+export function deletePart(data) {
   return request({
     url: '/webapi/boilermanage/productpartinfo/remove',
     method: 'post',

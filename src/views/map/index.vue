@@ -2,10 +2,22 @@
   <div>
     <div class="map-container">
       <div>
-        <device-map :map-height="mapHeight" v-on:listenToDeviceMap="receiveToDeviceMap"></device-map>
+        <device-map :map-height="mapHeight" @onDeviceClicked="deviceClick" 
+          :show-full-btn="true"></device-map>
       </div>
-      <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%">
-        <controller-run-info-dialog :cleartimer="!controllerRunInfoDialogVisible" :controllerNo="this.controllerNo" :address="this.address"></controller-run-info-dialog>
+      <el-dialog
+        title="监控"
+        :visible.sync="controllerRunInfoDialogVisible"
+        width="40%"
+        @close="close"
+      >
+        <controller-run-info-dialog
+          ref="deviceRunInfo"
+          :boiler-no="this.boilerNo"
+          :controller-no="this.controllerNo"
+          :address="this.address"
+          :visible="controllerRunInfoDialogVisible"
+        ></controller-run-info-dialog>
       </el-dialog>
     </div>
   </div>
@@ -19,32 +31,40 @@ export default {
     controllerRunInfoDialog,
     deviceMap
   },
-  props: {
-    mapHeight: {
-      type: Number,
-      default: document.documentElement.clientHeight-140
-    }
-  },
   data() {
     return {
       controllerRunInfoDialogVisible: false,
       address: "",
-      controllerNo: ""
+      controllerNo: "",
+      boilerNo: null,
+      mapHeight: document.documentElement.clientHeight - 100
     };
   },
+  computed: {
+    fullMap() {
+      return this.$store.state.app.fullMap;
+    }
+  },
   mounted() {},
+  watch: {
+    fullMap(val) {
+      if (val) {
+        this.mapHeight = document.documentElement.clientHeight - 10;
+      } else {
+        this.mapHeight = document.documentElement.clientHeight - 100;
+      }
+    }
+  },
   methods: {
-    receiveToDeviceMap(
-      controllerNoAry,
-      addressAry,
-      address,
-      controllerNo,
-      flag
-    ) {
-      this.address = address;
-      this.controllerRunInfoDialogVisible = flag;
-      this.controllerNo = controllerNo;
-      console.log(this.controllerRunInfoDialogVisible);
+    deviceClick(device) {
+      this.address = device.address;
+      this.controllerNo = device.controllerNo;
+      this.boilerNo = device.boilerNo;
+      this.controllerRunInfoDialogVisible = true;
+    },
+    close() {
+      console.log("dlg close.......");
+      this.$refs.deviceRunInfo.stopTimer();
     }
   }
 };

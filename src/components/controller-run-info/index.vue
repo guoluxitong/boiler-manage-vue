@@ -1,7 +1,9 @@
 <template>
   <div class="product-runInfo" style="overflow-y:auto">
-    <h4 style="margin:0">{{this.controllerNumber}}</h4>
-    <p style="margin:0">{{this.sellAddress}}</p>
+    <p style="margin:0">
+      <strong>{{this.boilerNo}}</strong>
+      &nbsp;{{this.address}}
+    </p>
     <animation
       :stove-animation="controllerFormData.stoveAnimation"
       :fan-animation-list="controllerFormData.fanAnimationList"
@@ -65,9 +67,8 @@ export default {
       timer: null,
       deviceType: null,
       subType: "",
-      dialogDeviceFormVisible: false,
       runTabHeight: document.body.clientHeight - 125,
-      timeInterVal: 3,
+      timeInterVal: 10,
       controllerFormData: {
         activeName: "second",
         stoveAnimation: "",
@@ -79,13 +80,11 @@ export default {
         mockInfoMap: {},
         settingInfoMap: {},
         deviceInfoMap: {}
-      },
-      sellAddress: this.address,
-      controllerNumber: this.controllerNo
+      }
     };
   },
   props: {
-    controllerNo: {
+    boilerNo: {
       type: String,
       default: ""
     },
@@ -93,66 +92,62 @@ export default {
       type: String,
       default: "未出售"
     },
-    cleartimer: {
+    visible: {
       type: Boolean,
       default: false
+    },
+    controllerNo: {
+      type: String,
+      default: null
     }
   },
   watch: {
-    address() {
-      this.sellAddress = this.address;
-    },
-    controllerNo() {
-      this.controllerNumber = this.controllerNo;
-    },
-    cleartimer(val, oldval) {
-      //console.log("val=" + val + " old=" + oldval);
-      if (val && this.timer) {
-        console.log("close..............");
-        this.deviceType = null
-        this.subType = ''
-        clearInterval(this.timer);
-        this.timer = null;
-      } else if (!val) {
-        console.log("start..............");
-        this.deviceType = null
-        this.subType = ''
-        this.setTimeInterval();
-        this.showControllerData();
+    visible(val) {
+      if (val) {
+        this.startTimer();
+      } else {
+        this.stopTimer();
       }
     }
-  },
-  mounted() {
-    this.setTimeInterval();
-    this.showControllerData();
   },
   beforeDestroy() {
     clearInterval(this.timer);
     this.timer = null;
   },
   methods: {
+    stopTimer() {
+      console.log("stopTimer");
+      this.deviceType = null;
+      this.subType = "";
+      if (this.timer) {
+        clearInterval(this.timer);
+      }
+      this.timer = null;
+    },
+    startTimer() {
+      console.log("startTimer");
+      this.deviceType = null;
+      this.subType = "";
+      this.setTimeInterval();
+      this.showControllerData();
+    },
     setTimeInterval() {
-      let timeInterVal = window.localStorage["timeInterVal"];
-      if (timeInterVal) this.timeInterVal = timeInterVal;
-
       this.timer = setInterval(() => {
         console.log("work..............");
         this.showControllerData();
       }, 1000 * this.timeInterVal);
-
-      // 通过$once来监听定时器，在beforeDestroy钩子可以被清除。
-      // this.$once("hook:beforeDestroy", () => {
-      //   clearInterval(timer);
-      // });
     },
     getDeviceByByteArray() {
-      getControllerByteData(this.controllerNo).then(data => {
-        this.initControllerInfo();
-        let controllerByteData = data.data;
-        if (controllerByteData.length > 0 && this.deviceType) {
-          this.getDevice(controllerByteData);
-        }
-      });
+      if (this.controllerNo) {
+        console.log(this.controllerNo)
+        getControllerByteData(this.controllerNo).then(data => {
+          this.initControllerInfo();
+          let controllerByteData = data.data;
+          if (controllerByteData.length > 0 && this.deviceType) {
+            this.getDevice(controllerByteData);
+          }
+        });
+      }
     },
     showControllerData() {
       if (!this.deviceType) {
@@ -166,46 +161,24 @@ export default {
     },
     getDevice(byteData) {
       //console.log(this.deviceType + this.subType)
-      getDeviceByByteDataAndType(byteData, this.deviceType).then(
-        data => {
-          if (data.getSubDeviceType() != "-1") {
-            this.subType = "_" + data.getSubDeviceType();
-          }
-          this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields().map;
-          this.controllerFormData.bengAnimationList = data.getBeng();
-          this.controllerFormData.fanAnimationList = data.getFan();
-          this.controllerFormData.stoveAnimation = data
-            .getStoveElement()
-            .getElementPrefixAndValuesString();
-          this.controllerFormData.exceptionInfoMap = data.getExceptionFields().map;
-          this.controllerFormData.baseInfoMap = data.getBaseInfoFields().map;
-
-          this.controllerFormData.mockInfoMap = data.getMockFields().map;
-
-          this.controllerFormData.settingInfoMap = data.getSettingFields().map;
-          this.controllerFormData.deviceInfoMap = data.getDeviceFields().map;
-          //console.log(this.controllerFormData.baseInfoMap)
-          /* for(let item in this.controllerFormData.baseInfoMap.map){
-              console.log(item.name+"==="+item.title+"==="+item.valueString)
-            } */
-          /* getCmdMapByDevice(data).then(cmds => {
-              for (let key in cmds) {
-                if (key == '设置参数') {
-                  let cmd = cmds[key]
-                  if (cmd.length == 0) {
-                    break
-                  }
-                  let str = cmd[0].getCommandString()
-                  //console.log("value修改前==>" + cmd[0].value + "CommandString修改前==>" + str)
-                  cmd[0].setValue(12)
-                  str = cmd[0].getCommandString()
-                  //console.log("value修改后==>" + cmd[0].value + "CommandString修改后==>" + str)
-                }
-
-              }
-            }) */
+      getDeviceByByteDataAndType(byteData, this.deviceType).then(data => {
+        if (data.getSubDeviceType() != "-1") {
+          this.subType = "_" + data.getSubDeviceType();
         }
-      );
+        this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields().map;
+        this.controllerFormData.bengAnimationList = data.getBeng();
+        this.controllerFormData.fanAnimationList = data.getFan();
+        this.controllerFormData.stoveAnimation = data
+          .getStoveElement()
+          .getElementPrefixAndValuesString();
+        this.controllerFormData.exceptionInfoMap = data.getExceptionFields().map;
+        this.controllerFormData.baseInfoMap = data.getBaseInfoFields().map;
+
+        this.controllerFormData.mockInfoMap = data.getMockFields().map;
+
+        this.controllerFormData.settingInfoMap = data.getSettingFields().map;
+        this.controllerFormData.deviceInfoMap = data.getDeviceFields().map;
+      });
     },
     initControllerInfo() {
       this.controllerFormData.bengAnimationList = [];

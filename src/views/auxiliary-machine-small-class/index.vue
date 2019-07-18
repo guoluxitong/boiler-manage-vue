@@ -16,7 +16,6 @@
       border
       fit
       highlight-current-row
-
       @row-contextmenu="openTableMenu"
     >
       <el-table-column align="left" label="名称">
@@ -59,11 +58,7 @@
 </template>
 
 <script>
-import {
-  getAuxiliaryMachineSmallClassListByCondition,
-  editAuxiliaryMachineSmallClass,
-  deleteAuxiliaryMachineSmallClassById
-} from "@/api/auxiliaryMachineSmallClass";
+import { partSubCategoryList } from "@/api/partSubCategory";
 export default {
   data() {
     return {
@@ -105,12 +100,10 @@ export default {
     getList() {
       this.listLoading = true;
       this.listQuery.largeClassId = this.$route.query.largeClassId;
-      getAuxiliaryMachineSmallClassListByCondition(41).then(
-        response => {
-          this.list = response.data.data;
-          this.listLoading = false;
-        }
-      );
+      partSubCategoryList(41).then(response => {
+        this.list = response.data.data;
+        this.listLoading = false;
+      });
     },
     resetTemp() {
       this.auxiliaryMachineSmallClassFormData = {
