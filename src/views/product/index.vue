@@ -139,7 +139,7 @@
         <!--  <menu-context-item @click="handleCopy"  :width="100" :fontSize="14">复制</menu-context-item>-->
         <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
         <!-- <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>-->
-        <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item>
+        <!-- <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item> -->
         <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="14">辅机信息</menu-context-item>
         <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
         <menu-context-item @click="handleChoiceUser" :width="100" :fontSize="14">负责员工</menu-context-item>
@@ -201,7 +201,7 @@
         @onClosed="productMapDialogClose"
       ></product-map-dialog>
       <!--监控-->
-      <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%" @close="close">
+      <!-- <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%" @close="close">
         <controller-run-info-dialog
           ref="deviceRunInfo"
           :boiler-no="this.boiler.boilerNo"
@@ -209,7 +209,7 @@
           :address="this.boiler.address"
           :visible="controllerRunInfoDialogVisible"
         ></controller-run-info-dialog>
-      </el-dialog>
+      </el-dialog> -->
 
       <!--运行信息-->
       <el-dialog title="运行信息报表" :visible.sync="showEchartDialog" height="100%" width="100%">
@@ -508,7 +508,7 @@ import { editProduct } from "@/api/product";
 import productMapDialog from "./product-map";
 import productFormDialog from "./product-form";
 import auxiliaryMachineDialog from "./auxiliary-machine-form";
-import controllerRunInfoDialog from "@/components/controller-run-info/index";
+// import controllerRunInfoDialog from "@/components/controller-run-info/index";
 import auxiliaryMachineInfoDialog from "./product-auxiliary-machine-info-form";
 import { getUserList } from "@/api/user";
 
@@ -724,15 +724,15 @@ export default {
       productFromDialogVisible: false,
       productMapDialogVisible: false,
       auxiliaryMachineDialogVisible: false,
-      controllerRunInfoDialogVisible: false,
+      //controllerRunInfoDialogVisible: false,
       mapCompleteDialogVisible: false,
       titleName: "",
-      boiler:{
-        address: null,
-        controllerNo: null,
-        boilerNo:null,
+      // boiler:{
+      //   address: null,
+      //   controllerNo: null,
+      //   boilerNo:null,
         
-      }
+      // }
     };
   },
   filters: {
@@ -965,12 +965,12 @@ export default {
       this.productMapDialogVisible = false;
     },
     //监控
-    showControllerData(row) {
-      this.controllerRunInfoDialogVisible = true;
-      this.boiler.controllerNo = row.controllerNo;
-      this.boiler.boilerNo = row.boilerNo
-      this.boiler.address = row.street
-    },
+    // showControllerData(row) {
+    //   this.controllerRunInfoDialogVisible = true;
+    //   this.boiler.controllerNo = row.controllerNo;
+    //   this.boiler.boilerNo = row.boilerNo
+    //   this.boiler.address = row.street
+    // },
     // 辅机信息
     auxiliaryMachineInfo(row) {
       this.PartCategory = 1;
@@ -1371,9 +1371,9 @@ export default {
       this.auxiliaryMachineDialogVisible = obj.auxiliaryMachineDialogVisible;
       this.getList();
     },
-    controllerRunInfoDialogClose(obj) {
-      this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible;
-    },
+    // controllerRunInfoDialogClose(obj) {
+    //   this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible;
+    // },
     handleSizeChange(val) {
       this.listQuery4.pageSize = val;
       this.getTypeList();
