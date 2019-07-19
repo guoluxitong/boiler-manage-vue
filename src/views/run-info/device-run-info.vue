@@ -148,7 +148,7 @@ export default {
           break;
       }
       this.weatherSrc = this.src + "&py=" + cityPinyin;
-      
+
       this.controllerNo = device.controllerNo;
       this.boilerNo = device.boilerNo
       this.productAddress = device.address

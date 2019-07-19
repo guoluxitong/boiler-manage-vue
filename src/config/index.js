@@ -1,7 +1,7 @@
 export const config = {
   //测试环境使用
-  development_base_ip: '127.0.0.1',
-  development_base_port: '8080',
+  development_base_ip: 'kuaixin.picp.net',
+  development_base_port: '14335',
   //正式环境当中使用  boilermanage.sdcsoft.com.cn
   product_base_ip: 'api.sdcsoft.com.cn',
   product_base_port: '',

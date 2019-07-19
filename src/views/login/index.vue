@@ -114,7 +114,7 @@ export default {
       if (copyrightInfo2) {
         this.copyrightInfo2 = window.localStorage["copyrightInfo2"];
       }
-      
+
       let logoUrl = window.localStorage["logoUrl"];
       let bgUrl = window.localStorage["bgUrl"];
       if (logoUrl) {
@@ -169,7 +169,7 @@ export default {
   text-align: center;
 }
 .pic {
-  margin: auto, 15px;
+  margin: 15px;
   width: auto;
   height: 100px;
   -webkit-border-radius: 5px;

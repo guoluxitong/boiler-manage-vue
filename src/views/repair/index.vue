@@ -2,7 +2,7 @@
   <div>
     <div>
       <el-tabs v-model="activeName" @tab-click="handleClick" v-if="!productRepairDialogVisibleuser">
-        <el-tab-pane label="设备维保信息" name="repairdevice">
+        <el-tab-pane label="锅炉维保记录" name="repairdevice">
           <div>
             <el-row>
               <el-col :span="3">
@@ -21,7 +21,7 @@
             </el-select>
               </el-col>
               <el-col :span="3">
-            <el-input v-model="product.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
+            <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
               </el-col>
               <el-col :span="3">
             <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
@@ -40,9 +40,14 @@
                   <span>{{scope.row.boilerNo}}</span>
                 </template>
               </el-table-column>
-              <el-table-column :show-overflow-tooltip="true" align="left" label="控制器编号">
+              <el-table-column :show-overflow-tooltip="true" align="left" label="燃料">
                 <template slot-scope="scope">
-                  <span>{{scope.row.controllerNo}}</span>
+                  <span>{{scope.row.power | dictionaryValueFieldFilter(fuelArray)}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column :show-overflow-tooltip="true" align="left" label="介质">
+                <template slot-scope="scope">
+                  <span>{{scope.row.media | dictionaryValueFieldFilter(mediumArray)}}</span>
                 </template>
               </el-table-column>
               <el-table-column :show-overflow-tooltip="true" align="left" label="吨位（T）">
@@ -74,7 +79,7 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="用户维保信息" name="repairuser">
+        <el-tab-pane label="员工维保记录" name="repairuser">
           <div>
             <el-row>
               <el-col :span="4">
@@ -191,7 +196,7 @@
                 <span style="margin-left: 10px">{{ scope.row.id }}</span>
               </template>
             </el-table-column>
-            <el-table-column v-if="titleName=='用户维保信息'" align="center" label="设备编号" width="130">
+            <el-table-column v-if="titleName=='员工维保记录'" align="center" label="设备编号" width="130">
               <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.controllerNo }}</span>
               </template>
@@ -310,6 +315,7 @@
 import { productSearch } from "@/api/product";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 import { getList } from "@/api/customer";
+import { initMedium, initFuel } from "@/views/product/product-dictionary";
 import { formatDateTime } from "@/utils/date";
 import {
   getRepairInfoListByDate,
@@ -320,6 +326,12 @@ import {
   deleteRepairInfoByProductId
 } from "@/api/RepairInfo";
 import { getUserList, getUserListByName } from "@/api/user";
+function dictionaryValueFilter(dictionaryValue, value) {
+  const dictionaryValueItem = dictionaryValue.filter(item => {
+    return item.value == value;
+  });
+  return dictionaryValueItem[0];
+}
 export default {
   name: "repair",
   components: {
@@ -349,6 +361,8 @@ export default {
           userList: []
         }
       ],
+      mediumArray: [],
+      fuelArray: [],
       listLoading: false,
       repairUserName: "",
       productId: "",
@@ -434,6 +448,11 @@ export default {
     };
   },
   filters: {
+    dictionaryValueFieldFilter(value, dictionaryValueArray) {
+      if (dictionaryValueFilter(dictionaryValueArray, value))
+        return dictionaryValueFilter(dictionaryValueArray, value).label;
+      return;
+    },
     statusFilter(status) {
       const statusMap = {
         1: "success",
@@ -449,8 +468,17 @@ export default {
   },
   created() {
     this.getWaterDetails(0);
+
   },
   methods: {
+    initSelectMedium() {
+      initMedium().then(data => {
+        this.mediumArray = data;
+      });
+      initFuel().then(data => {
+        this.fuelArray = data;
+      });
+    },
     dateFormat: function(time) {
       var date = new Date(time);
       var year = date.getFullYear();
@@ -538,7 +566,7 @@ export default {
     repairinfo(index, row) {
       this.productRepairDialogVisibleuser = true;
       this.productFormData = row;
-      this.titleName = "设备维保信息";
+      this.titleName = "锅炉维保记录";
       this.inputname = true;
       this.inputno = false;
       this.getrepairList();
@@ -546,18 +574,18 @@ export default {
     repairinfouser(index, row) {
       this.productRepairDialogVisibleuser = true;
       this.userFormData = row;
-      this.titleName = "用户维保信息";
+      this.titleName = "员工维保记录";
       this.inputname = false;
       this.inputno = true;
       this.getrepairListuser();
     },
     cancelbu() {
       this.newRepairDialogFlag = false;
-      this.titleName = "维保信息";
+      this.titleName = "维保记录";
     },
     cancel() {
       this.productRepairDialogVisible = false;
-      this.titleName = "维保信息";
+      this.titleName = "维保记录";
     },
     cancelbuuser() {
       this.repairform.repairDatetime = ''
@@ -566,21 +594,21 @@ export default {
       this.repairform.controllerNo = ''
       this.repairform.realName=''
       this.newRepairDialogFlaguser = false
-      this.titleName = "维保信息";
+      this.titleName = "维保记录";
     },
     canceluser() {
       this.currentPage1 = 1;
       this.productRepairDialogVisibleuser = false;
       this.repairuserList = [];
-      this.titleName = "维保信息";
+      this.titleName = "维保记录";
     },
     repairAdd() {
       this.newRepairDialogFlag = true;
-      this.titleName = "添加维保信息";
+      this.titleName = "添加维保记录";
     },
     repairAdduser() {
       this.newRepairDialogFlaguser = true;
-      this.titleName = "添加维保信息";
+      this.titleName = "添加维保记录";
     },
     repairdeleteuser(index, row) {
       this.deleteValidateFormDialogVisible = true;
@@ -754,7 +782,7 @@ export default {
         }).then(data => {
           if (data.data.code == 0) {
             this.newRepairDialogFlaguser = false;
-            this.titleName = "维保信息";
+            this.titleName = "维保记录";
             this.$message({
               message: "添加成功",
               type: "success"
@@ -783,7 +811,7 @@ export default {
         }).then(data => {
           if (data.data.code == 0) {
             this.newRepairDialogFlaguser = false;
-            this.titleName = "维保信息";
+            this.titleName = "维保记录";
             this.$message({
               message: "添加成功",
               type: "success"
@@ -942,6 +970,7 @@ export default {
       });
     },
     getWaterDetails(val) {
+      this.initSelectMedium();
       if (val == 0) {
         this.initSelect();
         this.userlist = [];
