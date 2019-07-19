@@ -306,9 +306,9 @@
   </div>
 </template>
 <script>
-import { getProductListByCondition } from "@/api/product";
+import { productSearch } from "@/api/product";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
-import { getList } from "@/api/boilerCustomer";
+import { getList } from "@/api/customer";
 import { formatDateTime } from "@/utils/date";
 import {
   getRepairInfoListByDate,
@@ -633,7 +633,7 @@ export default {
     handleFilter() {
       this.listLoading = true;
       this.listQuery.pageNum = 1;
-      getProductListByCondition({
+      productSearch({
         product: this.product,
         pageNum: this.pageNum,
         pageSize: this.pageSize
@@ -896,7 +896,7 @@ export default {
     handleSizeChange2(val) {
       this.listLoading = true;
       this.listQuery.pageSize = val;
-      getProductListByCondition({
+      productSearch({
         product: this.product,
         pageNum: this.pageNum,
         pageSize: this.pageSize
@@ -916,7 +916,7 @@ export default {
     handleCurrentChange2(val) {
       this.listLoading = true;
       this.listQuery.pageNum = val;
-      getProductListByCondition({
+      productSearch({
         product: this.product,
         pageNum: this.pageNum,
         pageSize: this.pageSize
@@ -940,7 +940,7 @@ export default {
         getUserList(this.userlistQuery2).then(response => {
           this.repairform.userList = response.data.data.list;
         });
-        /*  getProductListByCondition({
+        /*  productSearch({
             product: this.product,
             pageNum: this.pageNum,
             pageSize: this.pageSize
@@ -959,7 +959,7 @@ export default {
       if (val == 1) {
         this.inintUserSelect();
         this.productList = [];
-        getProductListByCondition({
+        productSearch({
           product: this.product1,
           pageNum: this.pageNum,
           pageSize: this.pageSize

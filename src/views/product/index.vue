@@ -1,239 +1,220 @@
 <template>
   <div class="app-container product-container">
     <div v-if="PartCategory==0">
-    <!--查询-->
-    <el-row class="app-query">
-      <el-col :span="3">
-      <el-select
-        clearable
-        v-model="product.customerName"
-        placeholder="客户名称"
+      <!--查询-->
+      <el-row class="app-query">
+        <el-col :span="3">
+          <el-select clearable v-model="product.customerName" placeholder="客户名称">
+            <el-option
+              style="width: 130px"
+              v-for="item in customerList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="2.5">
+          <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 130px"></el-input>
+        </el-col>
+        <el-col :span="3">
+          <el-select clearable v-model="product.productCategoryId" placeholder="锅炉型号">
+            <el-option
+              style="width: 130px"
+              v-for="item in boilerModelNumberArray"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="2.5">
+          <el-input v-model="product.controllerNo" placeholder="控制器编号" style="width: 130px"></el-input>
+        </el-col>
+        <el-col :span="2.5">
+          <el-select clearable style="width: 150px" v-model="product.power" placeholder="燃料">
+            <el-option
+              style="width: 130px"
+              v-for="item in fuelArray"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="2.5">
+          <el-select clearable style="width: 150px" v-model="product.media" placeholder="介质">
+            <el-option
+              style="width: 130px"
+              v-for="item in mediumArray"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="3">
+          <el-date-picker
+            v-model="product.saleDate"
+            style="width: 150px"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="售出时间"
+          ></el-date-picker>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button @click="handleCreate" icon="el-icon-plus" type="success">添加</el-button>
+        </el-col>
+        <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
+      </el-row>
+      <!--数据展示-->
+      <el-table
+        :data="list.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+        v-loading="listLoading"
+        element-loading-text="给我一点时间"
+        border
+        fit
+        highlight-current-row
+        style="width: 120%"
+        @row-contextmenu="openTableMenu"
       >
-        <el-option
-          style="width: 130px"
-          v-for="item in customerList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      </el-col>
-      <el-col :span="2.5">
-      <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 130px"></el-input>
-      </el-col>
-      <el-col :span="3">
-      <el-select
-        clearable
-        v-model="product.productCategoryId"
-        placeholder="锅炉型号"
-      >
-        <el-option
-          style="width: 130px"
-          v-for="item in boilerModelNumberArray"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      </el-col>
-      <el-col :span="2.5">
-      <el-input v-model="product.controllerNo" placeholder="控制器编号" style="width: 130px"></el-input>
-      </el-col>
-      <el-col :span="2.5">
-      <el-select clearable style="width: 150px" v-model="product.power" placeholder="燃料">
-        <el-option
-          style="width: 130px"
-          v-for="item in fuelArray"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      </el-col>
-      <el-col :span="2.5">
-      <el-select clearable style="width: 150px" v-model="product.media" placeholder="介质">
-        <el-option
-          style="width: 130px"
-          v-for="item in mediumArray"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      </el-col>
-      <el-col :span="3">
-      <el-date-picker
-        v-model="product.saleDate"
-        style="width: 150px"
-        type="date"
-        value-format="yyyy-MM-dd"
-        placeholder="售出时间"
-      ></el-date-picker>
-      </el-col>
-      <el-col :span="2">
-      <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-      </el-col>
-      <el-col :span="2">
-      <el-button
-        @click="handleCreate"
-        icon="el-icon-plus" type="success"
-      >添加</el-button>
-      </el-col>
-      <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
-    </el-row>
-    <!--数据展示-->
-    <el-table
-      :data="list.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
-      v-loading="listLoading"
-      element-loading-text="给我一点时间"
-      border
-      fit
-      highlight-current-row
-      style="width: 120%"
-      @row-contextmenu="openTableMenu"
-    >
-      <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉编号">
-        <template slot-scope="scope">
-          <span>{{scope.row.boilerNo}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉型号">
-        <template slot-scope="scope">
-          <span>{{scope.row.productCategoryId | dictionaryValueFieldFilter(boilerModelNumberArray)}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="控制器编号">
-        <template slot-scope="scope">
-          <span>{{scope.row.controllerNo}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="燃料">
-        <template slot-scope="scope">
-          <span>{{scope.row.power | dictionaryValueFieldFilter(fuelArray)}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="介质">
-        <template slot-scope="scope">
-          <span>{{scope.row.media | dictionaryValueFieldFilter(mediumArray)}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="吨位（T）">
-        <template slot-scope="scope">
-          <span>{{scope.row.tonnageNum}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="是否售出">
-        <template slot-scope="scope">
-          <span>{{scope.row.isSell | dictionaryValueFieldFilter(isSellArray)}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="客户">
-        <template slot-scope="scope">
-          <span v-if="scope.row.customerName">{{scope.row.customerName}}</span>
-          <span v-if="scope.row.customerName==null">无</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="售出时间">
-        <template slot-scope="scope">
-          <span v-if="scope.row.saleDate">{{scope.row.saleDate}}</span>
-          <span v-if="scope.row.saleDate==null">无</span>
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" align="left" label="售出地址">
-        <template slot-scope="scope">
-          <span
-            v-if="scope.row.province||scope.row.city||scope.row.district||scope.row.street"
-          >{{scope.row.province}}{{scope.row.city}}{{scope.row.district}}{{scope.row.street}}</span>
-          <span v-else>无</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <menu-context ref="menuContext">
-      <menu-context-item
-        @click="handleUpdate"
-        :width="100"
-        :fontSize="14"
-      >编辑</menu-context-item>
-    <!--  <menu-context-item @click="handleCopy"  :width="100" :fontSize="14">复制</menu-context-item>-->
-      <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
-     <!-- <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>-->
-      <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item>
-      <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="14">辅机信息</menu-context-item>
-      <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
-      <menu-context-item
-        @click="handleChoiceUser"
-        :width="100"
-        :fontSize="14"
-      >负责员工</menu-context-item>
-      <menu-context-item
-        @click="handleDelete"
-        :width="100"
-        :fontSize="14"
-      >删除</menu-context-item>
-    </menu-context>
-    <!--右键菜单-->
-    <!--<contextmenu :visible="showcontextmenu" ref="cmenu"></contextmenu>-->
+        <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉编号">
+          <template slot-scope="scope">
+            <span>{{scope.row.boilerNo}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="锅炉型号">
+          <template slot-scope="scope">
+            <span>{{scope.row.productCategoryId | dictionaryValueFieldFilter(boilerModelNumberArray)}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="控制器编号">
+          <template slot-scope="scope">
+            <span>{{scope.row.controllerNo}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="燃料">
+          <template slot-scope="scope">
+            <span>{{scope.row.power | dictionaryValueFieldFilter(fuelArray)}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="介质">
+          <template slot-scope="scope">
+            <span>{{scope.row.media | dictionaryValueFieldFilter(mediumArray)}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="吨位（T）">
+          <template slot-scope="scope">
+            <span>{{scope.row.tonnageNum}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="是否售出">
+          <template slot-scope="scope">
+            <span>{{scope.row.isSell | dictionaryValueFieldFilter(isSellArray)}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="客户">
+          <template slot-scope="scope">
+            <span v-if="scope.row.customerName">{{scope.row.customerName}}</span>
+            <span v-if="scope.row.customerName==null">无</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="售出时间">
+          <template slot-scope="scope">
+            <span v-if="scope.row.saleDate">{{scope.row.saleDate}}</span>
+            <span v-if="scope.row.saleDate==null">无</span>
+          </template>
+        </el-table-column>
+        <el-table-column :show-overflow-tooltip="true" align="left" label="售出地址">
+          <template slot-scope="scope">
+            <span>{{scope.row.street}}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <menu-context ref="menuContext">
+        <menu-context-item @click="handleUpdate" :width="100" :fontSize="14">编辑</menu-context-item>
+        <!--  <menu-context-item @click="handleCopy"  :width="100" :fontSize="14">复制</menu-context-item>-->
+        <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
+        <!-- <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>-->
+        <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item>
+        <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="14">辅机信息</menu-context-item>
+        <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
+        <menu-context-item @click="handleChoiceUser" :width="100" :fontSize="14">负责员工</menu-context-item>
+        <menu-context-item @click="handleDelete" :width="100" :fontSize="14">删除</menu-context-item>
+      </menu-context>
+      <!--右键菜单-->
+      <!--<contextmenu :visible="showcontextmenu" ref="cmenu"></contextmenu>-->
 
-    <!--分页-->
-    <div class="pagination-container">
-      <el-pagination
-        background
-        @size-change="handleSizeChange1"
-        @current-change="handleCurrentChange1"
-        :current-page="currentPage1"
-        :page-sizes="[5]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="listQuery.total"
-      ></el-pagination>
-    </div>
-    <!--分配用户dialog-->
-    <div class="user-select">
-      <el-dialog title="负责员工" :visible.sync="dialogChoiceUserFormVisible" width="50%">
-        <el-form
-          ref="choiceUserForm"
-          :model="choiceUserFormData"
-          label-position="right"
-          label-width="80px">
-          <el-transfer
-            v-model="choiceUserFormData.checkedUsers"
-            :data="choiceUserFormData.sourceUsers"
-            :titles="['可分配', '已分配']"
-          ></el-transfer>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
-          <el-button type="warning" icon="el-icon-back" @click="dialogChoiceUserFormVisible = false">取消</el-button>
-        </div>
+      <!--分页-->
+      <div class="pagination-container">
+        <el-pagination
+          background
+          @size-change="handleSizeChange1"
+          @current-change="handleCurrentChange1"
+          :current-page="currentPage1"
+          :page-sizes="[5]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="listQuery.total"
+        ></el-pagination>
+      </div>
+      <!--分配用户dialog-->
+      <div class="user-select">
+        <el-dialog title="负责员工" :visible.sync="dialogChoiceUserFormVisible" width="50%">
+          <el-form
+            ref="choiceUserForm"
+            :model="choiceUserFormData"
+            label-position="right"
+            label-width="80px"
+          >
+            <el-transfer
+              v-model="choiceUserFormData.checkedUsers"
+              :data="choiceUserFormData.sourceUsers"
+              :titles="['可分配', '已分配']"
+            ></el-transfer>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="confirmSubmitChoiceUser()">确认</el-button>
+            <el-button
+              type="warning"
+              icon="el-icon-back"
+              @click="dialogChoiceUserFormVisible = false"
+            >取消</el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <!--删除dialog-->
+      <boiler-common-delete-validate-dialog
+        @confirmDeleteValidate="confirmDeleteValidate"
+        @confirmCancelValidate="confirmCancelValidate"
+        :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
+        :id="delId"
+        :controllerNo="delCtlNo"
+      ></boiler-common-delete-validate-dialog>
+      <!--售出-->
+      <product-map-dialog
+        ref="productMapDlg"
+        :show.sync="productMapDialogVisible"
+        :productData="productFormData"
+        @onClosed="productMapDialogClose"
+      ></product-map-dialog>
+      <!--监控-->
+      <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%" @close="close">
+        <controller-run-info-dialog
+          ref="deviceRunInfo"
+          :boiler-no="this.boiler.boilerNo"
+          :controller-no="this.boiler.controllerNo"
+          :address="this.boiler.address"
+          :visible="controllerRunInfoDialogVisible"
+        ></controller-run-info-dialog>
       </el-dialog>
-    </div>
-    <!--删除dialog-->
-    <boiler-common-delete-validate-dialog
-      @confirmDeleteValidate="confirmDeleteValidate"
-      @confirmCancelValidate="confirmCancelValidate"
-      :deleteValidateFormDialogVisible="deleteValidateFormDialogVisible"
-      :id="delId"
-      :controllerNo="delCtlNo"
-    ></boiler-common-delete-validate-dialog>
-    <!--售出-->
-    <product-map-dialog
-      :show.sync="productMapDialogVisible"
-      :productFormData="productFormData"
-      @productMapDialogClose="productMapDialogClose"
-      @confirmSellDialog="confirmSellDialog"
-    ></product-map-dialog>
-    <!--监控-->
-    <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%">
-      <controller-run-info-dialog
-        :cleartimer="!controllerRunInfoDialogVisible"
-        :controllerNo="this.controllerNo"
-        :address="this.address"
-      ></controller-run-info-dialog>
-    </el-dialog>
 
-    <!--运行信息-->
-    <el-dialog title="运行信息报表" :visible.sync="showEchartDialog" height="100%" width="100%">
-      <device-chart></device-chart>
-    </el-dialog>
+      <!--运行信息-->
+      <el-dialog title="运行信息报表" :visible.sync="showEchartDialog" height="100%" width="100%">
+        <device-chart></device-chart>
+      </el-dialog>
     </div>
     <div v-if="PartCategory==1">
       <el-form
@@ -246,10 +227,10 @@
         <div style="margin-top: 5px">
           <el-row>
             <el-col :offset="20" :span="2">
-          <el-button  icon="el-icon-plus" type="success"  @click="handleAdd">添加</el-button>
+              <el-button icon="el-icon-plus" type="success" @click="handleAdd">添加</el-button>
             </el-col>
             <el-col :span="2">
-          <el-button type="warning" icon="el-icon-back" @click="canelForm">取消</el-button>
+              <el-button type="warning" icon="el-icon-back" @click="canelForm">取消</el-button>
             </el-col>
           </el-row>
         </div>
@@ -320,9 +301,9 @@
       ></boiler-common-delete-validate-dialog>
     </div>
     <div v-if="PartCategory==2">
-      <el-row >
+      <el-row>
         <el-col :span="3" :offset="21">
-        <el-button   type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
+          <el-button type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
         </el-col>
       </el-row>
       <el-form
@@ -354,28 +335,30 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-             <el-button icon="el-icon-plus" type="success" @click="handleAddBoilerModel" >添加</el-button>
+              <el-button icon="el-icon-plus" type="success" @click="handleAddBoilerModel">添加</el-button>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row  v-if="this.titleName=='添加'">
+        <el-row v-if="this.titleName=='添加'">
           <el-col :span="24">
             <el-alert
               title="控制器编号输入警告"
               type="warning"
               description="错误的控制器编号会引发数据混乱，修正要先删除锅炉信息，后再执行添加。请核实输入是否正确！"
-              effect="dark" :closable="false"
-              show-icon></el-alert>
+              effect="dark"
+              :closable="false"
+              show-icon
+            ></el-alert>
           </el-col>
         </el-row>
         <el-row>
           <el-col v-if="this.titleName=='添加'" :span="12">
             <el-form-item label="控制器编号" prop="controllerNo">
-              <el-input v-model="addFormData.controllerNo" placeholder="控制器编号" ></el-input>
+              <el-input v-model="addFormData.controllerNo" placeholder="控制器编号"></el-input>
             </el-form-item>
           </el-col>
           <el-col v-if="this.titleName!='添加'" :span="12">
-            <el-form-item label="控制器编号" >
+            <el-form-item label="控制器编号">
               <el-input v-model="addFormData.controllerNo" placeholder="控制器编号" disabled></el-input>
             </el-form-item>
           </el-col>
@@ -388,7 +371,12 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="燃料" prop="power">
-              <el-select clearable class="filter-item" v-model="addFormData.power" style="width: 100%">
+              <el-select
+                clearable
+                class="filter-item"
+                v-model="addFormData.power"
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in fuelArray"
                   :key="item.value"
@@ -418,29 +406,31 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item >
+            <el-form-item>
               <el-button style="margin-left: 35%" type="primary" @click="addsubmitForm">确认</el-button>
-              <el-button  type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
+              <el-button type="warning" icon="el-icon-back" @click="cenalForm">取消</el-button>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-    </div >
+    </div>
     <div v-if="PartCategory==3">
       <el-row class="app-query">
         <el-col :span="19">
-        <el-button
-          style="margin-left: 10px;"
-          @click="handleCreateType"
-          icon="el-icon-plus" type="success"
-        >添加</el-button>
+          <el-button
+            style="margin-left: 10px;"
+            @click="handleCreateType"
+            icon="el-icon-plus"
+            type="success"
+          >添加</el-button>
         </el-col>
         <el-col :span="3">
-        <el-button
-          style="margin-left: 85%;"
-          @click="canealType"
-          type="warning" icon="el-icon-back"
-        >取消</el-button>
+          <el-button
+            style="margin-left: 85%;"
+            @click="canealType"
+            type="warning"
+            icon="el-icon-back"
+          >取消</el-button>
         </el-col>
       </el-row>
 
@@ -451,7 +441,6 @@
         border
         fit
         highlight-current-row
-
         @row-contextmenu="openTableMenu"
       >
         <el-table-column align="left" :show-overflow-tooltip="true" label="名称">
@@ -472,7 +461,7 @@
           :total="listQuery4.total"
         ></el-pagination>
       </div>
-      <el-dialog :title="titleName" :visible.sync="dialogFormVisible" >
+      <el-dialog :title="titleName" :visible.sync="dialogFormVisible">
         <el-form
           :rules="rules"
           ref="boilerModelForm"
@@ -486,7 +475,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="createType">确认</el-button>
-          <el-button  type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
+          <el-button type="warning" icon="el-icon-back" @click="dialogFormVisible = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
@@ -495,24 +484,23 @@
 
 <script>
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
-import { getBoilerModelListByCondition } from "@/api/boilerModel";
+import { getProductCategoryList } from "@/api/productCategory";
 import contextmenu from "@/components/ContextMenu";
 import deviceChart from "@/components/deviceChart";
 import {
-  getProductListByCondition,
+  productSearch,
   deleteProductById,
   insertProduct,
   getProductUsers,
   modifyProductUser
 } from "@/api/product";
 import {
-  getBoilerModelListByConditionAndPage,
+  getProductCategoryListAndPage,
   createBoilerModel
-} from "@/api/boilerModel";
-import {getList} from "@/api/boilerCustomer";
-import { getProductAuxiliaryMachineInfoListByProductId, createProductAuxiliaryMachineInfoList,
-  editProductAuxiliaryMachineInfoList, removeProductAuxiliaryMachineInfoList} from "@/api/ProductAuxiliaryMachineInfo";
-import { getAuxiliaryMachineLargeClassListByCondition } from "@/api/auxiliaryMachineLargeClass";
+} from "@/api/productCategory";
+import { getList } from "@/api/customer";
+import { partlist, addPart, editPart, deletePart } from "@/api/productPartInfo";
+import { partCategoryList } from "@/api/partCategory";
 import boilerCommonDeleteValidate from "@/views/boiler-common-delete-validate";
 import { formatDateTime } from "@/utils/date";
 import { validatePositiveAndSmallAndFloatNum } from "@/utils/validate";
@@ -521,7 +509,6 @@ import productMapDialog from "./product-map";
 import productFormDialog from "./product-form";
 import auxiliaryMachineDialog from "./auxiliary-machine-form";
 import controllerRunInfoDialog from "@/components/controller-run-info/index";
-import { updateProductSellAbout } from "@/api/product";
 import auxiliaryMachineInfoDialog from "./product-auxiliary-machine-info-form";
 import { getUserList } from "@/api/user";
 
@@ -584,17 +571,17 @@ export default {
       },
       isEdit: false,
       productAuxiliaryMachineInfo: {
-        id: '',
-        partSubCategoryName: '',
-        partCategoryName: '',
+        id: "",
+        partSubCategoryName: "",
+        partCategoryName: "",
         partCategoryId: null,
         partSubCategoryId: null,
-        brandName: '',
-        modelName: '',
-        amountOfUser: '',
-        supplier: '',
-        remarks: '',
-        productId: ''
+        brandName: "",
+        modelName: "",
+        amountOfUser: "",
+        supplier: "",
+        remarks: "",
+        productId: ""
       },
       auxiliaryMachineInfoDialogVisible: false,
       formData: {
@@ -606,8 +593,8 @@ export default {
         controllerNo: "",
         boilerNo: "",
         largeClassId: null,
-        smallClassId: '',
-        partSubCategoryName: '',
+        smallClassId: "",
+        partSubCategoryName: "",
         partCategoryName: null,
         partCategoryId: null,
         partSubCategoryId: null,
@@ -626,7 +613,7 @@ export default {
         orgId: this.$store.state.user.orgId,
         controllerNo: "",
         boilerNo: "",
-        partSubCategoryName: '',
+        partSubCategoryName: "",
         partCategoryName: null,
         partCategoryId: null,
         partSubCategoryId: null,
@@ -635,7 +622,7 @@ export default {
         power: null,
         createDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
         editDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
-        isSell: 0,
+        isSell: 0
       },
       listQuery: {
         total: 50,
@@ -667,7 +654,7 @@ export default {
         name: null,
         orgId: null
       },
-      currentPage1:1,
+      currentPage1: 1,
       pageNum1: 1,
       pageSize1: 5,
       PartCategory: 0,
@@ -679,13 +666,13 @@ export default {
         saleDate: null,
         controllerNo: "",
         customerName: null,
-        productCategoryId:null,
+        productCategoryId: null,
         tonnageNum: null,
         media: null,
         power: null,
         userId: null,
         isSell: null,
-        productCategoryName: ''
+        productCategoryName: ""
       },
       delete: false,
       listQuery2: {
@@ -705,7 +692,7 @@ export default {
         productId: 0
       },
       productFormData: {},
-      controllerNo: "",
+   
       rules: {
         tonnageNum: [
           { trigger: "blur", validator: validatePositiveAndSmallAndFloatNumFun }
@@ -716,14 +703,16 @@ export default {
         controllerNo: [
           { required: true, trigger: "blur", message: "设备编号不能为空" }
         ],
-        power: [{ required: true, trigger: "blur", validator: validateFuelFun }],
+        power: [
+          { required: true, trigger: "blur", validator: validateFuelFun }
+        ],
         media: [
           { required: true, trigger: "blur", validator: validateMediumFun }
         ]
       },
       typeList: [],
-      productId: '',
-      productPartInfoId: '',
+      productId: "",
+      productPartInfoId: "",
       largeClassOptions: [],
       smallClassOptions: [],
       customerList: [],
@@ -738,7 +727,12 @@ export default {
       controllerRunInfoDialogVisible: false,
       mapCompleteDialogVisible: false,
       titleName: "",
-      address: ""
+      boiler:{
+        address: null,
+        controllerNo: null,
+        boilerNo:null,
+        
+      }
     };
   },
   filters: {
@@ -757,7 +751,7 @@ export default {
     getTypeList() {
       this.listLoading = true;
       this.listQuery.orgId = this.$store.state.user.orgId;
-      getBoilerModelListByConditionAndPage(this.listQuery4).then(response => {
+      getProductCategoryListAndPage(this.listQuery4).then(response => {
         const data = response.data.data;
         this.typeList = data.list;
         this.listQuery4.total = data.total;
@@ -771,16 +765,16 @@ export default {
       if (obj.flag) {
         this.auxiliaryMachineInfoDialogVisible =
           obj.auxiliaryMachineInfoDialogVisible;
-        if (obj.title === "添加"||obj.title === "复制") {
+        if (obj.title === "添加" || obj.title === "复制") {
           obj.auxiliaryMachineInfoFormData.productId = this.productId;
           productPartInfos.push(obj.auxiliaryMachineInfoFormData);
-          createProductAuxiliaryMachineInfoList(productPartInfos).then(data => {
-            if(data.data.code==0){
-            this.$message({
-              message: "操作成功",
-              type: "success"
-            });
-            this.getAuxiliaryList();
+          addPart(productPartInfos).then(data => {
+            if (data.data.code == 0) {
+              this.$message({
+                message: "操作成功",
+                type: "success"
+              });
+              this.getAuxiliaryList();
             } else {
               this.$message.error(data.data.msg);
               return;
@@ -788,13 +782,13 @@ export default {
           });
         } else {
           obj.auxiliaryMachineInfoFormData.productId = this.productId;
-          editProductAuxiliaryMachineInfoList(obj.auxiliaryMachineInfoFormData).then(data => {
-            if(data.data.code==0){
-            this.$message({
-              message: "操作成功",
-              type: "success"
-            });
-            this.getAuxiliaryList();
+          editPart(obj.auxiliaryMachineInfoFormData).then(data => {
+            if (data.data.code == 0) {
+              this.$message({
+                message: "操作成功",
+                type: "success"
+              });
+              this.getAuxiliaryList();
             } else {
               this.$message.error(data.data.msg);
               return;
@@ -822,7 +816,7 @@ export default {
       return options;
     },
     initSelect() {
-      getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
+      getProductCategoryList().then(data => {
         this.boilerModelNumberArray = this.getAuxiliaryMachineAboutOptions(
           data.data.data
         );
@@ -844,7 +838,7 @@ export default {
     },
     initAuxiliaryMachineAbout() {
       return new Promise((resolve, reject) => {
-        getAuxiliaryMachineLargeClassListByCondition().then(response => {
+        partCategoryList().then(response => {
           this.largeClassOptions = this.getAuxiliaryMachineAboutOptions(
             response.data.data
           );
@@ -882,16 +876,16 @@ export default {
     getList() {
       this.listLoading = true;
       this.product.userId = this.$store.state.user.userId;
-      getProductListByCondition({
+      productSearch({
         product: this.product,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }).then(response => {
-        if(response.data.code==0){
-        const data = response.data.data;
-        this.list = data.list;
-        this.listQuery.total = data.total;
-        this.listLoading = false;
+        if (response.data.code == 0) {
+          const data = response.data.data;
+          this.list = data.list;
+          this.listQuery.total = data.total;
+          this.listLoading = false;
         } else {
           this.$message.error(response.data.msg);
           return;
@@ -900,13 +894,13 @@ export default {
     },
     handleAddBoilerModel() {
       this.PartCategory = 3;
-      this.getTypeList()
+      this.getTypeList();
     },
-    handleCreateType(){
-      this.dialogFormVisible=true
+    handleCreateType() {
+      this.dialogFormVisible = true;
       this.titleName = "添加";
     },
-    canealType(){
+    canealType() {
       this.PartCategory = 2;
       this.initSelect();
     },
@@ -921,7 +915,7 @@ export default {
         orgId: this.$store.state.user.orgId,
         controllerNo: "",
         boilerNo: "",
-        partSubCategoryName: '',
+        partSubCategoryName: "",
         partCategoryName: null,
         partCategoryId: null,
         partSubCategoryId: null,
@@ -931,7 +925,7 @@ export default {
         createDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
         editDateTime: formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"),
         isSell: 0
-      }
+      };
     },
     //产品编辑
     handleUpdate(row) {
@@ -957,53 +951,55 @@ export default {
       this.titleName = "复制";
       this.productAuxiliaryMachineInfo = row;
     },
-    handleDeletepart(row){
+    handleDeletepart(row) {
       this.deleteValidateFormDialogVisible = true;
-      this.productPartInfoId=row.id;
-      this.delete=false;
+      this.productPartInfoId = row.id;
+      this.delete = false;
     },
     //产品售出
     sellProduct(row) {
       this.productMapDialogVisible = true;
       this.productFormData = row;
     },
+    onShowChange(val) {
+      this.productMapDialogVisible = false;
+    },
     //监控
     showControllerData(row) {
       this.controllerRunInfoDialogVisible = true;
-      this.controllerNo = row.controllerNo;
-      row.province
-        ? (this.address = row.province + row.city + row.district + row.street)
-        : (this.address = "");
+      this.boiler.controllerNo = row.controllerNo;
+      this.boiler.boilerNo = row.boilerNo
+      this.boiler.address = row.street
     },
     // 辅机信息
     auxiliaryMachineInfo(row) {
       this.PartCategory = 1;
       this.productFormData = row;
-      this.productId=row.id;
+      this.productId = row.id;
       this.titleName = "辅机信息";
-      this.getAuxiliaryList()
-      this.initAuxiliaryMachineAbout()
+      this.getAuxiliaryList();
+      this.initAuxiliaryMachineAbout();
     },
-    getAuxiliaryList(){
+    getAuxiliaryList() {
       this.listLoading = true;
-      getProductAuxiliaryMachineInfoListByProductId({
+      partlist({
         productId: this.productFormData.id
       }).then(response => {
-        if(response.data.code==0){
-        let productAuxiliaryMachineInfoList = response.data.data;
-        this.formData.productAuxiliaryMachineInfoList = productAuxiliaryMachineInfoList;
+        if (response.data.code == 0) {
+          let productAuxiliaryMachineInfoList = response.data.data;
+          this.formData.productAuxiliaryMachineInfoList = productAuxiliaryMachineInfoList;
           this.listLoading = false;
         } else {
-          this.$message.error(response.data.msg)
+          this.$message.error(response.data.msg);
           return;
         }
       });
     },
-    canelForm(){
+    canelForm() {
       this.PartCategory = 0;
-      this.deleteValidateFormDialogVisible=false
+      this.deleteValidateFormDialogVisible = false;
     },
-    cenalForm(){
+    cenalForm() {
       this.PartCategory = 0;
     },
     baseInfoInfo(row) {
@@ -1022,35 +1018,37 @@ export default {
       this.choiceUserFormData.users.forEach(u => {
         sourceUsers.push({ key: u.key, label: u.label });
       });
-      getProductUsers(this.choiceUserFormData.productId).then(response => {
-        let data = response.data;
-        if (data.code) {
-          this.$message.error(data.msg);
-          return;
-        } else {
-          let users = [];
-          data.data.forEach(d => {
-            if (1 != d.roleId) {
-              users.push(d.userId);
-            }
-          });
-          //组建source target
-          users.forEach(u => {
-            for (let i = 0; i < sourceUsers.length; i++) {
-              if (u.key == sourceUsers[i].key) {
-                u.label = sourceUsers[i].label;
-                sourceUsers.splice(i, 1);
+      getProductUsers(this.choiceUserFormData.productId)
+        .then(response => {
+          let data = response.data;
+          if (data.code) {
+            this.$message.error(data.msg);
+            return;
+          } else {
+            let users = [];
+            data.data.forEach(d => {
+              if (1 != d.roleId) {
+                users.push(d.userId);
               }
-            }
-          });
+            });
+            //组建source target
+            users.forEach(u => {
+              for (let i = 0; i < sourceUsers.length; i++) {
+                if (u.key == sourceUsers[i].key) {
+                  u.label = sourceUsers[i].label;
+                  sourceUsers.splice(i, 1);
+                }
+              }
+            });
 
-          this.choiceUserFormData.sourceUsers = sourceUsers;
-          this.choiceUserFormData.checkedUsers = users;
-          this.dialogChoiceUserFormVisible = true;
-        }
-      }).catch(resion=>{
-        this.$message.error(resion)
-      })
+            this.choiceUserFormData.sourceUsers = sourceUsers;
+            this.choiceUserFormData.checkedUsers = users;
+            this.dialogChoiceUserFormVisible = true;
+          }
+        })
+        .catch(resion => {
+          this.$message.error(resion);
+        });
     },
     handleChoiceUser(row) {
       this.dialogStatus = "update";
@@ -1070,35 +1068,37 @@ export default {
               }
             });
             this.choiceUserFormData.users = users;
-            this.initTransfer()
+            this.initTransfer();
           }
         });
-      }else{
-        this.initTransfer()
+      } else {
+        this.initTransfer();
       }
     },
     confirmSubmitChoiceUser() {
-      let productId = this.choiceUserFormData.productId
-      let checkedUsers = this.choiceUserFormData.checkedUsers
-      let data = []
-      checkedUsers.forEach(u=>{
-        data.push({"productId":productId,"userId":u})
-      })
-      modifyProductUser(productId,data).then(response=>{
-        if(response.data.code){
-          this.$message.error(response.data.msg)
-          return
-        }
-        this.choiceUserFormData.sourceUsers=[]
-        this.choiceUserFormData.checkedUsers=[]
-        this.dialogChoiceUserFormVisible = false
-      }).catch(resion=>{
-        this.$message.error(resion)
-      })
+      let productId = this.choiceUserFormData.productId;
+      let checkedUsers = this.choiceUserFormData.checkedUsers;
+      let data = [];
+      checkedUsers.forEach(u => {
+        data.push({ productId: productId, userId: u });
+      });
+      modifyProductUser(productId, data)
+        .then(response => {
+          if (response.data.code) {
+            this.$message.error(response.data.msg);
+            return;
+          }
+          this.choiceUserFormData.sourceUsers = [];
+          this.choiceUserFormData.checkedUsers = [];
+          this.dialogChoiceUserFormVisible = false;
+        })
+        .catch(resion => {
+          this.$message.error(resion);
+        });
     },
     handleDelete(row) {
       this.deleteValidateFormDialogVisible = true;
-      this.delete=true;
+      this.delete = true;
       this.delId = row.id;
       this.delCtlNo = row.controllerNo;
     },
@@ -1116,12 +1116,12 @@ export default {
               this.currentPage1 =(this.list.length-1)%this.pageSize1 == 0 ? this.currentPage1-1 : this.currentPage1
               this.getList();
             } else {
-              this.$message.error(response.data.msg)
+              this.$message.error(response.data.msg);
               return;
             }
           });
         } else {
-          removeProductAuxiliaryMachineInfoList({
+          deletePart({
             productId: this.productId,
             productPartInfoId: this.productPartInfoId
           }).then(response => {
@@ -1134,14 +1134,13 @@ export default {
             this.getAuxiliaryList();
           });
         }
-      }
-      else{
-        this.deleteValidateFormDialogVisible = false
-        this.delId = null
-        this.$message.error("输入密码错误，无法完成删除操作！")
+      } else {
+        this.deleteValidateFormDialogVisible = false;
+        this.delId = null;
+        this.$message.error("输入密码错误，无法完成删除操作！");
       }
     },
-    createType(){
+    createType() {
       createBoilerModel(this.boilerModelFormData).then(data => {
         this.dialogFormVisible = false;
         this.$message({
@@ -1152,27 +1151,27 @@ export default {
       });
     },
     addsubmitForm() {
-        if (this.titleName === "编辑") {
-          editProduct(this.addFormData).then(response => {
-            if (response.data.code==0){
-              this.$message({
-                message: "编辑成功",
-                type: "success"
-              });
-              this.PartCategory = 0;
+      if (this.titleName === "编辑") {
+        editProduct(this.addFormData).then(response => {
+          if (response.data.code == 0) {
+            this.$message({
+              message: "编辑成功",
+              type: "success"
+            });
+            this.PartCategory = 0;
             this.getList();
-            } else {
-              this.$message.error(response.data.msg)
-              return;
-            }
-          });
-        } else {
-          if(this.titleName === "复制"){
-            this.addFormData.boilerNo = "";
-            this.addFormData.controllerNo = "";
+          } else {
+            this.$message.error(response.data.msg);
+            return;
           }
-          insertProduct(this.addFormData).then(response => {
-            if (response.data.code==0){
+        });
+      } else {
+        if (this.titleName === "复制") {
+          this.addFormData.boilerNo = "";
+          this.addFormData.controllerNo = "";
+        }
+        insertProduct(this.addFormData).then(response => {
+          if (response.data.code == 0) {
             if (this.titleName === "复制") {
               this.$message({
                 message: "复制成功",
@@ -1187,26 +1186,8 @@ export default {
               this.PartCategory = 0;
             }
             this.getList();
-            } else {
-              this.$message.error(response.data.msg)
-              return;
-            }
-          })
-        }
-
-    },
-    confirmSellDialog(obj) {
-      if (obj.flag) {
-        this.productMapDialogVisible = obj.productMapDialogVisible;
-        updateProductSellAbout(obj.productFormData).then(response => {
-          if (response.data.code==0){
-          this.$message({
-            message: "出售成功",
-            type: "success"
-          });
-          this.getList();
           } else {
-            this.$message.error(response.data.msg)
+            this.$message.error(response.data.msg);
             return;
           }
         });
@@ -1216,14 +1197,14 @@ export default {
       if (obj.flag) {
         this.auxiliaryMachineDialogVisible = obj.auxiliaryMachineDialogVisible;
         editProduct(obj.productFormData).then(response => {
-          if (response.data.code==0){
-          this.$message({
-            message: "操作成功",
-            type: "success"
-          });
-          this.getList();
+          if (response.data.code == 0) {
+            this.$message({
+              message: "操作成功",
+              type: "success"
+            });
+            this.getList();
           } else {
-            this.$message.error(response.data.msg)
+            this.$message.error(response.data.msg);
             return;
           }
         });
@@ -1232,7 +1213,7 @@ export default {
     handleDownload(row) {
       this.initAuxiliaryMachineAbout()
         .then(() => {
-          return getProductAuxiliaryMachineInfoListByProductId({
+          return partlist({
             productId: row.id
           });
         })
@@ -1381,9 +1362,10 @@ export default {
       this.productFromDialogVisible = obj.productFromDialogVisible;
       this.getList();
     },
-    productMapDialogClose(obj) {
-      this.productMapDialogVisible = obj.productMapDialogVisible;
-      this.getList();
+    productMapDialogClose(isCancel) {
+      if (!isCancel) {
+        this.getList();
+      }
     },
     auxiliaryMachineDialogClose(obj) {
       this.auxiliaryMachineDialogVisible = obj.auxiliaryMachineDialogVisible;
@@ -1400,13 +1382,17 @@ export default {
       this.listQuery4.pageNum = val;
       this.getTypeList();
     },
-    handleSizeChange1: function (pageSize) {
+    handleSizeChange1: function(pageSize) {
       this.pageSize1 = pageSize;
       this.handleCurrentChange1(this.currentPage);
     },
-    handleCurrentChange1: function (currentPage) {//页码切换
+    handleCurrentChange1: function(currentPage) {
+      //页码切换
       this.currentPage1 = currentPage;
     },
+    close() {
+      this.$refs.deviceRunInfo.stopTimer();
+    }
   }
 };
 </script>

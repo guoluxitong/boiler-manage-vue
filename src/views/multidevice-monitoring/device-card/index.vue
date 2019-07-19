@@ -1,22 +1,18 @@
 <template>
-  <div style="float: left;margin: 10px 1%;width: 31%;display: inline-block;">
-    <el-card class="box-card">
-      <div slot="header" class="clearfix" style="padding-bottom: 0px">
-        <el-button
-          style="float: right; padding: 3px 0"
-          type="text"
-          @click="sendDeleteCardToParent"
-        >X</el-button>
-      </div>
-      <div class="runInfo1" :style="{height:mapHeight/8*2.5+'px'}">
-        <device-run-info
-          class="runInfoShow1"
-          :controllerNo="controllerNoArray[index]"
-          :address="addressArray[index]"
-        ></device-run-info>
-      </div>
-    </el-card>
-  </div>
+  <el-card>
+    <div slot="header" class="clearfix" style="padding-bottom: 0px">
+      <el-button style="float: right; padding: 3px 0" type="text" @click="sendDeleteCardToParent">X</el-button>
+    </div>
+    <div class="runInfo1" :style="{height:mapHeight/8*2.5+'px'}">
+      <device-run-info
+        ref="deviceRunInfo"
+        class="runInfoShow1"
+        :boiler-no="boilerNo"
+        :controller-no="controllerNo"
+        :address="address"
+      ></device-run-info>
+    </div>
+  </el-card>
 </template>
 
 <script>
@@ -24,21 +20,21 @@ import deviceRunInfo from "@/components/controller-run-info/index";
 export default {
   name: "index",
   props: {
-    controllerNoArray: {
-      type: Array,
-      default: function() {
-        return [];
-      }
+    boilerNo: {
+      type: String,
+      default: null
     },
-    addressArray: {
-      type: Array,
-      default: function() {
-        return [];
-      }
+    controllerNo: {
+      type: String,
+      default: null
     },
-    index: {
+    address: {
+      type: String,
+      default: null
+    },
+    arrayIndex: {
       type: Number,
-      required: true
+      default: -1
     },
     mapHeight: {
       type: Number,
@@ -47,30 +43,20 @@ export default {
   },
   data() {
     return {
-      //controllerArray: this.controllerNoArray,
-      // deviceAddressArrray: this.addressArray,
       mapWidth: document.documentElement.clientWidth - 90,
-      arrayIndex: this.index
+      visible: false
     };
-  },
-  watch: {
-    /* controllerNoArray() {
-      this.controllerArray = this.controllerNoArray;
-    },*/
-    index() {
-      this.arrayIndex = this.index;
-    }
-    /*addressArray() {
-      this.deviceAddressArrray = this.addressArray;
-    } */
   },
   components: {
     deviceRunInfo: deviceRunInfo
   },
-  mounted() {},
+  mounted() {
+    this.$refs.deviceRunInfo.startTimer()
+  },
   methods: {
     sendDeleteCardToParent() {
-      this.$emit("listenToControllerRunInfo", this.arrayIndex);
+      this.$refs.deviceRunInfo.stopTimer();
+      this.$emit("onCardClosed", this.arrayIndex);
     }
   }
 };
@@ -79,10 +65,6 @@ export default {
 <style scoped>
 .text {
   font-size: 14px;
-}
-
-.item {
-  padding: 18px 0;
 }
 .clearfix:before,
 .clearfix:after {

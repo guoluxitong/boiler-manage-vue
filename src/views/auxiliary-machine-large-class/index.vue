@@ -75,10 +75,8 @@
 
 <script>
 import {
-  getAuxiliaryMachineLargeClassListByCondition,
-  editAuxiliaryMachineLargeClass,
-  deleteAuxiliaryMachineLargeClassById
-} from "@/api/auxiliaryMachineLargeClass";
+  partCategoryList
+} from "@/api/partCategory";
 export default {
   data() {
     return {
@@ -125,7 +123,7 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      getAuxiliaryMachineLargeClassListByCondition(this.listQuery).then(
+      partCategoryList(this.listQuery).then(
         response => {
           const data = response.data.data;
           this.list = data.list;

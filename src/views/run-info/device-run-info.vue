@@ -3,7 +3,7 @@
     <div class="leftDiv">
       <div style="margin: 30px 15px 30px 30px">
         <div id="map" class="map" :style="{height:mapHeight/8*5+'px'}">
-          <device-map :map-height="mapHeight" v-on:listenToDeviceMap="receiveToDeviceMap"></device-map>
+          <device-map :map-height="mapHeight"  @onDeviceClicked="deviceClick"></device-map>
         </div>
         <div id="weather" class="weather">
           <iframe
@@ -40,13 +40,15 @@
           <runinfo-show
             v-show="flag"
             class="runInfoShow"
-            :controllerNo="this.controllerNo"
+            :boiler-no="this.boilerNo"
+            :controller-no="this.controllerNo"
+            :visible="true"
             :address="this.productAddress"
           ></runinfo-show>
         </div>
       </div>
       <div style="float: left;margin: 65px 1%;width: 30%;display: inline-block;text-align:center">
-        <img class="pic" src="/static/common/wechat.jpg" alt="微信小程序">
+        <img class="pic" src="/static/common/wechat.jpg" alt="微信小程序" />
         <p>扫码在手机上查看</p>
       </div>
     </div>
@@ -68,7 +70,7 @@ import { config } from "@/config/index";
 import { getDeviceByByteDataAndType } from "@/deviceAdapter";
 import { getControllerByteData, getControllerType } from "@/api/controller";
 import {
-  getProductListByCondition,
+  productSearch,
   getProductUserListByProductCondition,
   insertManyProductUser,
   productTypeAmountByCondition
@@ -133,15 +135,9 @@ export default {
     this.getProductList();
   },
   methods: {
-    receiveToDeviceMap(
-      controllerNoAry,
-      addressAry,
-      address,
-      controllerNo,
-      flag
-    ) {
+    deviceClick(device) {
       this.weatherSrc = this.src;
-      this.flag = flag;
+      this.flag = true;
       let cityPinyin = ConvertPinyin(this.getArea(address).City);
       switch (cityPinyin) {
         case "beijing":
@@ -152,8 +148,10 @@ export default {
           break;
       }
       this.weatherSrc = this.src + "&py=" + cityPinyin;
-      this.$store.state.user.deviceRunInfoNo = controllerNo;
-      this.controllerNo = controllerNo;
+      
+      this.controllerNo = device.controllerNo;
+      this.boilerNo = device.boilerNo
+      this.productAddress = device.address
       this.getLineChartDeviceFocus();
     },
     /**

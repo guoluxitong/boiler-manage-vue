@@ -1,78 +1,110 @@
 <template>
-  <div>
-    <el-row class="app-query">
-      <el-col :span="3">
-      <el-select
-        clearable
-        style="width: 150px"
-        v-model="product.customerName"
-        placeholder="客户名称"
+  <el-row>
+    <baidu-map
+      class="bm-view"
+      :style="{height:mapHeight+'px'}"
+      ak="eqPZV35edaZZGefOIopjLNqTSj4qI89Y"
+      :center="center"
+      :zoom="zoom"
+      :scroll-wheel-zoom="true"
+      @ready="handler"
+    >
+      <bm-control anchor="BMAP_ANCHOR_TOP_RIGHT">
+        <el-button icon="el-icon-search" type="primary" @click="query = !query">搜索</el-button>
+        <el-button v-if="showFullBtn" icon="el-icon-view" type="primary" @click="tlg()">{{fullText}}</el-button>
+      </bm-control>
+      <bm-marker
+        v-for="marker in markers"
+        :key="marker.device.controllerNo"
+        :position="{lng: marker.lng, lat: marker.lat}"
+        @click="markerClick(marker.device)"
       >
-        <el-option
-          v-for="item in customerList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      </el-col>
-      <el-col :span="3">
-      <el-input v-model="product.boilerNo" placeholder="锅炉编号" style="width: 150px;"></el-input>
-      </el-col>
-      <el-col :span="3">
-      <el-select
-        clearable
-        style="width: 150px"
-        v-model="product.productCategoryId"
-        placeholder="锅炉型号"
-      >
-        <el-option
-          v-for="item in boilerModelNumberArray"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      </el-col>
-      <el-col :span="3">
-      <el-input v-model="listQuery.controllerNo" placeholder="控制器编号" style="width: 150px;"></el-input>
-      </el-col>
-      <el-col :span="3">
-      <el-select clearable style="width: 150px" v-model="product.power" placeholder="燃料">
-        <el-option
-          v-for="item in fuelArray"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      </el-col>
-      <el-col :span="3">
-      <el-select clearable style="width: 150px" v-model="product.media" placeholder="介质">
-        <el-option
-          v-for="item in mediumArray"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      </el-col>
-      <el-col :span="3">
-      <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-      </el-col>
-      <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
-    </el-row>
-  <div class="map-container">
-    <div id="map" class="map" :style="{height:mapHeight+'px'}"></div>
-  </div>
-  </div>
+        <!-- <bm-info-window
+          :show="marker.device.show"
+          @close="infoWindowClose(marker)"
+          @open="infoWindowOpen(marker)"
+        >{{marker.device.boilerNo}}<br/>{{marker.device.address}}</bm-info-window>-->
+      </bm-marker>
+    </baidu-map>
+    <!-- <div class="search">
+      <el-button type="primary" @click="query = !query" v-if="!query" icon="el-icon-search" circle></el-button>
+    </div>-->
+    <transition name="slide-fade" mode="in-out">
+      <el-card class="box-card" v-if="query">
+        <div slot="header" class="clearfix">
+          <span>锅炉搜索</span>
+          <el-button style="float: right; padding: 3px 0" type="text" @click="query=!query">X</el-button>
+        </div>
+        <el-row>
+          <el-form ref="form" :model="product">
+            <el-form-item>
+              <el-select v-model="product.customerName" placeholder="客户">
+                <el-option
+                  v-for="item in customerList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-select v-model="product.productCategoryId" placeholder="锅炉型号">
+                <el-option
+                  v-for="item in productCategory"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-select v-model="product.power" placeholder="燃料">
+                <el-option
+                  v-for="item in fuelArray"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-select v-model="product.media" placeholder="介质">
+                <el-option
+                  v-for="item in mediumArray"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-input v-model="product.boilerNo" placeholder="锅炉编号"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-col :span="9">&nbsp;</el-col>
+              <el-col :span="6">
+                <el-button icon="el-icon-search" @click="searchProduct">搜索</el-button>
+              </el-col>
+              <el-col :span="9">&nbsp;</el-col>
+            </el-form-item>
+          </el-form>
+        </el-row>
+      </el-card>
+    </transition>
+  </el-row>
 </template>
 <script>
-import { getProductListByCondition } from "@/api/product";
-import {getList} from "@/api/boilerCustomer";
+import { productSearch } from "@/api/product";
+import { getList } from "@/api/customer";
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
-import { getBoilerModelListByCondition } from "@/api/boilerModel";
+import { getProductCategoryList } from "@/api/productCategory";
 import { validatePositiveAndSmallAndFloatNum } from "@/utils/validate";
+import BaiduMap from "vue-baidu-map/components/map/Map.vue";
+import BmlMarkerClusterer from "vue-baidu-map/components/extra/MarkerClusterer";
+import BmMarker from "vue-baidu-map/components/overlays/Marker";
+import BmInfoWindow from "vue-baidu-map/components/overlays/InfoWindow";
+import BmControl from "vue-baidu-map/components/controls/Control";
+
 function dictionaryValueFilter(dictionaryValue, value) {
   const dictionaryValueItem = dictionaryValue.filter(item => {
     return item.value == value;
@@ -81,128 +113,128 @@ function dictionaryValueFilter(dictionaryValue, value) {
 }
 export default {
   name: "devicemap",
-  components: {},
+  components: {
+    BaiduMap,
+    BmlMarkerClusterer,
+    BmMarker,
+    BmInfoWindow,
+    BmControl
+  },
   props: {
     mapHeight: {
       type: Number,
-      default: document.documentElement.clientHeight-140
+      default: document.documentElement.clientHeight - 140
+    },
+    showInfo: {
+      type: Boolean,
+      default: false
+    },
+    showFullBtn:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
-    const validatePositiveAndSmallAndFloatNumFun = (rule, value, callback) => {
-      if (!validatePositiveAndSmallAndFloatNum(value)) {
-        callback(new Error("请输入数字"));
-      } else {
-        callback();
-      }
-    };
-    const validateFuelFun = (rule, value, callback) => {
-      if (value == null) {
-        callback(new Error("请选择燃料"));
-      } else {
-        callback();
-      }
-    };
-    const validateMediumFun = (rule, value, callback) => {
-      if (value == null) {
-        callback(new Error("请选择介质"));
-      } else {
-        callback();
-      }
-    };
     return {
-      listQuery: {
-        organizationType: null,
-        organizationNo: null,
-        boilerNo: "",
-        saleDate: null,
-        controllerNo: "",
-        boilerCustomerName: null,
-        boilerModelNumber: null,
-        tonnageNum: null,
-        media: null,
-        power: null,
-        userId: null
-      },
+      query: false,
       product: {
         boilerNo: "",
-        saleDate: null,
-        controllerNo: "",
-        customerName: null,
+        customerId: null,
         productCategoryId: null,
         tonnageNum: null,
         media: null,
-        power: null,
-        userId: null,
-        isSell: null,
-        productCategoryName: ''
+        power: null
       },
-      pageNum: 1,
-      pageSize: 5,
-      listQuery2: {
-        total: 500,
-        pageNum: 1,
-        pageSize: 50,
-        realName: "",
-        mobile: null,
-        orgType: this.$store.state.user.orgType,
-        orgId: this.$store.state.user.orgId
-      },
-      boilerModelNumberArray: [],
+      productCategory: [],
       mediumArray: [],
       fuelArray: [],
-      isSellArray: [],
-      rules: {
-        tonnageNum: [
-          { trigger: "blur", validator: validatePositiveAndSmallAndFloatNumFun }
-        ],
-        boilerNo: [
-          { required: true, trigger: "blur", message: "锅炉编号不能为空" }
-        ],
-        controllerNo: [
-          { required: true, trigger: "blur", message: "设备编号不能为空" }
-        ],
-        power: [{ required: true, trigger: "blur", validator: validateFuelFun }],
-        media: [
-          { required: true, trigger: "blur", validator: validateMediumFun }
-        ]
-      },
       center: { lng: 105, lat: 34 },
-      mapPoints: [],
-      userId: "",
-      controllerNoArray: [],
-      addressArray: [],
-      customerList:[],
-      address: "",
-      controllerNo: "",
-      controllerRunInfoDialogVisible: false
+      customerList: [],
+      controllerRunInfoDialogVisible: false,
+      center: { lng: 0, lat: 0 },
+      zoom: 3,
+      markers: [],
+      fullText:'全屏'
     };
   },
-  filters: {
-    dictionaryValueFieldFilter(value, dictionaryValueArray) {
-      if (dictionaryValueFilter(dictionaryValueArray, value))
-        return dictionaryValueFilter(dictionaryValueArray, value).label;
-      return;
-    }
-  },
-  created() {
-    Promise.all([this.initSelect()]).then(() => {
-      this.loadMapData();
-    });
-  },
   mounted() {
+    this.initSearchOptions();
   },
   methods: {
-    initSelect() {
-      getBoilerModelListByCondition(this.$store.state.user.orgId).then(data => {
-        this.boilerModelNumberArray = this.getAuxiliaryMachineAboutOptions(
-          data.data.data
-        );
+    tlg() {
+      let f = this.$store.state.app.fullMap
+      if(f){
+        this.fullText='全屏'
+      }
+      else{
+        this.fullText='返回'
+      }
+      this.$store.dispatch("changeMapState", !this.$store.state.app.fullMap);
+    },
+    infoWindowClose(marker) {
+      marker.device.show = false;
+    },
+    infoWindowOpen() {
+      marker.device.show = true;
+    },
+    handler() {
+      this.center.lng = 110;
+      this.center.lat = 38;
+      this.zoom = 5;
+    },
+    markerClick(device) {
+      // if (this.showInfo) {
+      //   device.show = true;
+      // }
+      this.$emit("onDeviceClicked", device);
+    },
+    searchProduct() {
+      productSearch({
+        product: this.product,
+        pageNum: 1,
+        pageSize: 1000
+      }).then(res => {
+        let data = res.data;
+        if (data.code) {
+          this.$message.error(data.msg);
+          return;
+        } else {
+          this.markers = [];
+          data.data.list.forEach(item => {
+            if (item.isSell) {
+              this.markers.push({
+                lng: item.longitude,
+                lat: item.latitude,
+                device: {
+                  show: false,
+                  boilerNo: item.boilerNo,
+                  controllerNo: item.controllerNo,
+                  address: item.street
+                }
+              });
+            }
+          });
+        }
       });
-      getList(this.listQuery2).then(response => {
-        this.customerList = this.getcustomerListOptions(
-          response.data.data.list
-        );
+    },
+    initSearchOptions() {
+      getProductCategoryList().then(data => {
+        this.productCategory = [];
+        data.data.data.forEach(item => {
+          let optionItem = {};
+          optionItem.value = item.id;
+          optionItem.label = item.name;
+          this.productCategory.push(optionItem);
+        });
+      });
+      getList({ pageNum: 1, pageSize: 1000 }).then(response => {
+        this.customerList = [];
+        response.data.data.list.forEach(item => {
+          let optionItem = {};
+          optionItem.value = item.name;
+          optionItem.label = item.name;
+          this.customerList.push(optionItem);
+        });
       });
       initMedium().then(data => {
         this.mediumArray = data;
@@ -210,105 +242,26 @@ export default {
       initFuel().then(data => {
         this.fuelArray = data;
       });
-      initIsSell().then(data => {
-        this.isSellArray = data;
-      });
-    },
-    handleFilter() {
-      this.listQuery.pageNum = 1;
-      this.loadMapData();
-    },
-    getcustomerListOptions(dataList) {
-      let options = [];
-      dataList.forEach(item => {
-        let optionItem = {};
-        optionItem.value = item.name;
-        optionItem.label = item.name;
-        options.push(optionItem);
-      });
-      return options;
-    },
-    getAuxiliaryMachineAboutOptions(dataList) {
-      let options = [];
-      dataList.forEach(item => {
-        let optionItem = {};
-        optionItem.value = item.id;
-        optionItem.label = item.name;
-        options.push(optionItem);
-      });
-      return options;
-    },
-    loadMapData() {
-      let map = new BMap.Map("map");
-      let point = new BMap.Point(this.center.lng, this.center.lat);
-      map.centerAndZoom(point, 6);
-      map.enableScrollWheelZoom(true);
-      map.enableDoubleClickZoom(true);
-      map.clearOverlays();
-      //3->锅炉厂管理员 5->锅炉厂普通用户
-      this.userId = this.$store.state.user.userId;
-      getProductListByCondition({
-        product: this.product,
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
-      }).then(res => {
-        this.showMapData(map, res.data.data.list);
-      });
-    },
-    showMapData(map, data) {
-      this.mapPoints = data;
-      let markers = [];
-      let self = this;
-      for (let i = 0; i < this.mapPoints.length; i++) {
-        if (
-          this.mapPoints[i].longitude == null ||
-          this.mapPoints[i].latitude == null
-        ) {
-          continue;
-        }
-        let points = new BMap.Point(
-          this.mapPoints[i].longitude,
-          this.mapPoints[i].latitude
-        );
-        let mk = new BMap.Marker(points);
-        markers.push(mk);
-        //点击气泡添加需要监控的设备数据
-        mk.addEventListener("click", () => {
-          let point = this.mapPoints[i];
-          if (this.controllerNoArray.indexOf(point.controllerNo) == -1) {
-            this.controllerNoArray.push(point.controllerNo);
-            this.addressArray.push(
-              point.province + point.city + point.district
-            );
-          }
-          this.address = point.province + point.city + point.district;
-          this.controllerRunInfoDialogVisible = true;
-          this.controllerNo = this.mapPoints[i].controllerNo;
-          this.sendControllerNoArrayToParent();
-        });
-      }
-      new BMapLib.MarkerClusterer(map, { markers: markers });
-    },
-    sendControllerNoArrayToParent() {
-      this.$emit(
-        "listenToDeviceMap",
-        this.controllerNoArray,
-        this.addressArray,
-        this.address,
-        this.controllerNo,
-        this.controllerRunInfoDialogVisible
-      );
     }
   }
 };
 </script>
-
-<style rel="stylesheet/scss" lang="scss">
-.map-container {
-  .map {
-    width: 98% !important;
-    margin: 5px auto;
-    border-radius: 10px;
-  }
+<style>
+.bm-view {
+  width: 100%;
+}
+.search {
+  position: fixed;
+  top: 45%;
+  right: 20px;
+}
+.box-card {
+  position: fixed;
+  bottom: 0%;
+  right: 0px;
+  width: 260px;
+  background-color: floralwhite;
+  border: gainsboro 1px solid;
+  padding: 15px 10px;
 }
 </style>

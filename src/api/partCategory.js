@@ -1,8 +1,9 @@
 import request from '@/utils/request'
 
-export function getUserIdListByCustomerId(query) {
+
+export function partCategoryList(query) {
     return request({
-        url: '/customeruser/getuseridlistbycustomerid',
+        url: '/webapi/boilermanage/partcategory/list',
         method: 'get',
         params: query
     })
