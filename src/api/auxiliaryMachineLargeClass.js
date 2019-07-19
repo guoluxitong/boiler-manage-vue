@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 
-
 export function getAuxiliaryMachineLargeClassListByCondition(query) {
     return request({
         url: '/webapi/boilermanage/partcategory/list',
