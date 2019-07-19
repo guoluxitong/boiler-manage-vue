@@ -16,33 +16,32 @@
         :style="{'float':'left','width':'100%','overflow-y':'auto'}"
       >
         <el-tab-pane
-          label="异常信息"
+          label="报警"
           name="first"
-          v-if="controllerFormData.exceptionInfoMap&&Object.keys(controllerFormData.exceptionInfoMap).length>0"
         >
           <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name">
             <span class="dataTitle">{{item.title}}</span>
           </el-row>
         </el-tab-pane>
-        <el-tab-pane label="基本信息" name="second">
+        <el-tab-pane label="基本" name="second">
           <el-row v-for="item in controllerFormData.baseInfoMap" :key="item.name">
             <span class="dataTitle">{{item.title}}：</span>
             {{item.valueString}}
           </el-row>
         </el-tab-pane>
-        <el-tab-pane label="当前模拟量" name="third">
+        <el-tab-pane label="模拟量" name="third">
           <el-row v-for="item in controllerFormData.mockInfoMap" :key="item.name">
             <span class="dataTitle">{{item.title}}：</span>
             {{item.valueString}}
           </el-row>
         </el-tab-pane>
-        <el-tab-pane label="设定参数" name="fourth">
+        <el-tab-pane label="设置" name="fourth">
           <el-row v-for="item in controllerFormData.settingInfoMap" :key="item.name">
             <span class="dataTitle">{{item.title}}：</span>
             {{item.valueString}}
           </el-row>
         </el-tab-pane>
-        <el-tab-pane label="设备信息" name="five">
+        <el-tab-pane label="设备" name="five">
           <el-row v-for="item in controllerFormData.deviceInfoMap" :key="item.name">
             <span class="dataTitle">{{item.title}}：</span>
             {{item.valueString}}
