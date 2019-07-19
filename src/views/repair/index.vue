@@ -247,6 +247,7 @@
         <el-dialog
           :append-to-body="true"
           :title="titleName"
+          @close='closeDialog'
           :visible.sync="newRepairDialogFlaguser"
         >
           <el-form ref="repairform" v-model="repairform" label-width="80px">
@@ -486,6 +487,13 @@ export default {
       this.tabType = tab.index;
       var val = tab.index; //
       this.getWaterDetails(val);
+    },
+    closeDialog(){
+      this.repairform.repairDatetime = ''
+      this.repairform.createDatetime = ''
+      this.repairform.repairContent = ''
+      this.repairform.controllerNo = ''
+      this.repairform.realName=''
     },
     inintUserSelect() {
       getUserList(this.userlistQuery).then(response => {
