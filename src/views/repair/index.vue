@@ -104,7 +104,7 @@
                   <span>{{scope.row.userName}}</span>
                 </template>
               </el-table-column>
-              <el-table-column align="left" :show-overflow-tooltip="true" label="权限">
+              <el-table-column align="left" :show-overflow-tooltip="true" label="职务">
                 <template slot-scope="scope">
                   <span>{{scope.row.roleName}}</span>
                 </template>
