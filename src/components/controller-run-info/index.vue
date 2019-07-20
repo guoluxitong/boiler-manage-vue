@@ -1,6 +1,6 @@
 <template>
   <div class="product-runInfo" style="overflow-y:auto">
-    <p style="margin:0">
+    <p v-if="this.boilerNo" style="margin:0">
       <strong>{{this.boilerNo}}</strong>
       &nbsp;{{this.address}}
     </p>
@@ -11,22 +11,19 @@
     ></animation>
     <el-row class="run-tab">
       <el-tabs
-        type="card"
+        type="border-card"
         v-model="controllerFormData.activeName"
-        :style="{'float':'left','width':'100%','overflow-y':'auto'}"
+        :style="{'float':'left','width':'100%'}"
       >
-        <el-tab-pane
-          label="报警"
-          name="first"
-        >
-          <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name">
-            <span class="dataTitle">{{item.title}}</span>
-          </el-row>
-        </el-tab-pane>
-        <el-tab-pane label="基本" name="second">
+        <el-tab-pane label="基本" name="first">
           <el-row v-for="item in controllerFormData.baseInfoMap" :key="item.name">
             <span class="dataTitle">{{item.title}}：</span>
             {{item.valueString}}
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="报警" name="second">
+          <el-row v-for="item in controllerFormData.exceptionInfoMap" :key="item.name">
+            <span class="dataTitle">{{item.title}}</span>
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="模拟量" name="third">
@@ -69,7 +66,7 @@ export default {
       runTabHeight: document.body.clientHeight - 125,
       timeInterVal: 10,
       controllerFormData: {
-        activeName: "second",
+        activeName: "first",
         stoveAnimation: "",
         deviceFocusInfoMap: {},
         fanAnimationList: [],
@@ -85,7 +82,7 @@ export default {
   props: {
     boilerNo: {
       type: String,
-      default: ""
+      default: null
     },
     address: {
       type: String,
@@ -98,7 +95,7 @@ export default {
     controllerNo: {
       type: String,
       default: null
-    }
+    },
   },
   watch: {
     visible(val) {
@@ -109,11 +106,30 @@ export default {
       }
     }
   },
+  computed:{
+    keyStrings(){
+      return Math.random().toString()
+    }
+  },
+  mounted(){
+    console.log('mounted......')
+  },
   beforeDestroy() {
+    console.log("clearTimer")
     clearInterval(this.timer);
     this.timer = null;
   },
   methods: {
+    initControllerInfo() {
+      this.controllerFormData.bengAnimationList = [];
+      this.controllerFormData.fanAnimationList = [];
+      this.controllerFormData.stoveAnimation = "";
+      this.controllerFormData.exceptionInfoMap = {};
+      this.controllerFormData.baseInfoMap = {};
+      this.controllerFormData.mockInfoMap = {};
+      this.controllerFormData.settingInfoMap = {};
+      this.controllerFormData.deviceInfoMap = {};
+    },
     stopTimer() {
       console.log("stopTimer");
       this.deviceType = null;
@@ -122,6 +138,7 @@ export default {
         clearInterval(this.timer);
       }
       this.timer = null;
+      this.initControllerInfo()
     },
     startTimer() {
       console.log("startTimer");
@@ -138,7 +155,7 @@ export default {
     },
     getDeviceByByteArray() {
       if (this.controllerNo) {
-        console.log(this.controllerNo)
+        console.log(this.controllerNo);
         getControllerByteData(this.controllerNo).then(data => {
           this.initControllerInfo();
           let controllerByteData = data.data;
@@ -179,16 +196,7 @@ export default {
         this.controllerFormData.deviceInfoMap = data.getDeviceFields().map;
       });
     },
-    initControllerInfo() {
-      this.controllerFormData.bengAnimationList = [];
-      this.controllerFormData.fanAnimationList = [];
-      this.controllerFormData.stoveAnimation = "";
-      this.controllerFormData.exceptionInfoMap = {};
-      this.controllerFormData.baseInfoMap = {};
-      this.controllerFormData.mockInfoMap = {};
-      this.controllerFormData.settingInfoMap = {};
-      this.controllerFormData.deviceInfoMap = {};
-    }
+    
   }
 };
 </script>

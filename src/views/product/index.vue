@@ -524,7 +524,7 @@ export default {
     productFormDialog,
     productMapDialog,
     auxiliaryMachineDialog,
-    controllerRunInfoDialog,
+    //controllerRunInfoDialog,
     contextmenu,
     deviceChart,
     auxiliaryMachineInfoDialog

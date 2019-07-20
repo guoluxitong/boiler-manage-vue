@@ -1,17 +1,20 @@
 <template>
   <el-row>
     <device-map :map-height="mapHeight" :showInfo="true" @onDeviceClicked="deviceClick"></device-map>
-     <div :key="index" v-for="(item,index) in devices" class="deviceCard">
+    <el-row>
+      <template  v-for="(item,index) in devices">
       <device-card
         :key="index"
+        v-if="item.show"
         :array-index="index"
-        :controller-no="item.controllerNo"
-        :boiler-no="item.boilerNo"
-        :address="item.address"
+        :controller-no="item.device.controllerNo"
+        :boiler-no="item.device.boilerNo"
+        :address="item.device.address"
         @onCardClosed="cardClosed"
         :map-height="cardHeight"
       ></device-card>
-    </div>
+      </template>
+    </el-row>
   </el-row>
 </template>
 
@@ -30,7 +33,7 @@ export default {
       cardHeight: document.documentElement.clientHeight,
       devices: [],
       colCount: 3,
-      visible:true
+      visible: true
     };
   },
   mounted() {
@@ -46,33 +49,25 @@ export default {
   },
   methods: {
     deviceClick(device) {
-      if(this.devices.length==12){
-        this.$message.error("已达到设备监控上限！")
-        return
+      if (this.devices.length == 12) {
+        this.$message.error("已达到设备监控上限！");
+        return;
       }
       let f = true;
       for (let i = 0; i < this.devices.length; i++) {
-        if (this.devices[i].controllerNo == device.controllerNo) {
+        if (this.devices[i].device.controllerNo == device.controllerNo && this.devices[i].show) {
           f = false;
           break;
         }
       }
       if (f) {
-        this.devices.push(device);
+        this.devices.push({"device":device,"show":true});
       }
     },
     cardClosed(index) {
-      //this.$set(this.devices[i],"visible",false)
-      this.devices.splice(index,1);
+      this.$set(this.devices[index],"show",false)
+      //this.devices.splice(index, 1)
     }
   }
 };
 </script>
-<style scoped>
-.deviceCard {
-  position: relative;
-  float: left;
-  width: 420px;
-  margin: 10px 10px;
-}
-</style>

@@ -2,38 +2,31 @@
   <div>
     <div class="map-container">
       <div>
-        <device-map :map-height="mapHeight" @onDeviceClicked="deviceClick" 
-          :show-full-btn="true"></device-map>
+        <device-map :map-height="mapHeight" @onDeviceClicked="deviceClick" :show-full-btn="true"></device-map>
       </div>
-      <el-dialog
-        title="监控"
-        :visible.sync="controllerRunInfoDialogVisible"
-        width="40%"
-        @close="close"
-      >
-        <controller-run-info-dialog
-          ref="deviceRunInfo"
-          :boiler-no="this.boilerNo"
-          :controller-no="this.controllerNo"
-          :address="this.address"
-          :visible="controllerRunInfoDialogVisible"
-        ></controller-run-info-dialog>
-      </el-dialog>
+      <device-dialog
+        ref="deviceRunInfoDialog"
+        :boiler-no="this.boilerNo"
+        :controller-no="this.controllerNo"
+        :address="this.address"
+        :show.sync="deviceDialogVisible"
+      ></device-dialog>
     </div>
   </div>
 </template>
 <script>
 import deviceMap from "@/components/deviceMap/index";
-import controllerRunInfoDialog from "@/components/controller-run-info/index";
+import deviceDialog from "./device-dialog/index";
+
 export default {
   name: "map-index",
   components: {
-    controllerRunInfoDialog,
-    deviceMap
+    deviceMap,
+    deviceDialog
   },
   data() {
     return {
-      controllerRunInfoDialogVisible: false,
+      deviceDialogVisible: false,
       address: "",
       controllerNo: "",
       boilerNo: null,
@@ -60,11 +53,7 @@ export default {
       this.address = device.address;
       this.controllerNo = device.controllerNo;
       this.boilerNo = device.boilerNo;
-      this.controllerRunInfoDialogVisible = true;
-    },
-    close() {
-      console.log("dlg close.......");
-      this.$refs.deviceRunInfo.stopTimer();
+      this.deviceDialogVisible = true;
     }
   }
 };

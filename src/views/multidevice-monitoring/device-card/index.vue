@@ -1,15 +1,18 @@
 <template>
-  <el-card>
-    <div slot="header" class="clearfix" style="padding-bottom: 0px">
+  <el-card class="deviceCard">
+    <div slot="header" class="clearfix">
+      <span>
+        {{boilerNo}}
+        <small>{{address}}</small>
+      </span>
       <el-button style="float: right; padding: 3px 0" type="text" @click="sendDeleteCardToParent">X</el-button>
     </div>
-    <div class="runInfo1" :style="{height:mapHeight/8*2.5+'px'}">
+    <div class="runInfo1">
       <device-run-info
         ref="deviceRunInfo"
         class="runInfoShow1"
-        :boiler-no="boilerNo"
         :controller-no="controllerNo"
-        :address="address"
+        :visible="this.visible"
       ></device-run-info>
     </div>
   </el-card>
@@ -19,6 +22,17 @@
 import deviceRunInfo from "@/components/controller-run-info/index";
 export default {
   name: "index",
+  directives: {
+    sdc: {
+      bind: function(el) {
+        //el.value = "this is sdc-bind";
+      },
+      unbind:function(el){
+        console.log(el)
+        el.parentElement.remove()
+      }
+    }
+  },
   props: {
     boilerNo: {
       type: String,
@@ -51,40 +65,23 @@ export default {
     deviceRunInfo: deviceRunInfo
   },
   mounted() {
-    this.$refs.deviceRunInfo.startTimer()
+   // this.$refs.deviceRunInfo.startTimer();
+    this.visible = true
   },
   methods: {
     sendDeleteCardToParent() {
-      this.$refs.deviceRunInfo.stopTimer();
+      //this.$refs.deviceRunInfo.stopTimer();
+      this.visible = false
       this.$emit("onCardClosed", this.arrayIndex);
     }
   }
 };
 </script>
-
 <style scoped>
-.text {
-  font-size: 14px;
-}
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-.clearfix:after {
-  clear: both;
-}
-.runInfo1 {
+.deviceCard {
   position: relative;
-  overflow: hidden;
-}
-.runInfoShow1 {
-  height: 100%;
-  position: absolute;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
-.runInfoShow1::-webkit-scrollbar {
-  display: none;
+  float: left;
+  width: 420px;
+  margin: 10px 10px;
 }
 </style>
