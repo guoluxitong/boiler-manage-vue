@@ -165,8 +165,8 @@ export default {
           });
         }
       })
-      .catch(resion => {
-        this.$message.error(resion);
+      .catch(reason => {
+        this.$message.error(reason);
       });
   },
   methods: {
@@ -262,7 +262,7 @@ export default {
           this.isCancel = false
           this.visible = false
         }
-      }).catch(resion=>{
+      }).catch(reason=>{
         this.$message.error(data.msg)
       })
     },

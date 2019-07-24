@@ -1046,8 +1046,8 @@ export default {
             this.dialogChoiceUserFormVisible = true;
           }
         })
-        .catch(resion => {
-          this.$message.error(resion);
+        .catch(reason => {
+          this.$message.error(reason);
         });
     },
     handleChoiceUser(row) {
@@ -1092,8 +1092,8 @@ export default {
           this.choiceUserFormData.checkedUsers = [];
           this.dialogChoiceUserFormVisible = false;
         })
-        .catch(resion => {
-          this.$message.error(resion);
+        .catch(reason => {
+          this.$message.error(reason);
         });
     },
     handleDelete(row) {

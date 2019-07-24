@@ -185,8 +185,8 @@ export default {
             this.size=data.size;
           }
         }
-      ).catch(resion=>{
-        this.$message.error(resion)
+      ).catch(reason=>{
+        this.$message.error(reason)
       });
     },
     resetTemp() {
@@ -255,8 +255,8 @@ export default {
             }
           }
         })
-        .catch(resion => {
-          this.$message.error(resion);
+        .catch(reason => {
+          this.$message.error(reason);
         });
     },
     checkContains(array, item) {
@@ -304,8 +304,8 @@ export default {
             this.dialogResourceFormVisible = false;
           }
         })
-        .catch(resion => {
-          this.$message.error(resion);
+        .catch(reason => {
+          this.$message.error(reason);
         });
     },
     createOrEditRole() {
@@ -323,8 +323,8 @@ export default {
               this.getList();
             }
           })
-          .catch(resion => {
-            this.$message.error(resion);
+          .catch(reason => {
+            this.$message.error(reason);
           });
       } else {
         editRole(this.roleFormData).then(data => {
@@ -338,8 +338,8 @@ export default {
             });
             this.getList();
           }
-        }).catch(resion => {
-            this.$message.error(resion);
+        }).catch(reason => {
+            this.$message.error(reason);
           });
       }
     },

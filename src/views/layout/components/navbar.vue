@@ -306,8 +306,8 @@ export default {
             return;
           }
         })
-        .catch(resion => {
-          this.$message.error(resion);
+        .catch(reason => {
+          this.$message.error(reason);
         });
     },
     submitForm() {

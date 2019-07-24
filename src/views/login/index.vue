@@ -96,9 +96,9 @@ export default {
               this.loading = false
               this.$router.push({ path: this.redirect || "/index" });
             })
-            .catch(resion => {
+            .catch(reason => {
               this.loading = false
-              this.$message.error(resion);
+              this.$message.error(reason);
             });
         } else {
           return false;

@@ -273,8 +273,8 @@ export default {
             });
           }
         })
-        .catch(resion => {
-          this.$message.error(resion);
+        .catch(reason => {
+          this.$message.error(reason);
         });
     },
     selectChange(item){
@@ -300,8 +300,8 @@ export default {
           });
           this.getList();
         })
-        .catch(resion => {
-          this.$message.error(resion);
+        .catch(reason => {
+          this.$message.error(reason);
         });
     },
     editData() {
@@ -349,8 +349,8 @@ export default {
             }
             this.getList();
           })
-          .catch(resion => {
-            this.$message.error(resion);
+          .catch(reason => {
+            this.$message.error(reason);
           });
       }
       else{

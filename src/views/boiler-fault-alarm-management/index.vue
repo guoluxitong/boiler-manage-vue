@@ -48,32 +48,6 @@
         :series="series"
       ></line-chart>
     </div>
-    <el-dialog :visible.sync="msgDialogFlag" width="50%" title="系统消息">
-      <el-collapse v-model="activeName" accordion>
-        <el-collapse-item>
-          <template slot="title">
-            <span style="font-size:large">0222222222设备报警</span>
-            <i class="header-icon el-icon-warning" style="color:#F56C6C;"></i>
-          </template>
-          <div>2019年5月20日15点37分 0222222222 设备报警发生排烟温度高报警，请及时处理！</div>
-        </el-collapse-item>
-        <el-collapse-item>
-          <template slot="title">
-            <span style="font-size:large">0233333333设备已恢复正常运行</span>
-            <i class="header-icon el-icon-success" style="color:#67C23A;"></i>
-          </template>
-          <div>2019年5月20日15点30分 0233333333 设备故障已修复，现已正常运行！</div>
-        </el-collapse-item>
-        <el-collapse-item>
-          <template slot="title">
-            <span style="font-size:large">0233333333设备报警</span>
-            <i class="header-icon el-icon-warning" style="color:#F56C6C;"></i>
-          </template>
-          <div>2019年5月20日14点37分 0233333333 设备发生出水温度传感器故障报警，请及时处理！</div>
-        </el-collapse-item>
-      </el-collapse>
-    </el-dialog>
-    <repair-form :repairDialogFlag="repairDialogFlag"></repair-form>
   </div>
 </template>
 
@@ -82,13 +56,12 @@ const Mock = require("mockjs");
 import barChart from "@/components/reportForms/barChart";
 import pieChart from "@/components/reportForms/pieChart";
 import lineChart from "@/components/reportForms/lineChart";
-import repairForm from "./repairForm";
 
 let map = ["超温", "超压", "AAA"];
 
 export default {
   name: "boiler-fault-alarm",
-  components: { lineChart, barChart, pieChart, repairForm },
+  components: { lineChart, barChart, pieChart },
   data() {
     return {
       mapHeight: document.documentElement.clientHeight - 30,
