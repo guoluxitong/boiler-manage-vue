@@ -160,8 +160,8 @@ import { loginout } from "@/api/loginout";
 import { config } from "@/config/index";
 
 const baseURL = process.env.NODE_ENV === 'development'
-  ? 'http://' + config.development_base_ip + ':' + config.development_base_port
-  : 'http://' + config.product_base_ip + ':' + config.product_base_port
+  ? config.development_base_ip + ':' + config.development_base_port
+  : config.product_base_ip + ':' + config.product_base_port
 
 
 export default {

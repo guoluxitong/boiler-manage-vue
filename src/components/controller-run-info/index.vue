@@ -50,7 +50,6 @@
 </template>
 <script>
 import { getControllerByteData, getControllerType } from "@/api/controller";
-import { getDeviceByByteDataAndType, getCmdMapByDevice } from "@/deviceAdapter";
 import { Web_DeviceAdapter as DeviceAdapter } from '@tomcat008/devices-lib'
 import animation from "./components/animation";
 let deviceAdapter = DeviceAdapter.setLang("zh-cn")
@@ -178,35 +177,15 @@ export default {
       }
     },
     getDevice(byteData) {
-      //console.log(this.deviceType + this.subType)
-      // getDeviceByByteDataAndType(byteData, this.deviceType).then(data => {
-      //   if (data.getSubDeviceType() != "-1") {
-      //     this.subType = "_" + data.getSubDeviceType();
-      //   }
-
-      //   this.controllerFormData.deviceFocusInfoMap = data.getDeviceFocusFields().map;
-      //   this.controllerFormData.bengAnimationList = data.getBeng();
-      //   this.controllerFormData.fanAnimationList = data.getFan();
-      //   this.controllerFormData.stoveAnimation = data
-      //     .getStoveElement()
-      //     .getElementPrefixAndValuesString();
-      //   this.controllerFormData.exceptionInfoMap = data.getExceptionFields().map;
-      //   this.controllerFormData.baseInfoMap = data.getBaseInfoFields().map;
-
-      //   this.controllerFormData.mockInfoMap = data.getMockFields().map;
-
-      //   this.controllerFormData.settingInfoMap = data.getSettingFields().map;
-      //   this.controllerFormData.deviceInfoMap = data.getDeviceFields().map;
-      // });
       deviceAdapter.getSdcSoftDevice(this.deviceType,byteData).then(device=>{
-        console.log(device)
+        //console.log(device)
         this.controllerFormData.deviceFocusInfoMap = device.getDeviceFocusFields().map;
         this.controllerFormData.bengAnimationList = device.getBeng();
         this.controllerFormData.fanAnimationList = device.getFan();
         this.controllerFormData.stoveAnimation = device
           .getStoveElement()
           .getElementPrefixAndValuesString();
-          console.log('--------------1-2----------------')
+         // console.log('--------------1-2----------------')
         this.controllerFormData.exceptionInfoMap = device.getExceptionFields().map;
         this.controllerFormData.baseInfoMap = device.getBaseInfoFields().map;
 
