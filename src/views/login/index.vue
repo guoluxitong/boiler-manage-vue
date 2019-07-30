@@ -35,7 +35,7 @@
 <script>
 import { login, getUserInfo, a, b, c } from "@/api/login";
 import { resolve } from "url";
-import { fail } from 'assert';
+
 export default {
   name: "login",
   data() {

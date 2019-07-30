@@ -13,6 +13,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@sdcsoft/components": "^1.0.0",
     "@tomcat008/devices-lib": "^2.0.2",
     "axios": "^0.18.0",
     "echarts": "^4.2.1",
