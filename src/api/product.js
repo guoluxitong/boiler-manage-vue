@@ -16,10 +16,11 @@ export function getProductUsers(productId) {
     params: {productId}
   })
 }
-export function findSoldProduct() {
+export function findSoldProduct(data) {
   return request({
     url: '/webapi/boilermanage/product/sold',
-    method: 'get'
+    method: 'post',
+    data: data
   })
 }
 export function getUsers(productId) {
