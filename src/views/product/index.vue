@@ -72,7 +72,7 @@
       </el-row>
       <!--数据展示-->
       <el-table
-        :data="list.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+        :data="list"
         v-loading="listLoading"
         element-loading-text="给我一点时间"
         border
@@ -154,8 +154,9 @@
           background
           @size-change="handleSizeChange1"
           @current-change="handleCurrentChange1"
-          :current-page="currentPage1"
-          :page-sizes="[5]"
+          :current-page="listQuery.pageNum"
+          :page-sizes="[5,10,15,20]"
+          :page-size="listQuery.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="listQuery.total"
         ></el-pagination>
@@ -655,6 +656,7 @@ export default {
         orgId: null
       },
       currentPage1: 1,
+      size: '',
       pageNum1: 1,
       pageSize1: 5,
       PartCategory: 0,
@@ -692,7 +694,7 @@ export default {
         productId: 0
       },
       productFormData: {},
-   
+
       rules: {
         tonnageNum: [
           { trigger: "blur", validator: validatePositiveAndSmallAndFloatNumFun }
@@ -731,7 +733,7 @@ export default {
       //   address: null,
       //   controllerNo: null,
       //   boilerNo:null,
-        
+
       // }
     };
   },
@@ -878,13 +880,16 @@ export default {
       this.product.userId = this.$store.state.user.userId;
       productSearch({
         product: this.product,
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
+        pageNum: this.listQuery.pageNum,
+        pageSize: this.listQuery.pageSize
       }).then(response => {
         if (response.data.code == 0) {
           const data = response.data.data;
           this.list = data.list;
           this.listQuery.total = data.total;
+          this.listQuery.pageNum = data.pageNum;
+          this.listQuery.pageSize = data.pageSize;
+          this.size=data.size;
           this.listLoading = false;
         } else {
           this.$message.error(response.data.msg);
@@ -1113,7 +1118,9 @@ export default {
                 message: "删除成功",
                 type: "success"
               });
-              this.currentPage1 =(this.list.length-1)%this.pageSize1 == 0 ? this.currentPage1-1 : this.currentPage1
+              if (this.size == 1) {
+                this.listQuery.pageNum = this.pageNum > 1 ? this.pageNum - 1 : 1;
+              }
               this.getList();
             } else {
               this.$message.error(response.data.msg);
@@ -1382,13 +1389,13 @@ export default {
       this.listQuery4.pageNum = val;
       this.getTypeList();
     },
-    handleSizeChange1: function(pageSize) {
-      this.pageSize1 = pageSize;
-      this.handleCurrentChange1(this.currentPage);
+    handleSizeChange1(val) {
+      this.listQuery.pageSize = val;
+      this.getList();
     },
-    handleCurrentChange1: function(currentPage) {
-      //页码切换
-      this.currentPage1 = currentPage;
+    handleCurrentChange1(val) {
+      this.listQuery.pageNum = val;
+      this.getList();
     },
     close() {
       this.$refs.deviceRunInfo.stopTimer();

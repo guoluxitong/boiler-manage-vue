@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <device-map :map-height="mapHeight" :showInfo="true" @onDeviceClicked="deviceClick"></device-map>
+    <device-map :map-height="mapHeight" :medias="medias" :powers="powers" :products="products" :customers="customers" :categories="categories" ak="eqPZV35edaZZGefOIopjLNqTSj4qI89Y" @search="search" :showInfo="true" @onDeviceClicked="deviceClick"></device-map>
     <el-row>
       <template  v-for="(item,index) in devices">
       <device-card
@@ -19,7 +19,11 @@
 </template>
 
 <script>
-import deviceMap from "@/components/deviceMap/index";
+  import { initMedium, initFuel } from "./product-dictionary";
+  import { getProductCategoryList } from "@/api/productCategory";
+  import {productSearch} from "@/api/product";
+  import { getList } from "@/api/customer";
+ import deviceMap from "@sdcsoft/components/components/map/device-map/index";
 import deviceCard from "./device-card";
 export default {
   name: "index",
@@ -29,7 +33,12 @@ export default {
   },
   data() {
     return {
-      mapHeight: document.documentElement.clientHeight / 3,
+      products: [],
+      customers: [],
+      categories: [],
+      powers: [],
+      medias: [],
+      mapHeight: document.documentElement.clientHeight / 3 + "px",
       cardHeight: document.documentElement.clientHeight,
       devices: [],
       colCount: 3,
@@ -37,9 +46,10 @@ export default {
     };
   },
   mounted() {
+    this.initSearchOptions()
     let self = this;
     window.onresize = function() {
-      self.mapHeight = document.body.clientHeight;
+      self.mapHeight = document.body.clientHeight+ "px";
     };
   },
   computed: {
@@ -48,6 +58,58 @@ export default {
     }
   },
   methods: {
+    search(searchOption) {
+      productSearch({
+        product: searchOption,
+        pageNum: 1,
+        pageSize: 1000
+      }).then(res => {
+        let data = res.data;
+        if (data.code) {
+          this.$message.error(data.msg);
+          return;
+        } else {
+          this.products = [];
+          data.data.list.forEach(item => {
+            if (item.isSell) {
+              this.products.push({
+                lng: item.longitude,
+                lat: item.latitude,
+                boilerNo: item.boilerNo,
+                controllerNo: item.controllerNo,
+                address: item.street
+              });
+            }
+          });
+        }
+      });
+    },
+    initSearchOptions() {
+      getProductCategoryList().then(data => {
+        this.categories = [];
+        data.data.data.forEach(item => {
+          let optionItem = {};
+          optionItem.value = item.id;
+          optionItem.label = item.name;
+          this.categories.push(optionItem);
+        });
+      });
+      getList({ pageNum: 1, pageSize: 1000 }).then(response => {
+        this.customers = [];
+        response.data.data.list.forEach(item => {
+          let optionItem = {};
+          optionItem.value = item.name;
+          optionItem.label = item.name;
+          this.customers.push(optionItem);
+        });
+      });
+      initMedium().then(data => {
+        this.medias = data;
+      });
+      initFuel().then(data => {
+        this.powers = data;
+      });
+    },
     deviceClick(device) {
       if (this.devices.length == 12) {
         this.$message.error("已达到设备监控上限！");

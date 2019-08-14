@@ -10,9 +10,12 @@
 </template>
 
 <script>
-import deviceRunInfo from "@/components/controller-run-info/index";
+import deviceRunInfo from "@sdcsoft/components/components/device-run-info/index";
 export default {
   name: "devicedialog",
+  components: {
+    "device-run-info": deviceRunInfo
+  },
   props: {
     boilerNo: {
       type: String,

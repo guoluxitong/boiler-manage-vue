@@ -2,7 +2,7 @@
   <div>
     <div class="map-container">
       <div>
-        <device-map :map-height="mapHeight" @onDeviceClicked="deviceClick" :show-full-btn="true"></device-map>
+        <device-map :map-height="mapHeight" :medias="medias" :powers="powers" :products="products" :customers="customers" :categories="categories" ak="eqPZV35edaZZGefOIopjLNqTSj4qI89Y" @search="search" @onDeviceClicked="deviceClick" :show-full-btn="true"></device-map>
       </div>
       <device-dialog
         ref="deviceRunInfoDialog"
@@ -15,13 +15,17 @@
   </div>
 </template>
 <script>
-import deviceMap from "@/components/deviceMap/index";
+  import { initMedium, initFuel } from "./product-dictionary";
+  import { getProductCategoryList } from "@/api/productCategory";
+  import {productSearch} from "@/api/product";
+  import { getList } from "@/api/customer";
+import deviceMap from "@sdcsoft/components/components/map/device-map/index";
 import deviceDialog from "./device-dialog/index";
 
 export default {
   name: "map-index",
   components: {
-    deviceMap,
+    'device-map':deviceMap,
     deviceDialog
   },
   data() {
@@ -30,7 +34,20 @@ export default {
       address: "",
       controllerNo: "",
       boilerNo: null,
-      mapHeight: document.documentElement.clientHeight - 100
+      product: {
+        boilerNo: "",
+        customerName: null,
+        productCategoryId: null,
+        tonnageNum: null,
+        media: null,
+        power: null
+      },
+      products: [],
+      customers: [],
+      categories: [],
+      powers: [],
+      medias: [],
+      mapHeight: document.documentElement.clientHeight - 100+ "px"
     };
   },
   computed: {
@@ -38,7 +55,9 @@ export default {
       return this.$store.state.app.fullMap;
     }
   },
-  mounted() {},
+  mounted() {
+    this.initSearchOptions()
+  },
   watch: {
     fullMap(val) {
       if (val) {
@@ -49,6 +68,64 @@ export default {
     }
   },
   methods: {
+    search(searchOption) {
+      this.product.boilerNo=searchOption.boilerNo;
+      this.product.controllerNo=searchOption.controllerNo;
+      this.product.media=searchOption.media;
+      this.product.power=searchOption.power;
+      this.product.customerName=searchOption.customer;
+      this.product.productCategoryId=searchOption.category
+      productSearch({
+        product: this.product,
+        pageNum: 1,
+        pageSize: 1000
+      }).then(res => {
+        let data = res.data;
+        if (data.code) {
+          this.$message.error(data.msg);
+          return;
+        } else {
+          this.products = [];
+          data.data.list.forEach(item => {
+            if (item.isSell) {
+              this.products.push({
+                lng: item.longitude,
+                lat: item.latitude,
+                boilerNo: item.boilerNo,
+                controllerNo: item.controllerNo,
+                address: item.street
+              });
+            }
+          });
+        }
+      });
+    },
+    initSearchOptions() {
+      getProductCategoryList().then(data => {
+        this.categories = [];
+        data.data.data.forEach(item => {
+          let optionItem = {};
+          optionItem.value = item.id;
+          optionItem.label = item.name;
+          this.categories.push(optionItem);
+        });
+      });
+      getList({ pageNum: 1, pageSize: 1000 }).then(response => {
+        this.customers = [];
+        response.data.data.list.forEach(item => {
+          let optionItem = {};
+          optionItem.value = item.name;
+          optionItem.label = item.name;
+          this.customers.push(optionItem);
+        });
+      });
+      initMedium().then(data => {
+        this.medias = data;
+      });
+      initFuel().then(data => {
+        this.powers = data;
+      });
+    },
     deviceClick(device) {
       this.address = device.address;
       this.controllerNo = device.controllerNo;

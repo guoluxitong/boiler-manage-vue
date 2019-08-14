@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import deviceRunInfo from "@/components/controller-run-info/index";
+import deviceRunInfo from "@sdcsoft/components/components/device-run-info/index";
 export default {
   name: "index",
   directives: {
@@ -57,7 +57,7 @@ export default {
   },
   data() {
     return {
-      mapWidth: document.documentElement.clientWidth - 90,
+      mapWidth: document.documentElement.clientWidth - 90+ "px",
       visible: false
     };
   },
