@@ -2,6 +2,7 @@
   <el-dialog title="监控" :visible.sync="visible" width="40%" @close="close" @opened="opened">
     <device-run-info
       ref="deviceRunInfo"
+      lang="zh-cn"
       :boiler-no="this.boilerNo"
       :controller-no="this.controllerNo"
       :address="this.address"

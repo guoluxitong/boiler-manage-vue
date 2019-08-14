@@ -1,18 +1,17 @@
 <template>
   <el-card class="deviceCard">
     <div slot="header" class="clearfix">
-      <span>
-        {{boilerNo}}
-        <small>{{address}}</small>
-      </span>
       <el-button style="float: right; padding: 3px 0" type="text" @click="sendDeleteCardToParent">X</el-button>
     </div>
     <div class="runInfo1">
       <device-run-info
         ref="deviceRunInfo"
         class="runInfoShow1"
+        :boiler-no="boilerNo"
         :controller-no="controllerNo"
-        :visible="this.visible"
+        :address="address"
+        lang="zh-cn"
+        :runing="visible"
       ></device-run-info>
     </div>
   </el-card>
@@ -65,7 +64,7 @@ export default {
     deviceRunInfo: deviceRunInfo
   },
   mounted() {
-   // this.$refs.deviceRunInfo.startTimer();
+    this.$refs.deviceRunInfo.startTimer();
     this.visible = true
   },
   methods: {
