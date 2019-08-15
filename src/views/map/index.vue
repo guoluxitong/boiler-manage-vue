@@ -61,9 +61,9 @@ export default {
   watch: {
     fullMap(val) {
       if (val) {
-        this.mapHeight = document.documentElement.clientHeight - 10;
+        this.mapHeight = document.documentElement.clientHeight - 10 + "px";
       } else {
-        this.mapHeight = document.documentElement.clientHeight - 100;
+        this.mapHeight = document.documentElement.clientHeight - 100 + "px";
       }
     }
   },

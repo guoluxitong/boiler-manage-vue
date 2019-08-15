@@ -49,11 +49,11 @@ export default {
     this.initSearchOptions()
     let self = this;
     window.onresize = function() {
-      self.mapHeight = document.body.clientHeight+ "px";
+      self.mapHeight = document.body.clientHeight * 2 / 3+ "px";
     };
   },
   computed: {
-    span: () => {
+     span: () => {
       return 24 / this.colCount;
     }
   },
