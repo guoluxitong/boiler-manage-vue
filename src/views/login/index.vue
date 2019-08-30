@@ -14,7 +14,7 @@
 </template>
 <script>
   import { login, getUserInfo,wechatLogin, a, b, c } from "@/api/login";
-  import loginDialog from "@sdcsoft/components/components/login/index";
+  import loginDialog from "./login";
 
   export default {
     name: "login",
