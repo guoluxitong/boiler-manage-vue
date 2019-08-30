@@ -56,14 +56,6 @@
       }else{
         this.initCopyrightInfoAndLogoUrl();
       }
-      /*  if(this.employeeId!=0){
-          this.wechatlogin=false;
-          if(this.employeeId==0){
-            this.image=true
-          } else {
-        } else {
-          this.initCopyrightInfoAndLogoUrl();
-        }*/
     },
 
     methods: {
