@@ -48,8 +48,10 @@
       this.loginForm.passWord = this.getUrlKey('token')
       if(this.loginForm.account!=null){
         if(this.loginForm.account == 0){
+          window.history.pushState({status: 0} ,'' ,'http://ui.boilermanage.sdcsoft.com.cn/#/login')
           this.image=true
         } else {
+          window.history.pushState({status: 0} ,'' ,'http://ui.boilermanage.sdcsoft.com.cn/#/login')
           this.wechatlogin=false;
           this.wechatLogin()
         }
@@ -73,7 +75,6 @@
           .then(response => {
             let data = response.data;
             baseInfo = data.data;
-            console.log(baseInfo);
             if (data.code == 0) {
               org = baseInfo.orgId
               return getUserInfo(baseInfo.id);

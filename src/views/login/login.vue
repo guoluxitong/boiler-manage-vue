@@ -48,7 +48,7 @@
             >登录</el-button>
           </div ></el-tab-pane>
         <el-tab-pane>
-          <span slot="label"><a href="https://apis.sdcsoft.com.cn/wechat/login" style=" text-decoration: none; font-size: 15px;color: black" target="_self">微信登录</a></span>
+          <span slot="label"><a :href='wechatUrl' style=" text-decoration: none; font-size: 15px;color: black" target="_self">微信登录</a></span>
         </el-tab-pane>
       </el-tabs>
       <p class="copyright" v-if="copyrightInfo1!=''">{{copyrightInfo1}} © 2000-2019</p>
@@ -85,6 +85,7 @@
     },
     data() {
       return {
+        wechatUrl: '',
         applet:'/static/common/applet.jpg',
         loginInfo: null,
         activeName: 'first',
@@ -102,6 +103,7 @@
       };
     },
     created: function () {
+      this.wechatUrl = 'http://kuaixin.picp.net:14335/wechat/login?url=http://ui.boilermanage.sdcsoft.com.cn/#/login'
     },
     methods: {
       back(){
