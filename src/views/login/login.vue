@@ -103,7 +103,7 @@
       };
     },
     created: function () {
-      this.wechatUrl = 'http://kuaixin.picp.net:14335/wechat/login?url=http://ui.boilermanage.sdcsoft.com.cn/#/login'
+      this.wechatUrl = 'https://apis.sdcsoft.com.cn/wechat/login?url=http://ui.boilermanage.sdcsoft.com.cn/#/login'
     },
     methods: {
       back(){
