@@ -7,18 +7,3 @@ export function getDictionaryValueListByType(type) {
     params: {type: type}
   })
 }
-
-export function editDictionaryValue(data) {
-  return request({
-    url: '/dictionaryvalue/editdictionaryvalue',
-    method: 'post',
-    data: data
-  })
-}
-export function deleteDictionaryValueById(id) {
-  return request({
-    url: '/dictionaryvalue/deletedictionaryvaluebyid',
-    method: 'post',
-    params:{id}
-  })
-}
