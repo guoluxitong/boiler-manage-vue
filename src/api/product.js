@@ -68,11 +68,3 @@ export function deleteProductById(id,controllerNo) {
     data: qs.stringify({id: id, controllerNo: controllerNo})
   })
 }
-export function productTypeAmountByCondition(userId) {
-  return request({
-    url:'/product/productTypeAmountByCondition',
-    method:'get',
-    params:{userId:userId}
-  })
-
-}

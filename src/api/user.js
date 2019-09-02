@@ -15,14 +15,6 @@ export function getUserList(query) {
     params: query
   })
 }
-
-export function getUserListByName(query) {
-    return request({
-        url: '/user/getuserlistbyorganizationtypeandid',
-        method: 'get',
-        params: query
-    })
-}
 export function getUserRole(userId) {
   return request({
     url: '/webapi/boilermanage/user/find',

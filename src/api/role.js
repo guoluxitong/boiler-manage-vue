@@ -22,14 +22,12 @@ export function editRole(data) {
     data:data
   })
 }
-
-
 export function editRoleResources(roleId,data) {
   return request({
     url: '/webapi/boilermanage/role/resource/map',
     method: 'post',
     params:{roleId},
-    data:data
+    data: data
   })
 }
 

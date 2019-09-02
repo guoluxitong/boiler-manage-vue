@@ -68,7 +68,6 @@
         <el-col :span="2">
           <el-button @click="handleCreate" icon="el-icon-plus" type="success">添加</el-button>
         </el-col>
-        <!--<el-button style="margin-left: 10px;" @click="showMap" type="primary" icon="el-icon-location-outline">地图分布</el-button>-->
       </el-row>
       <!--数据展示-->
       <el-table
@@ -136,18 +135,11 @@
       </el-table>
       <menu-context ref="menuContext">
         <menu-context-item @click="handleUpdate" :width="100" :fontSize="14">编辑</menu-context-item>
-        <!--  <menu-context-item @click="handleCopy"  :width="100" :fontSize="14">复制</menu-context-item>-->
         <menu-context-item @click="sellProduct" :width="100" :fontSize="14">售出</menu-context-item>
-        <!-- <menu-context-item @click="handleDownload" :width="100" :fontSize="14">导出</menu-context-item>-->
-        <!-- <menu-context-item @click="showControllerData" :width="100" :fontSize="14">监控</menu-context-item> -->
         <menu-context-item @click="auxiliaryMachineInfo" :width="100" :fontSize="14">辅机信息</menu-context-item>
-        <!--<menu-context-item @click="baseInfoInfo" :width="100" :fontSize="18">运行信息</menu-context-item>-->
         <menu-context-item @click="handleChoiceUser" :width="100" :fontSize="14">负责员工</menu-context-item>
         <menu-context-item @click="handleDelete" :width="100" :fontSize="14">删除</menu-context-item>
       </menu-context>
-      <!--右键菜单-->
-      <!--<contextmenu :visible="showcontextmenu" ref="cmenu"></contextmenu>-->
-
       <!--分页-->
       <div class="pagination-container">
         <el-pagination
@@ -201,21 +193,6 @@
         :productData="productFormData"
         @onClosed="productMapDialogClose"
       ></product-map-dialog>
-      <!--监控-->
-      <!-- <el-dialog title="监控" :visible.sync="controllerRunInfoDialogVisible" width="40%" @close="close">
-        <controller-run-info-dialog
-          ref="deviceRunInfo"
-          :boiler-no="this.boiler.boilerNo"
-          :controller-no="this.boiler.controllerNo"
-          :address="this.boiler.address"
-          :visible="controllerRunInfoDialogVisible"
-        ></controller-run-info-dialog>
-      </el-dialog> -->
-
-      <!--运行信息-->
-      <el-dialog title="运行信息报表" :visible.sync="showEchartDialog" height="100%" width="100%">
-        <device-chart></device-chart>
-      </el-dialog>
     </div>
     <div v-if="PartCategory==1">
       <el-form
@@ -487,7 +464,6 @@
 import { initMedium, initFuel, initIsSell } from "./product-dictionary";
 import { getProductCategoryList } from "@/api/productCategory";
 import contextmenu from "@/components/ContextMenu";
-import deviceChart from "@/components/deviceChart";
 import {
   productSearch,
   deleteProductById,
@@ -509,7 +485,6 @@ import { editProduct } from "@/api/product";
 import productMapDialog from "./product-map";
 import productFormDialog from "./product-form";
 import auxiliaryMachineDialog from "./auxiliary-machine-form";
-// import controllerRunInfoDialog from "@/components/controller-run-info/index";
 import auxiliaryMachineInfoDialog from "./product-auxiliary-machine-info-form";
 import { getUserList } from "@/api/user";
 
@@ -525,9 +500,7 @@ export default {
     productFormDialog,
     productMapDialog,
     auxiliaryMachineDialog,
-    //controllerRunInfoDialog,
     contextmenu,
-    deviceChart,
     auxiliaryMachineInfoDialog
   },
   data() {
@@ -726,15 +699,8 @@ export default {
       productFromDialogVisible: false,
       productMapDialogVisible: false,
       auxiliaryMachineDialogVisible: false,
-      //controllerRunInfoDialogVisible: false,
       mapCompleteDialogVisible: false,
       titleName: "",
-      // boiler:{
-      //   address: null,
-      //   controllerNo: null,
-      //   boilerNo:null,
-
-      // }
     };
   },
   filters: {
@@ -938,12 +904,6 @@ export default {
       this.addFormData = row;
       this.titleName = "编辑";
     },
-    //产品复制
-    handleCopy(row) {
-      this.PartCategory = 2;
-      this.addFormData = row;
-      this.titleName = "复制";
-    },
     //辅机编辑
     handleUpdatePart(row) {
       this.auxiliaryMachineInfoDialogVisible = true;
@@ -969,13 +929,6 @@ export default {
     onShowChange(val) {
       this.productMapDialogVisible = false;
     },
-    //监控
-    // showControllerData(row) {
-    //   this.controllerRunInfoDialogVisible = true;
-    //   this.boiler.controllerNo = row.controllerNo;
-    //   this.boiler.boilerNo = row.boilerNo
-    //   this.boiler.address = row.street
-    // },
     // 辅机信息
     auxiliaryMachineInfo(row) {
       this.PartCategory = 1;
@@ -1006,17 +959,6 @@ export default {
     },
     cenalForm() {
       this.PartCategory = 0;
-    },
-    baseInfoInfo(row) {
-      let width = Math.round(document.body.clientWidth) - 200;
-      let height = Math.round(document.body.clientHeight) - 200;
-      let newWindow = openCommonWindow(
-        "/base-run-info-complete-page?controllerNo=" + row.controllerNo,
-        { width: width, height: height }
-      );
-      newWindow.on("closed", () => {
-        newWindow = null;
-      });
     },
     initTransfer() {
       let sourceUsers = [];
@@ -1217,150 +1159,6 @@ export default {
         });
       }
     },
-    handleDownload(row) {
-      this.initAuxiliaryMachineAbout()
-        .then(() => {
-          return partlist({
-            productId: row.id
-          });
-        })
-        .then(response => {
-          this.productAuxiliaryMachineInfoList = response.data.data;
-          return import("./exportToExcel");
-        })
-        .then(excel => {
-          let excelObjArray = [];
-          const boiler_header = [
-            "锅炉编号",
-            "锅炉型号",
-            "控制器编号",
-            "燃料",
-            "介质",
-            "吨位（T）",
-            "是否售出",
-            "客户名称",
-            "出售日期",
-            "出售地址"
-          ];
-          const boiler_filter_val = [
-            "boilerNo",
-            "boilerModelNumber",
-            "controllerNo",
-            "power",
-            "media",
-            "tonnageNum",
-            "isSell",
-            "customerName",
-            "saleDate",
-            "saleAddress"
-          ];
-          const boiler_data = {
-            boilerNo: row.boilerNo,
-            boilerModelNumber: (() => {
-              let dictionary = dictionaryValueFilter(
-                this.boilerModelNumberArray,
-                row.productCategoryId
-              );
-              if (dictionary) return dictionary.label;
-              return "";
-            })(),
-            controllerNo: row.controllerNo,
-            tonnageNum: row.tonnageNum,
-            media: (() => {
-              let dictionary = dictionaryValueFilter(
-                this.mediumArray,
-                row.media
-              );
-              if (dictionary) return dictionary.label;
-              return "";
-            })(),
-            power: (() => {
-              let dictionary = dictionaryValueFilter(this.fuelArray, row.power);
-              if (dictionary) return dictionary.label;
-              return "";
-            })(),
-            isSell: (() => {
-              let dictionary = dictionaryValueFilter(
-                this.isSellArray,
-                row.isSell
-              );
-              if (dictionary) return dictionary.label;
-              return "";
-            })(),
-            customerName: (() => {
-              if (row.customerName) return row.customerName;
-              return "无";
-            })(),
-            saleDate: (() => {
-              if (row.saleDate) return row.saleDate;
-              return "无";
-            })(),
-            saleAddress: (() => {
-              if (row.province || row.city || row.district || row.street) {
-                return row.province + row.city + row.district + row.street;
-              }
-
-              return "无";
-            })()
-          };
-          excelObjArray.push({
-            title: "产品信息",
-            header: boiler_header,
-            data: this.formatJson(boiler_filter_val, [boiler_data])
-          });
-
-          if (this.productAuxiliaryMachineInfoList.length > 0) {
-            const productAuxiliaryMachineInfo_header = [
-              "大类",
-              "小类",
-              "品牌",
-              "型号",
-              "数量",
-              "供货厂家",
-              "备注"
-            ];
-            const productAuxiliaryMachineInfo_filter_val = [
-              "largeClassName",
-              "smallClassName",
-              "brandName",
-              "modelName",
-              "amountOfUser",
-              "supplier",
-              "remarks"
-            ];
-            this.productAuxiliaryMachineInfoList.forEach(item => {
-              item.largeClassName = (() => {
-                let dictionary = dictionaryValueFilter(
-                  this.largeClassArray,
-                  item.largeClassId
-                );
-                if (dictionary) return dictionary.label;
-                return "";
-              })();
-              item.smallClassName = (() => {
-                let dictionary = dictionaryValueFilter(
-                  this.smallClassArray,
-                  item.smallClassId
-                );
-                if (dictionary) return dictionary.label;
-                return "";
-              })();
-            });
-            excelObjArray.push({
-              title: "辅机信息",
-              header: productAuxiliaryMachineInfo_header,
-              data: this.formatJson(
-                productAuxiliaryMachineInfo_filter_val,
-                this.productAuxiliaryMachineInfoList
-              )
-            });
-          }
-          excel.export_json_to_excel(row.boilerNo, excelObjArray);
-        });
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => v[j]));
-    },
     confirmCancelValidate(obj) {
       this.deleteValidateFormDialogVisible =
         obj.deleteValidateFormDialogVisible;
@@ -1378,9 +1176,6 @@ export default {
       this.auxiliaryMachineDialogVisible = obj.auxiliaryMachineDialogVisible;
       this.getList();
     },
-    // controllerRunInfoDialogClose(obj) {
-    //   this.controllerRunInfoDialogVisible = obj.controllerRunInfoDialogVisible;
-    // },
     handleSizeChange(val) {
       this.listQuery4.pageSize = val;
       this.getTypeList();

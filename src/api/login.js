@@ -16,3 +16,10 @@ export function getUserInfo(employeeId) {
     params:{ "employeeId": employeeId}
   })
 }
+export function loginout(query) {
+  return request({
+    url: '/webapi/boilermanage/logout/out',
+    method: 'get',
+    params: query
+  })
+}

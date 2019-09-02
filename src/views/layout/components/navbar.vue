@@ -154,9 +154,8 @@
 import { validateURL } from "@/utils/validate";
 import sidebarItem from "./sidebar/sidebarItem";
 import { editUserPass } from "@/api/user";
-import { login } from "@/api/login";
+import { login,loginout } from "@/api/login";
 import { deleteFile } from "@/api/upload";
-import { loginout } from "@/api/loginout";
 import { config } from "@/config/index";
 
 const baseURL = process.env.NODE_ENV === 'development'

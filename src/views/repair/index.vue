@@ -255,10 +255,7 @@
           @close='closeDialog'
           :visible.sync="newRepairDialogFlaguser"
         >
-          <el-form ref="repairform" v-model="repairform" label-width="80px">
-            <el-form-item label="序号" v-show="false">
-              <el-input v-model="repairform.repairId"></el-input>
-            </el-form-item>
+          <el-form ref="repairformdata" v-model="repairform" label-width="80px">
             <el-form-item v-if="inputno" label="产品编号">
               <el-autocomplete
                 v-model="repairform.controllerNo"
@@ -358,9 +355,10 @@ export default {
           controllerNo: "",
           id: "",
           boilerNo: "",
-          userList: []
         }
       ],
+      userListRepair: [],
+      boilerNoList: [],
       mediumArray: [],
       fuelArray: [],
       listLoading: false,
@@ -471,6 +469,22 @@ export default {
 
   },
   methods: {
+    inintRepair(){
+      this.repairform = [
+        {
+          userName: "",
+          repairDatetime: "",
+          repairContent: "",
+          realName: "",
+          createDatetime: "",
+          createUserName: "",
+          userId: "",
+          controllerNo: "",
+          id: "",
+          boilerNo: "",
+        }
+      ]
+    },
     initSelectMedium() {
       initMedium().then(data => {
         this.mediumArray = data;
@@ -512,16 +526,12 @@ export default {
       );
     },
     handleClick(tab, event) {
-      this.tabType = tab.index;
-      var val = tab.index; //
+      var val = tab.index;
+      console.log(val)
       this.getWaterDetails(val);
     },
     closeDialog(){
-      this.repairform.repairDatetime = ''
-      this.repairform.createDatetime = ''
-      this.repairform.repairContent = ''
-      this.repairform.controllerNo = ''
-      this.repairform.realName=''
+      this.inintRepair()
     },
     inintUserSelect() {
       getUserList(this.userlistQuery).then(response => {
@@ -588,11 +598,7 @@ export default {
       this.titleName = "维保记录";
     },
     cancelbuuser() {
-      this.repairform.repairDatetime = ''
-      this.repairform.createDatetime = ''
-      this.repairform.repairContent = ''
-      this.repairform.controllerNo = ''
-      this.repairform.realName=''
+      this.inintRepair()
       this.newRepairDialogFlaguser = false
       this.titleName = "维保记录";
     },
@@ -655,9 +661,6 @@ export default {
       });
       return options;
     },
-    repairOpen() {
-      this.getrepairList();
-    },
     openTableMenu(row, event) {
       this.$refs.menuContext.openTableMenu(
         row,
@@ -701,9 +704,6 @@ export default {
         }
       });
     },
-    repairOpenuser() {
-      this.getrepairListuser();
-    },
     getrepairListuser() {
       this.listLoading = true;
       getRepairInfoListByUserId(this.userFormData.id).then(response => {
@@ -719,14 +719,14 @@ export default {
     },
     querySearchAsync(queryString, callback) {
       var results = [];
-      for (let i = 0, len = this.repairform.userList.length; i < len; i++) {
-        this.repairform.userList[i].value = this.repairform.userList[
+      for (let i = 0, len = this.userListRepair.length; i < len; i++) {
+        this.userListRepair[i].value = this.userListRepair[
           i
         ].userName;
       }
       results = queryString
-        ? this.repairform.userList.filter(this.createFilter(queryString))
-        : this.repairform.userList;
+        ? this.userListRepair.filter(this.createFilter(queryString))
+        : this.userListRepair;
       callback(results);
     },
     createFilter(queryString, queryArr) {
@@ -741,16 +741,16 @@ export default {
     },
     querySearchAsyncuser(queryString, callback) {
       var results = [];
-      for (let i = 0, len = this.repairform.boilerNoList.length; i < len; i++) {
-        this.repairform.boilerNoList[i].value = this.repairform.boilerNoList[
+      for (let i = 0, len = this.boilerNoList.length; i < len; i++) {
+        this.boilerNoList[i].value = this.boilerNoList[
           i
         ].controllerNo;
       }
       results = queryString
-        ? this.repairform.boilerNoList.filter(
+        ? this.boilerNoList.filter(
             this.createFilteruser(queryString)
           )
-        : this.repairform.boilerNoList;
+        : this.boilerNoList;
       callback(results);
     },
 
@@ -787,11 +787,7 @@ export default {
               message: "添加成功",
               type: "success"
             });
-            this.repairform.repairDatetime = ''
-            this.repairform.createDatetime = ''
-            this.repairform.repairContent = ''
-            this.repairform.controllerNo = ''
-            this.repairform.realName=''
+            this.inintRepair()
             this.getrepairList();
           } else {
             this.$message.error(data.data.msg);
@@ -816,11 +812,7 @@ export default {
               message: "添加成功",
               type: "success"
             });
-            this.repairform.repairDatetime = ''
-            this.repairform.createDatetime = ''
-            this.repairform.repairContent = ''
-            this.repairform.controllerNo = ''
-            this.repairform.realName=''
+            this.inintRepair()
             this.getrepairListuser();
           } else {
             this.$message.error(data.data.msg);
@@ -902,96 +894,14 @@ export default {
     getDetails(row) {
       this.deleteId = row.id;
     },
-    handleSizeChange(val) {
-      this.listLoading = true;
-      this.userlistQuery.pageSize = val;
-      getUserList(this.userlistQuery).then(response => {
-        let userInfoList = response.data.data;
-        this.userlist = userInfoList.list;
-        this.userlistQuery.total = userInfoList.total;
-        this.userlistQuery.pageNum = userInfoList.pageNum;
-        this.listLoading = false;
-      });
-    },
-    handleCurrentChange(val) {
-      this.listLoading = true;
-      this.userlistQuery.pageNum = val;
-      getUserList(this.userlistQuery).then(response => {
-        if (response.data.code == 0) {
-          let userInfoList = response.data.data;
-          this.userlist = userInfoList.list;
-          this.userlistQuery.total = userInfoList.total;
-          this.userlistQuery.pageNum = userInfoList.pageNum;
-          this.listLoading = false;
-        } else {
-          this.$message.error(response.data.msg);
-          return;
-        }
-      });
-    },
-    handleSizeChange2(val) {
-      this.listLoading = true;
-      this.listQuery.pageSize = val;
-      productSearch({
-        product: this.product,
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
-      }).then(response => {
-        if (response.data.code == 0) {
-          let productInfoList = response.data.data;
-          this.productList = productInfoList.list;
-          this.listQuery.total = productInfoList.total;
-          this.listQuery.pageNum = productInfoList.pageNum;
-          this.listLoading = false;
-        } else {
-          this.$message.error(response.data.msg);
-          return;
-        }
-      });
-    },
-    handleCurrentChange2(val) {
-      this.listLoading = true;
-      this.listQuery.pageNum = val;
-      productSearch({
-        product: this.product,
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
-      }).then(response => {
-        if (response.data.code == 0) {
-          let productInfoList = response.data.data;
-          this.productList = productInfoList.list;
-          this.listQuery.total = productInfoList.total;
-          this.listQuery.pageNum = productInfoList.pageNum;
-          this.listLoading = false;
-        } else {
-          this.$message.error(response.data.msg);
-          return;
-        }
-      });
-    },
     getWaterDetails(val) {
       this.initSelectMedium();
       if (val == 0) {
         this.initSelect();
         this.userlist = [];
         getUserList(this.userlistQuery2).then(response => {
-          this.repairform.userList = response.data.data.list;
+          this.userListRepair = response.data.data.list;
         });
-        /*  productSearch({
-            product: this.product,
-            pageNum: this.pageNum,
-            pageSize: this.pageSize
-          }).then(response => {
-            if(response.data.code==0){
-            let productInfoList = response.data.data;
-            this.productList = productInfoList.list;
-            this.listQuery.total = productInfoList.total;
-            this.listQuery.pageNum = productInfoList.pageNum;
-            } else {
-              this.$message.error(response.data.msg);
-              return;
-            }
-          })*/
       }
       if (val == 1) {
         this.inintUserSelect();
@@ -1001,19 +911,8 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize
         }).then(response => {
-          this.repairform.boilerNoList = response.data.data.list;
+          this.boilerNoList = response.data.data.list;
         });
-        /* getUserList(this.userlistQuery).then(response => {
-            if(response.data.code==0){
-            let userInfoList = response.data.data;
-            this.userlist = userInfoList.list;
-            this.userlistQuery.total = userInfoList.total;
-            this.userlistQuery.pageNum = userInfoList.pageNum;
-            } else {
-              this.$message.error(response.data.msg);
-              return;
-            }
-          });*/
       }
     }
   }
