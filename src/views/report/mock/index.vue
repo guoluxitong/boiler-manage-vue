@@ -124,7 +124,7 @@
       </div>
     </div>
     <div v-if="showReport==1">
-      <data-mock-report v-show="reportShow" @back="back" :boiler="boiler" server="http://192.168.0.113:8080"></data-mock-report>
+      <data-mock-report v-show="reportShow" @back="back" :boiler="boiler" server="https://apis.sdcsoft.com.cn"></data-mock-report>
     </div>
   </div>
 </template>

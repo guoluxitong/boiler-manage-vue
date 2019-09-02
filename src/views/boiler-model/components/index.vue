@@ -139,7 +139,7 @@ export default {
     },
     getList() {
       this.listLoading = true;
-        this.listQuery.orgId = this.$store.state.user.orgId;
+      this.listQuery.orgId = this.$store.state.user.orgId;
       getProductCategoryListAndPage(this.listQuery).then(response => {
         if ( response.data.code==0){
         const data = response.data.data;

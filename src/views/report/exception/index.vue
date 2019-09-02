@@ -1,5 +1,5 @@
 <template>
-      <data-expection-report :orgName="orgName" :orgId="orgId"  :boilers="boilers" server="http://192.168.0.113:8080"></data-expection-report>
+      <data-expection-report :orgName="orgName" :orgId="orgId"  :boilers="boilers" server="https://apis.sdcsoft.com.cn"></data-expection-report>
 </template>
 <script>
   import {findSoldProduct} from "@/api/product";
