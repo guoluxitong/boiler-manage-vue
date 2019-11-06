@@ -53,19 +53,19 @@
             ></el-option>
           </el-select>
         </el-col>
-        <el-col :span="3">
+        <el-col :span="2.5">
           <el-date-picker
             v-model="product.saleDate"
-            style="width: 150px"
+            style="width: 130px"
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="售出时间"
           ></el-date-picker>
         </el-col>
-        <el-col :span="2">
+        <el-col :span="1.5">
           <el-button type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
         </el-col>
-        <el-col :span="2">
+        <el-col :span="1.5">
           <el-button @click="handleCreate" icon="el-icon-plus" type="success">添加</el-button>
         </el-col>
       </el-row>
