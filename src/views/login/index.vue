@@ -13,7 +13,7 @@
   </div>
 </template>
 <script>
-  import { login, getUserInfo,wechatLogin, a, b, c } from "@/api/login";
+  import { login, getUserInfo,wechatlogin, a, b, c } from "@/api/login";
   import loginDialog from "./login";
 
   export default {
@@ -30,9 +30,6 @@
         copyrightInfo2: "",
         logoUrl: "/static/common/defaultLogo.png",
         backgroundUrl: "/static/common/loginBackground.jpg",
-
-        loading: false,
-
         loginForm: {
           account: null,
           passWord: null
@@ -46,6 +43,7 @@
     created() {
       this.loginForm.account = this.getUrlKey('mobile')
       this.loginForm.passWord = this.getUrlKey('token')
+      console.log(this.loginForm.passWord)
       if(this.loginForm.account!=null){
         if(this.loginForm.account == 0){
           window.history.pushState({status: 0} ,'' ,'http://ui.boilermanage.sdcsoft.com.cn/#/login')
@@ -71,8 +69,12 @@
         let org = 0
         this.loading = true;
         let baseInfo,resources;
-        login(this.loginForm.account.trim(), this.loginForm.passWord)
+        wechatlogin(this.loginForm.account.trim())
           .then(response => {
+            let mobile = response.data.data.mobile
+            let password = response.data.data.password
+              login(mobile.trim(), password)
+                .then(response => {
             let data = response.data;
             baseInfo = data.data;
             if (data.code == 0) {
@@ -81,27 +83,29 @@
             } else {
               return Promise.reject(data.msg);
             }
+                })
+                .then(response => {
+                  let data = response.data
+                  if (data.code == 0) {
+                    return this.$store.dispatch("saveUserState", {
+                      "baseInfo": baseInfo,
+                      "sysInfo": data.data,
+                      "router": this.$router
+                    });
+                  }
+                })
+                .then(() => {
+                  //记录orgid
+                  /*  window.localStorage["logoUrl"] = '/files/' + org + '/logo.jpg'*/
+                  this.loading = false
+                  this.$router.push({ path: this.redirect || "/index" });
+                })
+                .catch(reason => {
+                  this.loading = false
+                  this.$message.error(reason);
+                });
           })
-          .then(response => {
-            let data = response.data
-            if (data.code == 0) {
-              return this.$store.dispatch("saveUserState", {
-                "baseInfo": baseInfo,
-                "sysInfo": data.data,
-                "router": this.$router
-              });
-            }
-          })
-          .then(() => {
-            //记录orgid
-            window.localStorage["logoUrl"] = '/files/' + org + '/logo.jpg'
-            this.loading = false
-            this.$router.push({ path: this.redirect || "/index" });
-          })
-          .catch(reason => {
-            this.loading = false
-            this.$message.error(reason);
-          });
+
       },
       handleLogin(loginForm) {
         let org = 0

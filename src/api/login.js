@@ -8,6 +8,13 @@ export function login(account, password) {
     data: qs.stringify({ loginId: account, password: password})
   })
 }
+export function wechatlogin(account) {
+  return request({
+    url: '/wechat/employee/find',
+    method: 'get',
+    params: { 'loginId': account}
+  })
+}
 
 export function getUserInfo(employeeId) {
   return request({
