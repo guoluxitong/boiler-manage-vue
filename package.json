@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@sdcsoft/comms": "^1.1.1",
-    "@sdcsoft/components": "^1.0.8",
+    "@sdcsoft/components": "^1.1.3",
     "@tomcat008/devices-lib": "^2.2.1",
     "axios": "^0.18.0",
     "echarts": "^4.2.1",

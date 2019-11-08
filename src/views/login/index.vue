@@ -30,9 +30,6 @@
         copyrightInfo2: "",
         logoUrl: "/static/common/defaultLogo.png",
         backgroundUrl: "/static/common/loginBackground.jpg",
-
-        loading: false,
-
         loginForm: {
           account: null,
           passWord: null
